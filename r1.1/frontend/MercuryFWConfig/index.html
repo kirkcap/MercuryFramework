@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+  <html>
+  <head lang="en">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--base href="/"/-->
+    <title>Mercury Framework - The quicker framework of the world to implement REST CRUD API</title>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="css/app.css"/>
+    <script type="text/javascript" src="lib/angular.min.js"></script>
+
+    <script type="text/javascript" src="js/app.js"></script>
+
+    <script type="text/javascript" src="js/constants.js"></script>
+
+    <!--script type="text/javascript" src="js/admin_cfg-controllers.js"></script>
+    <script type="text/javascript" src="js/auth_cfg-controllers.js"></script>
+    <script type="text/javascript" src="js/databases-controllers.js"></script>
+    <script type="text/javascript" src="js/models-controllers.js"></script>
+    <script type="text/javascript" src="js/routes-controllers.js"></script-->
+    <script type="text/javascript" src="js/teste-controllers.js"></script>
+
+    <script type="text/javascript" src="js/services.js"></script>
+    <script type="text/javascript" src="lib/angular-ui-router.min.js"></script>
+    <script type="text/javascript" src="lib/angular-resource.min.js"></script>
+  </head>
+  <body data-ng-app="mercuryFWConfigApp">
+    <nav class="navbar navbar-default" role="navigation">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" ui-sref="attributes">Mercury Framework Configuration</a>
+        </div>
+        <div class="collapse navbar-collapse">
+          <!--ul class="nav navbar-nav">
+            <li class="active"><a ui-sref="admin_cfg">Admin</a></li>
+          </ul>
+          <ul class="nav navbar-nav">
+            <li class="active"><a ui-sref="auth_cfg">Auth</a></li>
+          </ul>
+          <ul class="nav navbar-nav">
+            <li class="active"><a ui-sref="database">Databases</a></li>
+          </ul>
+          <ul class="nav navbar-nav">
+            <li class="active"><a ui-sref="model">Models</a></li>
+          </ul>
+          <ul class="nav navbar-nav">
+            <li class="active"><a ui-sref="route">Routes</a></li>
+          </ul-->
+          <ul class="nav navbar-nav">
+            <li class="active"><a ui-sref="teste">Teste</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container">
+      <div class="row top-buffer">
+        <div class="col-xs-8 col-xs-offset-2">
+          <div ui-view></div> <!-- This is where our views will load -->
+        </div>
+      </div>
+    </div>
+
+    <!--script>
+      // ...and add 'ui.router' as a dependency
+      var mcapp = angular.module('mobileCarsApp', ['ui.router']);
+    </script-->
+  </body>
+</html>

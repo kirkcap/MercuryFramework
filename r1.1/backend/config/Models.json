@@ -1,0 +1,377 @@
+{
+    "authModel" : {
+        "dbCfgName"   : "default",
+        "entity_id"   : "user",
+        "entity_name" : "User",
+        "tb_name"     : "tb_users",
+        "tb_key"      : ["id"],
+        "login_field" : "email",
+        "pwd_field"   : "password",
+        "tb_columns"  : {"id"             : {"key" : true , "show" : true , "insert" : false, "update" : false, "bind_type" : "i"},
+                         "email"          : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "s", "order" : "asc"},
+                         "password"       : {"key" : false, "show" : false, "insert" : true , "update" : true , "bind_type" : "s", "password" : true },
+                         "name"           : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "s"},
+                         "mobilenumber"   : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "s"},
+                         "remember_token" : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "s"},
+                         "created_at"     : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "s", "default" : {"type":"function", "value":"current_timestamp", "fill_on_insert": true} },
+                         "updated_at"     : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "s", "default" : {"type":"function", "value":"current_timestamp", "fill_on_update": true} }
+                        }
+    },
+
+    "attributesModel" : {
+        "entity_id"   : "attribute",
+        "entity_name" : "Attribute",
+        "tb_name"     : "tb_attributes",
+        "tb_key"      : ["attcod"],
+        "tb_columns"  : {"attcod"     : {"key" : true , "show" : true , "insert" : false, "update" : false, "bind_type" : "i"},
+                         "attnam"     : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "s","order" : "asc"},
+                         "attdsc"     : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "s"},
+                         "attlst"     : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "s"},
+                         "atttyp"     : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "s"},
+                         "attnumchr"  : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "i"},
+                         "attnumdec"  : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "i"},
+                         "attvaltbl"  : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "s"},
+                         "created_at" : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "s", "default" : {"type":"function", "value":"current_timestamp", "fill_on_insert": true} },
+                         "creusr"     : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "i", "default" : {"type" : "token_id", "fill_on_insert": true} },
+                         "updated_at" : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "s", "default" : {"type":"function", "value":"current_timestamp", "fill_on_update": true} },
+                         "updusr"     : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "i", "default" : {"type" : "token_id", "fill_on_update": true} }
+                        }
+    },
+
+    "attributeValuesModel" : {
+        "entity_id"   : "attributeValue",
+        "entity_name" : "Attribute Value",
+        "tb_name"     : "tb_attribute_values",
+        "tb_key"      : ["attcod","attvalseq"],
+        "tb_columns"  : {"attcod"       : {"key" : true , "show" : true , "insert" : true , "update" : false, "bind_type" : "i"},
+                         "attvalseq"    : {"key" : true , "show" : true , "insert" : false, "update" : false, "bind_type" : "i","order" : "asc", "default" : {"type" : "subquery_max", "field" : "attvalseq", "criteriaFields" : ["attcod"]}},
+                         "attvalchr"    : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "s"},
+                         "attvalnumini" : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "d"},
+                         "attvalnumend" : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "d"},
+                         "created_at"   : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "s", "default" : {"type":"function", "value" : "current_timestamp", "fill_on_insert": true} },
+                         "updated_at"   : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "s", "default" : {"type":"function", "value":"current_timestamp", "fill_on_update": true} }
+                        }
+    },
+
+    "classesModel" : {
+        "entity_id"   : "class",
+        "entity_name" : "Class",
+        "tb_name"     : "tb_classes",
+        "tb_key"      : ["clscod"],
+        "tb_columns"  : {"clscod"       : {"key" : true , "show" : true , "insert" : true , "update" : false, "bind_type" : "i"},
+                         "clsnam"       : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "s"},
+                         "clstypcod"    : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "i", "order" : "asc"},
+                         "clsdsc"       : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "s"},
+                         "created_at"   : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "s", "default" : {"type":"function", "value" : "current_timestamp", "fill_on_insert": true} },
+                         "updated_at"   : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "s", "default" : {"type":"function", "value":"current_timestamp", "fill_on_update": true} }
+                        }
+    },
+
+    "classAttributesModel" : {
+        "entity_id"   : "classAttribute",
+        "entity_name" : "Class Attribute",
+        "tb_name"     : "tb_class_attributes",
+        "tb_key"      : ["clscod","attcod"],
+        "tb_columns"  : {"clscod"       : {"key" : true , "show" : true , "insert" : true , "update" : true , "bind_type" : "i"},
+                         "attcod"       : {"key" : true , "show" : true , "insert" : true , "update" : true , "bind_type" : "i"},
+                         "created_at"   : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "s", "default" : {"type":"function", "value" : "current_timestamp", "fill_on_insert": true} },
+                         "updated_at"   : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "s", "default" : {"type":"function", "value":"current_timestamp", "fill_on_update": true} }
+                        }
+    },
+
+    "classTypesModel" : {
+        "entity_id"   : "classType",
+        "entity_name" : "Class Type",
+        "tb_name"     : "tb_class_types",
+        "tb_key"      : ["clstypcod"],
+        "tb_columns"  : {"clstypcod"    : {"key" : true , "show" : true , "insert" : true , "update" : false, "bind_type" : "i"},
+                         "clstypnam"    : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "s"},
+                         "clstyptbl"    : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "s"},
+                         "created_at"   : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "s", "default" : {"type":"function", "value" : "current_timestamp", "fill_on_insert": true} },
+                         "updated_at"   : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "s", "default" : {"type":"function", "value":"current_timestamp", "fill_on_update": true} }
+                        }
+    },
+
+    "expenseTypesModel" : {
+        "entity_id"   : "expenseType",
+        "entity_name" : "Expense Type",
+        "tb_name"     : "tb_expense_types",
+        "tb_key"      : ["exptypcod"],
+        "tb_columns"  : {"exptypcod"    : {"key" : true , "show" : true , "insert" : true , "update" : false, "bind_type" : "i"},
+                         "exptypnam"    : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "s"},
+                         "exptypdsc"    : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "s"},
+                         "created_at"   : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "s", "default" : {"type":"function", "value" : "current_timestamp", "fill_on_insert": true} },
+                         "creusr"       : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "i", "default" : {"type" : "token_id", "fill_on_insert": true}},
+                         "updated_at"   : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "s", "default" : {"type" : "function", "value" : "current_timestamp", "fill_on_update": true} },
+                         "updusr"       : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "i", "default" : {"type" : "token_id", "fill_on_update": true}}
+                        }
+    },
+
+    "makersModel" : {
+        "entity_id"   : "maker",
+        "entity_name" : "Maker",
+        "tb_name"     : "tb_makers",
+        "tb_key"      : ["makcod"],
+        "tb_columns"  : {"makcod"       : {"key" : true , "show" : true , "insert" : true , "update" : false, "bind_type" : "i"},
+                         "maknam"       : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "s"},
+                         "created_at"   : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "s"},
+                         "updated_at"   : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "s", "default" : {"type":"function", "value":"current_timestamp", "fill_on_update": true} }
+                        }
+    },
+
+    "makerModelsModel" : {
+        "entity_id"   : "makerModel",
+        "entity_name" : "Maker Model",
+        "tb_name"     : "tb_maker_models",
+        "tb_key"      : ["makcod","makmdlcod"],
+        "tb_columns"  : {"makcod"       : {"key" : true , "show" : true , "insert" : true , "update" : false, "bind_type" : "i"},
+                         "makmdlcod"    : {"key" : true , "show" : true , "insert" : false, "update" : false, "bind_type" : "i", "order" : "asc", "default" : {"type" : "subquery_max", "field" : "makmdlcod", "criteriaFields" : ["makcod"]}},
+                         "makmdlnam"    : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "s"},
+                         "created_at"   : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "s", "default" : {"type":"function", "value" : "current_timestamp", "fill_on_insert": true} },
+                         "updated_at"   : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "s", "default" : {"type":"function", "value" : "current_timestamp", "fill_on_update": true} }
+                        }
+    },
+
+    "monExpHeaderModel" : {
+        "entity_id"   : "montExpHeader",
+        "entity_name" : "Monthly Expense",
+        "tb_name"     : "tb_monthly_expenses_header",
+        "tb_key"      : ["monexpyer","monexpmon"],
+        "tb_columns"  : {"monexpyer"    : {"key" : true , "show" : true , "insert" : true , "update" : false, "bind_type" : "s"},
+                         "monexpmon"    : {"key" : true , "show" : true , "insert" : true , "update" : false, "bind_type" : "s"},
+                         "monexpdatlan" : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "s"},
+                         "monexpobs"    : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "s"},
+                         "created_at"   : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "s", "default" : {"type" : "function", "value":"current_timestamp", "fill_on_insert": true} },
+                         "creusr"       : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "s", "default" : {"type" : "token_id", "fill_on_insert": true}},
+                         "updated_at"   : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "s", "default" : {"type" : "function", "value":"current_timestamp", "fill_on_update": true} },
+                         "updusr"       : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "i", "default" : {"type" : "token_id", "fill_on_insert": true}}
+                        }
+    },
+
+    "monExpHeaderModelVW" : {
+        "entity_id"   : "montExpHeaderVW",
+        "entity_name" : "Monthly Expense",
+        "tb_name"     : "vw_monthly_expenses_header",
+        "tb_key"      : ["monexpyer","monexpmon"],
+        "tb_columns"  : {"monexpyer"    : {"key" : true , "show" : true , "insert" : false, "update" : false, "bind_type" : "s"},
+                         "monexpmon"    : {"key" : true , "show" : true , "insert" : false, "update" : false, "bind_type" : "s"},
+                         "monexpdatlan" : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "s"},
+                         "monexpobs"    : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "s"},
+                         "created_at"   : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "s"},
+                         "creusr"       : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "s"},
+                         "updated_at"   : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "s"},
+                         "updusr"       : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "i"},
+                         "monexptotval" : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "d"}
+                        }
+    },
+
+    "monExpItemsModel" : {
+        "entity_id"   : "montExpItem",
+        "entity_name" : "Monthly Expense Item",
+        "tb_name"     : "tb_monthly_expenses_items",
+        "tb_key"      : ["monexpyer","monexpmon","monexpitm"],
+        "tb_columns"  : {"monexpyer"       : {"key" : true , "show" : true , "insert" : true , "update" : false, "bind_type" : "s"},
+                         "monexpmon"       : {"key" : true , "show" : true , "insert" : true , "update" : false, "bind_type" : "s"},
+                         "monexpitm"       : {"key" : true , "show" : true , "insert" : false, "update" : false, "bind_type" : "i", "order" : "asc", "default" : {"type" : "subquery_max", "field" : "monexpitm", "criteriaFields" : ["monexpyer","monexpmon"]}},
+                         "exptypcod"       : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "i"},
+                         "monexpitmdsc"    : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "s"},
+                         "monexpitmduedat" : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "s"},
+                         "monexpitmpaydat" : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "s"},
+                         "monexpitmval"    : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "d"},
+                         "created_at"      : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "s", "default" : {"type" : "function", "value":"current_timestamp", "fill_on_insert": true} },
+                         "creusr"          : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "i", "default" : {"type" : "token_id", "fill_on_insert": true}},
+                         "updated_at"      : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "s", "default" : {"type" : "function", "value":"current_timestamp", "fill_on_update": true} },
+                         "updusr"          : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "i", "default" : {"type" : "token_id", "fill_on_update": true}}
+                        }
+    },
+
+    "objectAttValuesModel" : {
+        "entity_id"   : "objectAttributeValue",
+        "entity_name" : "Object Attribute Value",
+        "tb_name"     : "tb_object_attribute_values",
+        "tb_key"      : ["objcod","clscod","attcod"],
+        "tb_columns"  : {"objcod"       : {"key" : true , "show" : true , "insert" : true , "update" : false, "bind_type" : "i"},
+                         "clscod"       : {"key" : true , "show" : true , "insert" : true , "update" : false, "bind_type" : "i"},
+                         "attcod"       : {"key" : true , "show" : true , "insert" : true , "update" : false, "bind_type" : "i"},
+                         "clstypcod"    : {"key" : false, "show" : true , "insert" : true , "update" : false, "bind_type" : "i"},
+                         "attvalseq"    : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "i"},
+                         "attvalchr"    : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "s"},
+                         "attvalnumini" : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "d"},
+                         "attvalnumend" : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "d"},
+                         "created_at"   : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "s", "default" : {"type" : "function", "value":"current_timestamp", "fill_on_insert": true} },
+                         "updated_at"   : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "s", "default" : {"type" : "function", "value":"current_timestamp", "fill_on_update": true} }
+                        }
+    },
+
+    "objectAttValuesModelVW" : {
+        "entity_id"   : "objectAttributeValueVW",
+        "entity_name" : "Object Attribute Value",
+        "tb_name"     : "vw_object_attribute_values",
+        "tb_key"      : ["objcod","clscod","attcod"],
+        "tb_columns"  : {"objcod"          : {"key" : true , "show" : true , "insert" : false, "update" : false, "bind_type" : "i"},
+                         "clscod"          : {"key" : true , "show" : true , "insert" : false, "update" : false, "bind_type" : "i"},
+                         "attcod"          : {"key" : true , "show" : true , "insert" : false, "update" : false, "bind_type" : "i"},
+                         "clstypcod"       : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "i"},
+                         "attvalseq"       : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "i"},
+                         "attvalseqchr"    : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "s"},
+                         "attvalseqnumini" : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "d"},
+                         "attvalseqnumend" : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "d"},
+                         "attvalchr"       : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "s"},
+                         "attvalnumini"    : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "d"},
+                         "attvalnumend"    : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "d"},
+                         "created_at"      : {"key" : false, "show" : true , "insert" : false, "update" : true , "bind_type" : "s"},
+                         "updated_at"      : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "s"}
+                        }
+    },
+
+
+    "objectClassesModel" : {
+        "entity_id"   : "objectClass",
+        "entity_name" : "Object Class",
+        "tb_name"     : "tb_object_classes",
+        "tb_key"      : ["objcod","clscod"],
+        "tb_columns"  : {"objcod"       : {"key" : true , "show" : true , "insert" : true , "update" : false, "bind_type" : "i"},
+                         "clscod"       : {"key" : true , "show" : true , "insert" : true , "update" : false, "bind_type" : "i"},
+                         "clstypcod"    : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "i"},
+                         "created_at"   : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "s", "default" : {"type" : "function", "value":"current_timestamp", "fill_on_insert": true} },
+                         "updated_at"   : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "s", "default" : {"type" : "function", "value":"current_timestamp", "fill_on_update": true} }
+                        }
+    },
+
+    "serviceOrdersModel" : {
+        "entity_id"   : "serviceOrder",
+        "entity_name" : "Service Order",
+        "tb_name"     : "tb_service_orders",
+        "tb_key"      : ["svcordcod"],
+        "tb_columns"  : {"svcordcod"       : {"key" : true , "show" : true , "insert" : true , "update" : false, "bind_type" : "i"},
+                         "svcordstrsvcdat" : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "s"},
+                         "svcordendsvcdat" : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "s"},
+                         "veicod"          : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "i"},
+                         "svcordprbdsc"    : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "s"},
+                         "svcordprbdat"    : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "s"},
+                         "svcordadtcmt"    : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "s"},
+                         "created_at"      : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "s", "default" : {"type" : "function", "value":"current_timestamp", "fill_on_insert": true} },
+                         "creusr"          : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "i", "default" : {"type" : "token_id", "fill_on_insert": true}},
+                         "updated_at"      : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "s", "default" : {"type":"function", "value":"current_timestamp", "fill_on_update": true} },
+                         "updusr"          : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "i", "default" : {"type" : "token_id", "fill_on_update": true}}
+                        }
+    },
+
+    "serviceOrderItemsModel" : {
+        "entity_id"   : "serviceOrderItem",
+        "entity_name" : "Service Order Item",
+        "tb_name"     : "tb_service_order_items",
+        "tb_key"      : ["svcordcod","svcorditmnum"],
+        "tb_columns"  : {"svcordcod"       : {"key" : true , "show" : true , "insert" : true , "update" : false, "bind_type" : "i"},
+                         "svcorditmnum"    : {"key" : true , "show" : true , "insert" : true , "update" : false, "bind_type" : "i","order" : "asc", "default" : {"type" : "subquery_max", "field" : "svcorditmnum", "criteriaFields" : ["svcord"]}},
+                         "svcorditmdsc"    : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "s"},
+                         "svcorditmexcdat" : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "s"},
+                         "svcorditmtyp"    : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "s"},
+                         "svcorditmvaluni" : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "d"},
+                         "svcorditmqtd"    : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "d"},
+                         "svcorditmuntmea" : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "s"},
+                         "svcorditmvaltot" : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "d"},
+                         "created_at"      : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "s", "default" : {"type":"function", "value" : "current_timestamp", "fill_on_insert": true} },
+                         "creusr"          : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "i", "default" : {"type" : "token_id", "fill_on_insert": true}},
+                         "updated_at"      : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "s", "default" : {"type":"function", "value":"current_timestamp", "fill_on_update": true} },
+                         "updusr"          : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "i", "default" : {"type" : "token_id", "fill_on_update": true}}
+                        }
+    },
+
+    "vehiclesModel" : {
+        "entity_id"   : "vehicle",
+        "entity_name" : "Vehicle",
+        "tb_name"     : "tb_vehicles",
+        "tb_key"      : ["veicod"],
+        "tb_columns"  : {"veicod"          : {"key" : true , "show" : true , "insert" : false, "update" : false, "bind_type" : "i"},
+                         "veitypcod"       : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "i"},
+                         "veisubtypcod"    : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "i"},
+                         "makcod"          : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "i"},
+                         "makmdlcod"       : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "i"},
+                         "veidatent"       : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "s"},
+                         "veiyermak"       : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "i"},
+                         "veiyermdl"       : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "i"},
+                         "veibuyprc"       : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "d"},
+                         "veisleprc"       : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "d"},
+                         "veinew"          : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "s"},
+                         "created_at"      : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "s", "default" : {"type":"function", "value" : "current_timestamp", "fill_on_insert": true} },
+                         "creusr"          : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "i", "default" : {"type" : "token_id", "fill_on_insert": true}},
+                         "updated_at"      : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "s", "default" : {"type":"function", "value" : "current_timestamp", "fill_on_update": true} },
+                         "updusr"          : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "i", "default" : {"type" : "token_id", "fill_on_update": true}}
+                        }
+    },
+
+
+    "vehiclesModelVW" : {
+        "entity_id"   : "vehicleVW",
+        "entity_name" : "Vehicle",
+        "tb_name"     : "vw_vehicles",
+        "tb_key"      : ["veicod"],
+        "tb_columns"  : {"veicod"          : {"key" : true , "show" : true , "insert" : false , "update" : false, "bind_type" : "i" },
+                         "veitypcod"       : {"key" : false, "show" : true , "insert" : false , "update" : false, "bind_type" : "i" },
+                         "veitypnam"       : {"key" : false, "show" : true , "insert" : false , "update" : false, "bind_type" : "s" },
+                         "veisubtypcod"    : {"key" : false, "show" : true , "insert" : false , "update" : false, "bind_type" : "i" },
+                         "veisubtypnam"    : {"key" : false, "show" : true , "insert" : false , "update" : false, "bind_type" : "s" },
+                         "makcod"          : {"key" : false, "show" : true , "insert" : false , "update" : false, "bind_type" : "i" },
+                         "maknam"          : {"key" : false, "show" : true , "insert" : false , "update" : false, "bind_type" : "s" },
+                         "makmdlcod"       : {"key" : false, "show" : true , "insert" : false , "update" : false, "bind_type" : "i" },
+                         "makmdlnam"       : {"key" : false, "show" : true , "insert" : false , "update" : false, "bind_type" : "s" },
+                         "veidatent"       : {"key" : false, "show" : true , "insert" : false , "update" : false, "bind_type" : "s" },
+                         "veiyermak"       : {"key" : false, "show" : true , "insert" : false , "update" : false, "bind_type" : "i" },
+                         "veiyermdl"       : {"key" : false, "show" : true , "insert" : false , "update" : false, "bind_type" : "i" },
+                         "veibuyprc"       : {"key" : false, "show" : true , "insert" : false , "update" : false, "bind_type" : "d" },
+                         "veisleprc"       : {"key" : false, "show" : true , "insert" : false , "update" : false, "bind_type" : "d" },
+                         "veinew"          : {"key" : false, "show" : true , "insert" : false , "update" : false, "bind_type" : "s" },
+                         "created_at"      : {"key" : false, "show" : true , "insert" : false , "update" : false, "bind_type" : "s" },
+                         "creusr"          : {"key" : false, "show" : true , "insert" : false , "update" : false, "bind_type" : "i" },
+                         "updated_at"      : {"key" : false, "show" : true , "insert" : false , "update" : false, "bind_type" : "s" },
+                         "updusr"          : {"key" : false, "show" : true , "insert" : false , "update" : false, "bind_type" : "i" }
+                        }
+    },
+
+    "vehicleApportionmentsModel" : {
+        "entity_id"   : "vehicleApportionment",
+        "entity_name" : "Vehicle Apportionment",
+        "tb_name"     : "tb_vehicle_apportionment",
+        "tb_key"      : ["veicod","apmyer","apmmon"],
+        "tb_columns"  : {"veicod"          : {"key" : true , "show" : true , "insert" : true , "update" : false, "bind_type" : "i"},
+                         "apmyer"          : {"key" : true , "show" : true , "insert" : true , "update" : false, "bind_type" : "i"},
+                         "apmmon"          : {"key" : true , "show" : true , "insert" : true , "update" : false, "bind_type" : "i"},
+                         "apmval"          : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "d"},
+                         "created_at"      : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "s"},
+                         "creusr"          : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "i", "default" : {"type" : "token_id", "fill_on_insert": true}},
+                         "updated_at"      : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "s", "default" : {"type":"function", "value":"current_timestamp", "fill_on_update": true} },
+                         "updusr"          : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "i", "default" : {"type" : "token_id", "fill_on_update": true}}
+                        }
+    },
+
+    "vehicleSubtypesModel" : {
+        "entity_id"   : "vehicleSubType",
+        "entity_name" : "Vehicle Subtype",
+        "tb_name"     : "tb_vehicle_subtypes",
+        "tb_key"      : ["veitypcod","veisubtypcod"],
+        "tb_columns"  : {"veitypcod"       : {"key" : true , "show" : true , "insert" : true , "update" : false, "bind_type" : "i"},
+                         "veisubtypcod"    : {"key" : true , "show" : true , "insert" : false, "update" : false, "bind_type" : "i", "order" : "asc", "default" : {"type" : "subquery_max", "field" : "veisubtypcod", "criteriaFields" : ["veitypcod"]}},
+                         "veisubtypnam"    : {"key" : true , "show" : true , "insert" : true , "update" : true , "bind_type" : "s"},
+                         "created_at"      : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "s", "default" : {"type" : "function", "value" : "current_timestamp", "fill_on_insert": true}},
+                         "creusr"          : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "i", "default" : {"type" : "token_id", "fill_on_insert": true}},
+                         "updated_at"      : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "s", "default" : {"type" : "function", "value" : "current_timestamp", "fill_on_update": true} },
+                         "updusr"          : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "i", "default" : {"type" : "token_id", "fill_on_update": true}}
+                        }
+    },
+
+    "vehicleTypesModel" : {
+        "entity_id"   : "vehicleType",
+        "entity_name" : "Vehicle Type",
+        "tb_name"     : "tb_vehicle_types",
+        "tb_key"      : ["veitypcod"],
+        "tb_columns"  : {"veitypcod"       : {"key" : true , "show" : true , "insert" : false, "update" : false, "bind_type" : "i"},
+                         "veitypnam"       : {"key" : false, "show" : true , "insert" : true , "update" : true , "bind_type" : "s"},
+                         "created_at"      : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "s", "default" : {"type":"function", "value" : "current_timestamp", "fill_on_insert": true} },
+                         "creusr"          : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "i", "default" : {"type" : "token_id", "fill_on_insert": true}},
+                         "updated_at"      : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "s", "default" : {"type":"function", "value" : "current_timestamp", "fill_on_update": true} },
+                         "updusr"          : {"key" : false, "show" : true , "insert" : false, "update" : false, "bind_type" : "i", "default" : {"type" : "token_id", "fill_on_update": true}}
+                        }
+    }
+
+}
