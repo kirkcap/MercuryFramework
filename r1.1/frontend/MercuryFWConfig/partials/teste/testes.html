@@ -5,12 +5,12 @@
     <td><h3>All Teste's</h3></td>
     <td></td>
   </tr>
-  <tr ng-repeat="(key, value) in testes">
+  <tr ng-repeat="(key, value) in configs">
 
     <td>{{key}}</td>
     <td>
       <a class="btn btn-primary" ui-sref="viewTeste({cfg:key})">View</a>
-      <a class="btn btn-danger"  ng-click="deleteTeste({key:key})">Delete</a>
+      <a class="btn btn-danger"  ng-click="deleteConfig({key:key})">Delete</a>
     </td>
   </tr>
 </table>

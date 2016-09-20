@@ -1,17 +1,16 @@
 <table class="table testetable">
   <tr>
-    <td><h3>Details for Field {{config.key}}</h3></td>
+    <td><h3>Details for Field {{config_key.value}}</h3></td>
     <td></td>
   </tr>
-  <tr>
-    <td>Field 1</td>
-    <td>{{teste_data.campo1}}</td>
+  <tr ng-repeat="(key, value) in config_body">
+
+    <td>{{key}}</td>
+    <td>{{value}}</td>
+
   </tr>
-  <tr>
-    <td>Field 2</td>
-    <td>{{teste_data.campo2}}</td>
-  </tr>
+
 </table>
 <div>
-  <a class="btn btn-primary" ui-sref="editTeste({cfg:config.key})">Edit</a>
+  <a class="btn btn-primary" ui-sref="editTeste({cfg:config_key.value})">Edit</a>
 </div>

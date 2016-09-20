@@ -1,8 +1,9 @@
 {
-  "admin_cfg" : "admin_cfg.json",
-  "auth_cfg"  : "auth_cfg.json",
-  "databases" : "databases.json",
-  "models"    : "Models.json",
-  "routes"    : "routes.json",
-  "teste"     : "teste.json"
+  "config_files" : "config_files.json",
+  "admin_cfg"    : "admin_cfg.json",
+  "auth_cfg"     : "auth_cfg.json",
+  "databases"    : "databases.json",
+  "models"       : "Models.json",
+  "routes"       : "routes.json",
+  "teste"        : "teste.json"
 }

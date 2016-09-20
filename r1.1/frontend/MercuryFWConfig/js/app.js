@@ -9,129 +9,286 @@ angular.module('mercuryFWConfigApp').config(function($stateProvider) {
 
 /******
 * Administration config
-******* /
-  .state('admin_cfg', { // state for showing all attributes
+*******/
+  .state('adminConfig', { // state for showing all attributes
     url: '/admin_cfg',
-    templateUrl: 'partials/admin_cfg/admin_cfg.html',
-    controller: 'AdminCfgListController'
-  }).state('viewAdminCfg', { //state for showing single attribute
+    templateUrl: 'partials/generic_cfg/generic_cfg.html',
+    controller: 'GenericConfigListController',
+    cfgname: 'AdminConfig',
+    singleTypeParameters: true,
+    svcname: 'admin_cfg',
+    sourceUrl: 'adminConfig'
+  }).state('viewAdminConfig', { //state for showing single attribute
     url: '/admin_cfg/:cfg/view',
-    templateUrl: 'partials/admin_cfg/admin_cfg-view.html',
-    controller: 'AdminCfgViewController'
-  }).state('newAdminCfg', { //state for adding a new attribute
+    templateUrl: 'partials/generic_cfg/generic_cfg-view.html',
+    controller: 'GenericConfigViewController',
+    cfgname: 'AdminConfig',
+    singleTypeParameters: true,
+    svcname: 'admin_cfg',
+    sourceUrl: 'adminConfig'
+  }).state('newAdminConfig', { //state for adding a new attribute
     url: '/admin_cfg/new',
-    templateUrl: 'partials/admin_cfg/admin_cfg-add.html',
-    controller: 'AdminCfgCreateController'
-  }).state('editAdminCfg', { //state for updating a attribute
+    templateUrl: 'partials/generic_cfg/generic_cfg-add.html',
+    controller: 'GenericConfigCreateController',
+    cfgname: 'AdminConfig',
+    singleTypeParameters: true,
+    svcname: 'admin_cfg',
+    sourceUrl: 'adminConfig'
+  }).state('editAdminConfig', { //state for updating a attribute
     url: '/admin_cfg/:cfg/edit',
-    templateUrl: 'partials/admin_cfg/admin_cfg-edit.html',
-    controller: 'AdminCfgEditController'
+    templateUrl: 'partials/generic_cfg/generic_cfg-edit.html',
+    controller: 'GenericConfigEditController',
+    cfgname: 'AdminConfig',
+    singleTypeParameters: true,
+    svcname: 'admin_cfg',
+    sourceUrl: 'adminConfig'
   })
 
 
 /******
 * Authorization config
-******* /
-  .state('auth_cfg', { // state for showing all attributes
+*******/
+  .state('authConfig', { // state for showing all attributes
     url: '/auth_cfg',
-    templateUrl: 'partials/auth_cfg/auth_cfg.html',
-    controller: 'AuthCfgListController'
-  }).state('viewAuthCfg', { //state for showing single attribute
+    templateUrl: 'partials/generic_cfg/generic_cfg.html',
+    controller: 'GenericConfigListController',
+    cfgname: 'AuthConfig',
+    singleTypeParameters: true,
+    svcname: 'auth_cfg',
+    sourceUrl: 'authConfig'
+  }).state('viewAuthConfig', { //state for showing single attribute
     url: '/auth_cfg/:cfg/view',
-    templateUrl: 'partials/auth_cfg/auth_cfg-view.html',
-    controller: 'AuthCfgViewController'
-  }).state('newAuthCfg', { //state for adding a new attribute
+    templateUrl: 'partials/generic_cfg/generic_cfg-view.html',
+    controller: 'GenericConfigViewController',
+    cfgname: 'AuthConfig',
+    singleTypeParameters: true,
+    svcname: 'auth_cfg',
+    sourceUrl: 'authConfig'
+  }).state('newAuthConfig', { //state for adding a new attribute
     url: '/auth_cfg/new',
-    templateUrl: 'partials/auth_cfg/auth_cfg-add.html',
-    controller: 'AuthCfgCreateController'
-  }).state('editAuthCfg', { //state for updating a attribute
+    templateUrl: 'partials/generic_cfg/generic_cfg-add.html',
+    controller: 'GenericConfigCreateController',
+    cfgname: 'AuthConfig',
+    singleTypeParameters: true,
+    svcname: 'auth_cfg',
+    sourceUrl: 'authConfig'
+  }).state('editAuthConfig', { //state for updating a attribute
     url: '/auth_cfg/:cfg/edit',
-    templateUrl: 'partials/auth_cfg/auth_cfg-edit.html',
-    controller: 'AuthCfgEditController'
+    templateUrl: 'partials/generic_cfg/generic_cfg-edit.html',
+    controller: 'GenericConfigEditController',
+    cfgname: 'AuthConfig',
+    singleTypeParameters: true,
+    svcname: 'auth_cfg',
+    sourceUrl: 'authConfig'
   })
+
+/******
+* Files config
+*******/
+  .state('configFiles', { // state for showing all attributes
+    url: '/files',
+    templateUrl: 'partials/generic_cfg/generic_cfg.html',
+    controller: 'GenericConfigListController',
+    cfgname: 'ConfigFile',
+    singleTypeParameters: true,
+    svcname: 'config_files',
+    sourceUrl: 'configFiles'
+  }).state('viewConfigFile', { //state for showing single attribute
+    url: '/files/:cfg/view',
+    templateUrl: 'partials/generic_cfg/generic_cfg-view.html',
+    controller: 'GenericConfigViewController',
+    cfgname: 'ConfigFile',
+    singleTypeParameters: true,
+    svcname: 'config_files',
+    sourceUrl: 'configFiles'
+  }).state('newConfigFile', { //state for adding a new attribute
+    url: '/files/new',
+    templateUrl: 'partials/generic_cfg/generic_cfg-add.html',
+    controller: 'GenericConfigCreateController',
+    cfgname: 'ConfigFile',
+    singleTypeParameters: true,
+    svcname: 'config_files',
+    sourceUrl: 'configFiles'
+  }).state('editConfigFile', { //state for updating a attribute
+    url: '/files/:cfg/edit',
+    templateUrl: 'partials/generic_cfg/generic_cfg-edit.html',
+    controller: 'GenericConfigEditController',
+    cfgname: 'ConfigFile',
+    singleTypeParameters: true,
+    svcname: 'config_files',
+    sourceUrl: 'configFiles'
+  })
+
 
 /******
 * Database config
-******* /
-  .state('database', { // state for showing all attributes
-    url: '/database',
-    templateUrl: 'partials/database/databases.html',
-    controller: 'DatabaseListController'
-  }).state('viewDatabase', { //state for showing single attribute
-    url: '/database/:cfg/view',
-    templateUrl: 'partials/database/database-view.html',
-    controller: 'DatabaseViewController'
-  }).state('newDatabase', { //state for adding a new attribute
-    url: '/database/new',
-    templateUrl: 'partials/database/database-add.html',
-    controller: 'DatabaseCreateController'
-  }).state('editDatabase', { //state for updating a attribute
-    url: '/database/:cfg/edit',
-    templateUrl: 'partials/database/database-edit.html',
-    controller: 'DatabaseEditController'
+*******/
+  .state('dbConfig', { // state for showing all attributes
+    url: '/db_config',
+    templateUrl: 'partials/generic_cfg/generic_cfg.html',
+    controller: 'GenericConfigListController',
+    cfgname: 'DbConfig',
+    singleTypeParameters: false,
+    svcname: 'databases',
+    sourceUrl: 'dbConfig'
+  }).state('viewDbConfig', { //state for showing single attribute
+    url: '/db_config/:cfg/view',
+    templateUrl: 'partials/generic_cfg/generic_cfg-view.html',
+    controller: 'GenericConfigViewController',
+    cfgname: 'DbConfig',
+    singleTypeParameters: false,
+    svcname: 'databases',
+    sourceUrl: 'dbConfig'
+  }).state('newDbConfig', { //state for adding a new attribute
+    url: '/db_config/new',
+    templateUrl: 'partials/generic_cfg/generic_cfg-add.html',
+    controller: 'GenericConfigCreateController',
+    cfgname: 'DbConfig',
+    singleTypeParameters: false,
+    svcname: 'databases',
+    sourceUrl: 'dbConfig',
+    schema: {
+      DB : "Fill the DB Name",
+      DB_TYPE : "mysql",
+      DB_SERVER : "eg: localhost",
+      DB_USER : "Fill the DB UserName",
+      DB_PASSWORD : "Fill the DB Password",
+      PREFIX_DB : false,
+      PREFIX_TB : false
+    }
+  }).state('editDbConfig', { //state for updating a attribute
+    url: '/db_config/:cfg/edit',
+    templateUrl: 'partials/generic_cfg/generic_cfg-edit.html',
+    controller: 'GenericConfigEditController',
+    cfgname: 'DbConfig',
+    singleTypeParameters: false,
+    svcname: 'databases',
+    sourceUrl: 'dbConfig'
   })
+
 
 /******
 * Model config
-******* /
-  .state('model', { // state for showing all attributes
-    url: '/model',
-    templateUrl: 'partials/model/models.html',
-    controller: 'ModelListController'
-  }).state('viewModel', { //state for showing single attribute
-    url: '/model/:cfg/view',
-    templateUrl: 'partials/model/model-view.html',
-    controller: 'ModelViewController'
-  }).state('newModel', { //state for adding a new attribute
-    url: '/model/new',
-    templateUrl: 'partials/model/model-add.html',
-    controller: 'ModelCreateController'
-  }).state('editModel', { //state for updating a attribute
-    url: '/model/:cfg/edit',
-    templateUrl: 'partials/model/model-edit.html',
-    controller: 'ModelEditController'
+*******/
+  .state('modelConfig', { // state for showing all attributes
+    url: '/model_config',
+    templateUrl: 'partials/generic_cfg/generic_cfg.html',
+    controller: 'GenericConfigListController',
+    cfgname: 'ModelConfig',
+    singleTypeParameters: false,
+    svcname: 'models',
+    sourceUrl: 'modelConfig'
+  }).state('viewModelConfig', { //state for showing single attribute
+    url: '/model_config/:cfg/view',
+    templateUrl: 'partials/generic_cfg/generic_cfg-view.html',
+    controller: 'GenericConfigViewController',
+    cfgname: 'ModelConfig',
+    singleTypeParameters: false,
+    svcname: 'models',
+    sourceUrl: 'modelConfig'
+  }).state('newModelConfig', { //state for adding a new attribute
+    url: '/model_config/new',
+    templateUrl: 'partials/generic_cfg/generic_cfg-add.html',
+    controller: 'GenericConfigCreateController',
+    cfgname: 'ModelConfig',
+    singleTypeParameters: false,
+    svcname: 'models',
+    sourceUrl: 'modelConfig'
+  }).state('editModelConfig', { //state for updating a attribute
+    url: '/model_config/:cfg/edit',
+    templateUrl: 'partials/generic_cfg/generic_cfg-edit.html',
+    controller: 'GenericConfigEditController',
+    cfgname: 'ModelConfig',
+    singleTypeParameters: false,
+    svcname: 'models',
+    sourceUrl: 'modelConfig'
   })
+
+
+
 
 /******
 * Route config
-******* /
-  .state('route', { // state for showing all attributes
-    url: '/route',
-    templateUrl: 'partials/route/routes.html',
-    controller: 'RouteListController'
-  }).state('viewRoute', { //state for showing single attribute
-    url: '/route/:cfg/view',
-    templateUrl: 'partials/route/route-view.html',
-    controller: 'RouteViewController'
-  }).state('newRoute', { //state for adding a new attribute
-    url: '/route/new',
-    templateUrl: 'partials/route/route-add.html',
-    controller: 'RouteCreateController'
-  }).state('editRoute', { //state for updating a attribute
-    url: '/route/:cfg/edit',
-    templateUrl: 'partials/route/route-edit.html',
-    controller: 'RouteEditController'
-  })
+*******/
+.state('routeConfig', { // state for showing all attributes
+  url: '/route_config',
+  templateUrl: 'partials/generic_cfg/generic_cfg.html',
+  controller: 'GenericConfigListController',
+  cfgname: 'RouteConfig',
+  singleTypeParameters: false,
+  svcname: 'routes',
+  sourceUrl: 'routeConfig'
+}).state('viewRouteConfig', { //state for showing single attribute
+  url: '/route_config/:cfg/view',
+  templateUrl: 'partials/generic_cfg/generic_cfg-view.html',
+  controller: 'GenericConfigViewController',
+  cfgname: 'RouteConfig',
+  singleTypeParameters: false,
+  svcname: 'routes',
+  sourceUrl: 'routeConfig'
+}).state('newRouteConfig', { //state for adding a new attribute
+  url: '/route_config/new',
+  templateUrl: 'partials/generic_cfg/generic_cfg-add.html',
+  controller: 'GenericConfigCreateController',
+  cfgname: 'RouteConfig',
+  singleTypeParameters: false,
+  svcname: 'routes',
+  sourceUrl: 'routeConfig',
+  schema: {
+    controller : "Controller Name(for generic, use: genericCRUDController)",
+    method : "Method Name(for CRUD, use CRUD)" ,
+    checkToken : false,
+    model : "Model Name"
+  }
+}).state('editRouteConfig', { //state for updating a attribute
+  url: '/route_config/:cfg/edit',
+  templateUrl: 'partials/generic_cfg/generic_cfg-edit.html',
+  controller: 'GenericConfigEditController',
+  cfgname: 'RouteConfig',
+  singleTypeParameters: false,
+  svcname: 'routes',
+  sourceUrl: 'routeConfig'
+})
 
 /******
 * Teste config
 *******/
   .state('teste', { // state for showing all attributes
     url: '/teste',
-    templateUrl: 'partials/teste/testes.html',
-    controller: 'TesteListController'
+    templateUrl: 'partials/generic_cfg/generic_cfg.html',
+    controller: 'GenericConfigListController',
+    cfgname: 'Teste',
+    singleTypeParameters: false,
+    svcname: 'teste',
+    sourceUrl: 'teste'
   }).state('viewTeste', { //state for showing single attribute
     url: '/teste/:cfg/view',
-    templateUrl: 'partials/teste/teste-view.html',
-    controller: 'TesteViewController'
+    templateUrl: 'partials/generic_cfg/generic_cfg-view.html',
+    controller: 'GenericConfigViewController',
+    cfgname: 'Teste',
+    singleTypeParameters: false,
+    svcname: 'teste',
+    sourceUrl: 'teste'
   }).state('newTeste', { //state for adding a new attribute
     url: '/teste/new',
-    templateUrl: 'partials/teste/teste-add.html',
-    controller: 'TesteCreateController'
+    templateUrl: 'partials/generic_cfg/generic_cfg-add.html',
+    controller: 'GenericConfigCreateController',
+    cfgname: 'Teste',
+    singleTypeParameters: false,
+    svcname: 'teste',
+    sourceUrl: 'teste',
+    schema:{
+      campo1:"Value for campo1",
+      campo2:"Value for campo2"
+    }
   }).state('editTeste', { //state for updating a attribute
     url: '/teste/:cfg/edit',
-    templateUrl: 'partials/teste/teste-edit.html',
-    controller: 'TesteEditController'
+    templateUrl: 'partials/generic_cfg/generic_cfg-edit.html',
+    controller: 'GenericConfigEditController',
+    cfgname: 'Teste',
+    singleTypeParameters: false,
+    svcname: 'teste',
+    sourceUrl: 'teste'
   })
 
 

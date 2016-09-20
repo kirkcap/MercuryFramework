@@ -1,0 +1,25 @@
+<div class="form-group">
+  <label for="configkey" class="col-sm-2 control-label">{{state_data.cfgname}} Parameter</label>
+  <div class="col-sm-10">
+    <input type="text" ng-disabled="action=='edit'" ng-model="config_key.value" class="form-control" id="configkey" placeholder="{{config_key.placeholder}}"/>
+  </div>
+</div>
+
+<div class="form-group" ng-repeat="(key, value) in config_body">
+  <label for="field{{key}}" class="col-sm-2 control-label">{{key}}</label>
+  <div class="col-sm-10">
+    <input type="text" ng-if="metadata.meta[key].type=='string'" ng-model="config_body[key]" class="form-control" id="field{{key}}" placeholder="{{metadata.meta[key].placeholder}}"/>
+    <input type="number" ng-if="metadata.meta[key].type=='number'" string-to-number  ng-model="config_body[key]" class="form-control" id="field{{key}}" placeholder="{{metadata.meta[key].placeholder}}"/>
+    <input type="checkbox" ng-if="metadata.meta[key].type=='boolean'" ng-model="config_body[key]" ng-true-value="true" ng-false-value="false" class="form-control" id="field{{key}}"/><div ng-if="metadata.meta[key].type=='boolean'">{{metadata.meta[key].placeholder}}</div>
+    <select name="field{{key}}" ng-if="metadata.meta[key].type=='select'" id="field{{key}}" ng-model="config_body[key]">
+      <option ng-repeat="value in metadata.meta[key].valid_values.values" value="{{value.key}}">{{value.key+(value.value!=""?" - "+value.value:"")}}</option>
+    </select>
+    <input type="text" ng-if="metadata.meta[key].type=='select' && config_body[key]=='Other'" ng-model="others[key]" class="form-control" id="field{{key}}_other" placeholder="{{metadata.meta[key].placeholder}}"/>
+  </div>
+</div>
+
+<div class="form-group">
+  <div class="col-sm-offset-2 col-sm-10">
+    <input type="submit" class="btn btn-primary" value="Save"/>
+  </div>
+</div>

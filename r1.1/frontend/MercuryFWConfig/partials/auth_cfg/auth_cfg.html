@@ -1,0 +1,18 @@
+<!--a ui-sref="newAdmConfig" class="btn-primary btn-lg nodecoration">Add New Parameter</a-->
+
+<table class="table configtable">
+  <tr>
+    <td><h3>Authorization Parameters</h3></td>
+    <td></td>
+  </tr>
+  <tr ng-repeat="(key, value) in configs">
+
+    <td>{{key}}</td>
+    <td>{{value}}</td>
+    <td>
+      <a class="btn btn-primary" ui-sref="editAuthConfig({cfg:key})">Edit</a>
+      <!--a class="btn btn-primary" ui-sref="viewAdmConfig({cfg:key})">Edit</a>
+      <a class="btn btn-danger"  ng-click="deleteConfig({key:key})">Delete</a-->
+    </td>
+  </tr>
+</table>

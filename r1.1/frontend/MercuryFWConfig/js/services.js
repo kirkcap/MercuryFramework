@@ -1,16 +1,41 @@
 angular.module('mercuryFWConfigApp.services', [])
-.factory('Teste', function($resource, BackendConfig) {
-  return $resource(BackendConfig.url + 'teste/:cfg', { cfg: '@cfg' }, {
-    update: {method:'PUT', params: { cfg: '@cfg' }},
-    get:    {method:'GET', params: { cfg: '@cfg' }},
-    save:   {method:'POST', params: { cfg: '@cfg' }},
-    query:  {method:'GET', isArray:false},
-    remove: {method:'DELETE', params: { cfg: '@cfg' }},
-    delete: {method:'DELETE', params: { cfg: '@cfg' }}
+
+.factory('CONFIG_API', function($resource, BackendConfig) {
+  return $resource(BackendConfig.url + ':service/:cfg', { service: '@service', cfg: '@cfg' }, {
+    update: {method:'PUT', params: { service: '@service', cfg: '@cfg' }},
+    get:    {method:'GET', params: { service: '@service', cfg: '@cfg' }},
+    save:   {method:'POST', params: { service: '@service', cfg: '@cfg' }},
+    query:  {method:'GET', isArray:false, params: { service: '@service' }},
+    remove: {method:'DELETE', params: { service: '@service', cfg: '@cfg' }},
+    delete: {method:'DELETE', params: { service: '@service', cfg: '@cfg' }}
   });
 })
 
 
+.factory('Utils', function(){
+  return {
+    isSingleType: function(data){
+      $data_type = ucase( typeof data );
+      switch($data_type){
+        case "STRING":
+          return true;
+          break;
+        case "NUMBER":
+          return true;
+          break;
+        case "BOOLEAN":
+          return true;
+          break;
+        case "OBJECT":
+          return false;
+          break;
+        case "ARRAY":
+          return false;
+          break;
+      }
+    }
+  }
+})
 
 .service('popupService',function($window){
     this.showPopup=function(message){
