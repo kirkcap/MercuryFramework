@@ -8,23 +8,32 @@
     <title>Mercury Framework - The quicker framework of the world to implement REST CRUD API</title>
     <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/>
     <link rel="stylesheet" type="text/css" href="css/app.css"/>
+    <link rel="stylesheet" type="text/css" href="css/ngDialog.min.css"/>
+    <link rel="stylesheet" type="text/css" href="css/ngDialog-theme-default.min.css"/>
+
+    <style>
+        .table {
+            height: 400px;
+        }
+        .ngdialog.ngdialog-custom .ngdialog-content {
+          height: 450px;
+        }
+    </style>
     <script type="text/javascript" src="lib/angular.min.js"></script>
+
+    <script type="text/javascript" src="lib/jquery-2.0.3.min.js"></script>
+    <script type="text/javascript" src="lib/angu-fixed-header-table.js"></script>
 
     <script type="text/javascript" src="js/app.js"></script>
 
     <script type="text/javascript" src="js/constants.js"></script>
 
-    <!--script type="text/javascript" src="js/admin_cfg-controllers.js"></script>
-    <script type="text/javascript" src="js/auth_cfg-controllers.js"></script-->
-    <!--script type="text/javascript" src="js/databases-controllers.js"></script>
-    <script type="text/javascript" src="js/models-controllers.js"></script>
-    <script type="text/javascript" src="js/routes-controllers.js"></script-->
     <script type="text/javascript" src="js/genericConfig-controllers.js"></script>
-    <script type="text/javascript" src="js/teste-controllers.js"></script>
 
     <script type="text/javascript" src="js/services.js"></script>
     <script type="text/javascript" src="lib/angular-ui-router.min.js"></script>
     <script type="text/javascript" src="lib/angular-resource.min.js"></script>
+    <script type="text/javascript" src="lib/ngDialog.min.js"></script>
   </head>
   <body data-ng-app="mercuryFWConfigApp">
     <nav class="navbar navbar-default" role="navigation">
@@ -50,9 +59,6 @@
           </ul>
           <ul class="nav navbar-nav">
             <li class="active"><a ui-sref="routeConfig">Routes</a></li>
-          </ul>
-          <ul class="nav navbar-nav">
-            <li class="active"><a ui-sref="teste">Teste</a></li>
           </ul>
         </div>
       </div>

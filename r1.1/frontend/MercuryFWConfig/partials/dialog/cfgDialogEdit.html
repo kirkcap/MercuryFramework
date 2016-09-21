@@ -1,0 +1,39 @@
+<form class="form-horizontal" role="form" ng-submit="dialogVm.saveConfig()">
+  <div class="form-group">
+    <label for="configkey" class="col-md-4 control-label">Fields for {{ngDialogData.detail_key}} Parameter</label>
+  </div>
+  <div class="row">
+    <div class="col-md-1">
+      Field
+    </div>
+    <div class="{{ngDialogData.metadata.meta[ngDialogData.detail_key].structure.field.structure[subkey].fldtype=='boolean'?'col-md-1':'col-md-2'}}" ng-repeat="(subkey, subvalue) in ngDialogData.metadata.meta[ngDialogData.detail_key].structure.field.structure">
+      {{subkey}}
+      <div ng-if="ngDialogData.metadata.meta[ngDialogData.detail_key].structure.field.structure[subkey].fldtype=='boolean'">({{ngDialogData.metadata.meta[ngDialogData.detail_key].structure.field.structure[subkey].placeholder}})</div>
+    </div>
+  </div>
+  <div style="overflow-y: auto; max-height:300px;">
+
+    <div class="row" ng-repeat="(key, value) in ngDialogData.config_body[ngDialogData.detail_key]">
+      <div class="col-md-1">
+        {{key}}
+      </div>
+      <div class="{{ngDialogData.metadata.meta[ngDialogData.detail_key].structure.field.structure[subkey].fldtype=='boolean'?'col-md-1':'col-md-2'}}" ng-repeat="(subkey, subvalue) in ngDialogData.metadata.meta[ngDialogData.detail_key].structure.field.structure">
+        <input type="text" ng-if="ngDialogData.metadata.meta[ngDialogData.detail_key].structure.field.structure[subkey].fldtype=='string'" ng-model="ngDialogData.config_body[ngDialogData.detail_key][key][subkey]" id="field{{subkey}}" placeholder="{{ngDialogData.metadata.meta[ngDialogData.detail_key].structure.field.structure[subkey].placeholder}}"/>
+        <input type="number" ng-if="ngDialogData.metadata.meta[ngDialogData.detail_key].structure.field.structure[subkey].fldtype=='number'" string-to-number  ng-model="ngDialogData.config_body[ngDialogData.detail_key][key][subkey]" id="field{{subkey}}" placeholder="{{ngDialogData.metadata.meta[ngDialogData.detail_key].structure.field.structure[subkey].placeholder}}"/>
+        <input type="checkbox" ng-if="ngDialogData.metadata.meta[ngDialogData.detail_key].structure.field.structure[subkey].fldtype=='boolean'" ng-model="ngDialogData.config_body[ngDialogData.detail_key][key][subkey]" ng-true-value="true" ng-false-value="false" id="field{{subkey}}"/>
+        <select name="field{{key}}" ng-if="ngDialogData.metadata.meta[ngDialogData.detail_key].structure.field.structure[subkey].fldtype=='select'" id="field{{key}}" ng-model="ngDialogData.config_body[ngDialogData.detail_key][key][subkey]">
+          <option ng-repeat="vvalue in ngDialogData.metadata.meta[ngDialogData.detail_key].structure.field.structure[subkey].valid_values.values" value="{{vvalue.key}}">{{vvalue.key+(vvalue.value!=""?" - "+vvalue.value:"")}}</option>
+        </select>
+        <input type="text" ng-if="ngDialogData.metadata.meta[key].fldtype=='select' && ngDialogData.config_body[key]=='Other'" ng-model="ngDialogData.others[key]" id="field{{key}}_other" placeholder="{{ngDialogData.metadata.meta[ngDialogData.detail_key].structure.field.structure[subkey].placeholder}}"/>
+        <a class="btn btn-primary" ng-if="ngDialogData.metadata.meta[ngDialogData.detail_key].structure.field.structure[subkey].fldtype=='object'" ui-sref="dialogVm.cfgSubDialog({key:subkey, data:ngDialogData.config_body[ngDialogData.detail_key][key][subkey]})">...</a>
+      </div>
+    </div>
+
+  </div>
+  <div class="form-group">
+    <div class="col-md-offset-2 col-md-10">
+      <input type="submit" class="btn btn-primary" value="Save"/>
+    </div>
+  </div>
+
+</form>

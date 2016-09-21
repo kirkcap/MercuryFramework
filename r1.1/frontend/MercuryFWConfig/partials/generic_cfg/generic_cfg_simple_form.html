@@ -1,20 +1,20 @@
 <div class="form-group">
   <label for="cfgkey" class="col-sm-2 control-label">Parameter Name</label>
   <div class="col-sm-10">
-    <input type="text" ng-if="metadata.meta.param_key.type=='string'" ng-disabled="action=='edit'" ng-model="config_key.value" class="form-control" id="cfgkey" placeholder="{{config_key.placeholder}}"/>
-    <select name="cfgkey" ng-if="metadata.meta.param_key.type=='select'" id="cfgkey" ng-disabled="action=='edit'" ng-model="config_key.value">
-      <option ng-repeat="value in metadata.parameter_list" value="{{value}}">{{value}}</option>
+    <input type="text" ng-if="vm.metadata.meta.param_key.type=='string'" ng-disabled="action=='edit'" ng-model="vm.config_key.value" class="form-control" id="cfgkey" placeholder="{{vm.config_key.placeholder}}"/>
+    <select name="cfgkey" ng-if="vm.metadata.meta.param_key.type=='select'" id="cfgkey" ng-disabled="action=='edit'" ng-model="vm.config_key.value">
+      <option ng-repeat="value in vm.metadata.parameter_list" value="{{value}}">{{value}}</option>
     </select>
   </div>
 </div>
 <div class="form-group">
   <label for="cfgvalue" class="col-sm-2 control-label">Parameter Value</label>
   <div class="col-sm-10">
-    <input type="text" ng-if="(config_key.value !='' && !metadata.meta[config_key.value]) || metadata.meta[config_key.value].type=='string'" ng-model="config[config_key.value]" class="form-control" id="cfgvalue" placeholder="{{metadata.meta[config_key.value].placeholder}}"/>
-    <input type="number" ng-if="metadata.meta[config_key.value].type=='number'" string-to-number ng-model="config[config_key.value]" class="form-control" id="cfgvalue" placeholder="{{metadata.meta[config_key.value].placeholder}}"/>
-    <input type="checkbox" ng-if="metadata.meta[config_key.value].type=='boolean'" ng-model="config[config_key.value]" ng-true-value="true" ng-false-value="false" class="form-control" id="cfgvalue"/><div ng-if="metadata.meta[config_key.value].type=='boolean'">{{metadata.meta[config_key.value].placeholder}}</div>
-    <select name="cfgvalue" ng-if="metadata.meta[config_key.value].type=='select'" id="cfgvalue" ng-model="config[config_key].value">
-      <option ng-repeat="value in metadata.meta[config_key.value].valid_values.values" value="{{value.key}}">{{value.key+(value.value!=""?" - "+value.value:"")}}</option>
+    <input type="text" ng-if="(vm.config_key.value !='' && !vm.metadata.meta[vm.config_key.value]) || vm.metadata.meta[vm.config_key.value].fldtype=='string'" ng-model="vm.config[vm.config_key.value]" class="form-control" id="cfgvalue" placeholder="{{vm.metadata.meta[vm.config_key.value].placeholder}}"/>
+    <input type="number" ng-if="vm.metadata.meta[vm.config_key.value].fldtype=='number'" string-to-number ng-model="vm.config[vm.config_key.value]" class="form-control" id="cfgvalue" placeholder="{{vm.metadata.meta[vm.config_key.value].placeholder}}"/>
+    <input type="checkbox" ng-if="vm.metadata.meta[vm.config_key.value].fldtype=='boolean'" ng-model="vm.config[vm.config_key.value]" ng-true-value="true" ng-false-value="false" class="form-control" id="cfgvalue"/><div ng-if="vm.metadata.meta[vm.config_key.value].fldtype=='boolean'">{{vm.metadata.meta[vm.config_key.value].placeholder}}</div>
+    <select name="cfgvalue" ng-if="vm.metadata.meta[vm.config_key.value].fldtype=='select'" id="cfgvalue" ng-model="vm.config[vm.config_key].value">
+      <option ng-repeat="value in vm.metadata.meta[vm.config_key.value].valid_values.values" value="{{value.key}}">{{value.key+(value.value!=""?" - "+value.value:"")}}</option>
     </select>
   </div>
 </div>

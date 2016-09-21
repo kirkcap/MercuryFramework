@@ -1,9 +1,9 @@
 <table class="table parametertable">
   <tr>
-    <td><h3>Details for Parameter {{config_key.value}}</h3></td>
+    <td><h3>Details for Parameter {{vm.config_key.value}}</h3></td>
     <td></td>
   </tr>
-  <tr ng-repeat="(key, value) in config_body">
+  <tr ng-repeat="(key, value) in vm.config_body">
 
     <td>{{key}}</td>
     <td>{{value}}</td>
@@ -12,5 +12,5 @@
 
 </table>
 <div>
-  <a class="btn btn-primary" ui-sref="edit{{state_data.cfgname}}({cfg:config_key.value})">Edit</a>
+  <a class="btn btn-primary" ui-sref="edit{{vm.state_data.cfgname}}({cfg:vm.config_key.value})">Edit</a>
 </div>
