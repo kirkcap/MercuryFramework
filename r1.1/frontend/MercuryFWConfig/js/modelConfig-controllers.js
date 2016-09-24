@@ -1,6 +1,6 @@
-angular.module('mercuryFWConfigApp.controllers',[])
+angular.module('mercuryFWConfigApp.controllers')
 
-.controller('GenericConfigListController', function($state, popupService, $window, CONFIG_API, ConfigMetadata) {
+.controller('ModelConfigListController', function($state, popupService, $window, CONFIG_API, ConfigMetadata) {
   var vm = this;
   vm.state_data = $state.current;
   vm.metadata = ConfigMetadata[vm.state_data.cfgname];
@@ -19,22 +19,7 @@ angular.module('mercuryFWConfigApp.controllers',[])
   };
 
 })
-/*Substituted by the GenericConfigViewEditController, which does both actions, according to parameter set in the state configuration
-.controller('GenericConfigViewController', function( $state, $stateParams, CONFIG_API, Utils, ConfigMetadata) {
-  var vm = this;
-
-  vm.state_data = $state.current;
-  vm.metadata = ConfigMetadata[vm.state_data.cfgname];
-  vm.config_key = {"value" : $stateParams.cfg };
-  vm.config = CONFIG_API.get({ service: vm.metadata.svcname, cfg: vm.config_key.value }, function(){
-    if(!vm.metadata.singleTypeParameters){
-      vm.config_body = vm.config[vm.config_key.value];
-    }
-  }); //Get a single attribute.Issues a GET to /api/attributes/:id
-
-})
-*/
-.controller('GenericConfigCreateController', function($state, $stateParams, CONFIG_API, ConfigMetadata) {
+.controller('ModelConfigCreateController', function($state, $stateParams, CONFIG_API, ConfigMetadata, ngDialog) {
   var vm = this;
 
   vm.state_data = $state.current;
@@ -53,20 +38,18 @@ angular.module('mercuryFWConfigApp.controllers',[])
   vm.action = "new";
   vm.config_key = {"value":"","placeholder":vm.metadata.meta['param_key'].placeholder};
   vm.config_body = vm.metadata.schema; //Used only on complex parameters
-  if(!vm.metadata.singleTypeParameters){
-    angular.forEach(vm.config_body, function(value, key){
-      if(vm.metadata.meta[key].fldtype == "select" && vm.metadata.meta[key].valid_values.type=="service_call"){
-        vm.cfg_values = CONFIG_API.query({ service: vm.metadata.meta[key].valid_values.service }, function(){
-          $i=0;
-          vm.metadata.meta[key].valid_values.values = [];
-          angular.forEach(vm.cfg_values, function(cfg_value, cfg_key){
-            vm.metadata.meta[key].valid_values.values[$i++] = {key: cfg_key, value: ""};
-          })
-          vm.cfg_values={};
+  angular.forEach(vm.config_body, function(value, key){
+    if(vm.metadata.meta[key].fldtype == "select" && vm.metadata.meta[key].valid_values.type=="service_call"){
+      vm.cfg_values = CONFIG_API.query({ service: vm.metadata.meta[key].valid_values.service }, function(){
+        $i=0;
+        vm.metadata.meta[key].valid_values.values = [];
+        angular.forEach(vm.cfg_values, function(cfg_value, cfg_key){
+          vm.metadata.meta[key].valid_values.values[$i++] = {key: cfg_key, value: ""};
         })
-      }
-    })
-  }
+        vm.cfg_values={};
+      })
+    }
+  })
   vm.config = new CONFIG_API();  //create new attribute instance. Properties will be set via ng-model on UI
   vm.others = {};//Variable to receive "Other" select values
 
@@ -85,7 +68,52 @@ angular.module('mercuryFWConfigApp.controllers',[])
     });
   };
 
-}).controller('GenericConfigViewEditController', function($state, $stateParams, $filter, CONFIG_API, ConfigMetadata, ngDialog) {
+  vm.newModelDialog = function() {
+    vm.continue = false;
+    var dialog = ngDialog.open({ template: 'partials/dialog/newModelCfgDialog.html',
+                    className: 'ngdialog-theme-default',
+                    appendClassName: 'ngdialog-custom-new_model',
+                    width: '90%',
+                    closeByDocument: false,
+                    controller: 'CfgDialogNewModelController as newModelVM',
+                    data: vm,
+                    cache: false,
+                    preCloseCallback: function(value) {
+                      if(!vm.continue){
+                        if (confirm('Are you sure you want to close without saving your changes?')) {
+                            return true;
+                        }
+                        return false;
+                      }
+                    }
+                   });
+
+    dialog.closePromise.then(function (data) {
+        alert(data.id + ' has been dismissed.');
+        if(!vm.continue){
+          vm.config_body = {};
+          history.go(-1);
+        }
+    });
+  };
+
+  vm.newModelDialog();//Calls the dialog to fill Model basic configuration data
+
+
+  vm.cfgDialog = function(cfg) {
+
+    vm.detail_key = cfg.key;
+    ngDialog.open({ template: 'partials/dialog/'+ vm.metadata.meta[vm.detail_key].dialogForm, //cfgDialogTbColumnsEdit.html',
+                    className: 'ngdialog-theme-default',
+                    appendClassName: vm.metadata.meta[vm.detail_key].dialogClass, //'ngdialog-custom',
+                    width: '98%',
+                    controller: vm.metadata.meta[vm.detail_key].dialogController, //'CfgDialogEditController as dialogVm',
+                    data: vm });
+
+  };
+
+
+}).controller('ModelConfigViewEditController', function($state, $stateParams, $filter, CONFIG_API, ConfigMetadata, ngDialog) {
   var vm = this;
 
   vm.state_data = $state.current;
@@ -174,30 +202,29 @@ angular.module('mercuryFWConfigApp.controllers',[])
 
   vm.loadConfig(); // Load a attribute which can be edited on UI
 
-}).controller('CfgTbColumnsDialogEditController', function($scope, ngDialog){
+}).controller('CfgDialogNewModelController', function($scope, ConfigMetadata, CONFIG_API, DBTableStructure){
   var vm = this;
   vm.data = $scope.ngDialogData;
   vm.data.others = {};
+  var db_config_metadata = ConfigMetadata['DbConfig'];
+  var model_config_metadata = ConfigMetadata['ModelConfig'];
+  vm.dbConfigs = CONFIG_API.query({service:db_config_metadata.svcname});
+  vm.modelConfigs = CONFIG_API.query({service:model_config_metadata.svcname});
+  vm.existingModels = [];
 
-  vm.cfgSubDialog = function(cfg) {
-    var data = {};
-    data.action     = cfg.action;
-    data.field      = cfg.field;
-    data.detail_key = cfg.attribute;
-    data.config_body = cfg.data;
-    data.metadata = {};
-    data.metadata.meta = $scope.ngDialogData.metadata.meta.tb_columns.structure.field.structure;
-    ngDialog.open({ template: 'partials/dialog/'+data.metadata.meta[data.detail_key].dialogForm, //cfgTbColumnsFieldDefaultDialogEdit.html',
-                    className: 'ngdialog-theme-default',
-                    appendClassName: data.metadata.meta[data.detail_key].dialogClass, //'ngdialog-custom',
-                    width: '80%',
-                    controller: data.metadata.meta[data.detail_key].dialogController, //'CfgDialogEditController as subDialogVm',
-                    data: data });
-  };
+  vm.getDbTablesList = function(dbCfgName){
+    vm.dbTables = CONFIG_API.get({service:'dbMetadata',cfg:dbCfgName});
+  }
 
-}).controller('CfgTbColumnsFieldDefaultDialogEditController', function($scope, ngDialog){
-  var vm = this;
-  vm.data = $scope.ngDialogData;
-  vm.data.others = {};
+  vm.checkExistingModels = function(tb_name){
+    $i=0;
+    vm.existingModels = [];
+    vm.tableStructure = DBTableStructure.get({db_name:vm.data.config_body.dbCfgName, tb_name:tb_name});
+    angular.forEach(vm.modelConfigs,function(data, model_name){
+      if(data.tb_name==tb_name){
+        vm.existingModels[$i++] = model_name;
+      }
+    });
+  }
 
 })

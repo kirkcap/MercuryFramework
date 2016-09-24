@@ -11,6 +11,13 @@ angular.module('mercuryFWConfigApp.services', [])
   });
 })
 
+.factory('DBTableStructure', function($resource, BackendConfig) {
+  return $resource(BackendConfig.url + 'dbMetadata/:db_name/tbMetadata/:tb_name', { db_name: '@db_name', tb_name: '@tb_name' }, {
+    get:    {method:'GET', isArray:true, params: { db_name: '@db_name', tb_name: '@tb_name' }}
+    //query:  {method:'GET', isArray:false, params: { service: '@service' }},
+  });
+})
+
 
 .factory('Utils', function(){
   return {

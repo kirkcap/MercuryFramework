@@ -1,0 +1,40 @@
+<form class="form-horizontal" role="form">
+  <div class="form-group">
+    <!--{{ngDialogData.detail_key}} -->
+    <label for="configkey" class="col-md-4 control-label">Fields for '{{TbColumnsVm.data.detail_key}}' Parameter</label>
+  </div>
+  <div class="row">
+    <div class="col-md-2">
+      <b>Field</b>
+    </div>
+    <div class="{{meta_data.fldtype=='boolean'?'col-md-1':'col-md-2'}}" ng-repeat="(meta_key, meta_data) in TbColumnsVm.data.metadata.meta[TbColumnsVm.data.detail_key].structure.field.structure">
+      <b>{{meta_key}}</b>
+      <div>({{meta_data.placeholder}})</div>
+    </div>
+  </div>
+  <div style="overflow-y: auto; max-height:250px;">
+
+    <div class="row" ng-repeat="(key, value) in TbColumnsVm.data.config_body[TbColumnsVm.data.detail_key]">
+      <div class="col-md-2">
+        <b>{{key}}</b>
+      </div>
+      <div class="{{meta_data.fldtype=='boolean'?'col-md-1':'col-md-2'}}" ng-repeat="(meta_key, meta_data) in TbColumnsVm.data.metadata.meta[TbColumnsVm.data.detail_key].structure.field.structure">
+        <input type="text" ng-disabled="TbColumnsVm.data.action=='view'" ng-if="meta_data.fldtype=='string'" class="form-control" ng-model="TbColumnsVm.data.config_body[TbColumnsVm.data.detail_key][key][meta_key]" id="field{{meta_key}}" placeholder="{{meta_data.placeholder}}"/>
+        <input type="number" ng-disabled="TbColumnsVm.data.action=='view'" ng-if="meta_data.fldtype=='number'" string-to-number  class="form-control" ng-model="TbColumnsVm.data.config_body[TbColumnsVm.data.detail_key][key][meta_key]" id="field{{meta_key}}" placeholder="{{meta_data.placeholder}}"/>
+        <input type="checkbox" ng-disabled="TbColumnsVm.data.action=='view'" ng-if="meta_data.fldtype=='boolean'" class="form-control" ng-model="TbColumnsVm.data.config_body[TbColumnsVm.data.detail_key][key][meta_key]" ng-true-value="true" ng-false-value="false" id="field{{meta_key}}"/>
+        <select name="field{{key}}" ng-disabled="TbColumnsVm.data.action=='view'" ng-if="meta_data.fldtype=='select'" id="field{{key}}" class="form-control" ng-model="TbColumnsVm.data.config_body[TbColumnsVm.data.detail_key][key][meta_key]">
+          <option ng-repeat="vvalue in meta_data.valid_values.values" value="{{vvalue.key}}">{{vvalue.key+(vvalue.value!=""?" - "+vvalue.value:"")}}</option>
+        </select>
+        <input type="text" ng-disabled="TbColumnsVm.data.action=='view'" ng-if="TbColumnsVm.data.metadata.meta[key].fldtype=='select' && TbColumnsVm.data.config_body[key]=='Other'" class="form-control" ng-model="TbColumnsVm.data.others[key]" id="field{{key}}_other" placeholder="{{meta_data.placeholder}}"/>
+        <a class="btn btn-primary" ng-if="meta_data.fldtype=='object'" ng-click="TbColumnsVm.cfgSubDialog({field:key, attribute:meta_key, action:TbColumnsVm.data.action, data:TbColumnsVm.data.config_body[TbColumnsVm.data.detail_key][key][meta_key]})">...</a>
+      </div>
+    </div>
+
+  </div>
+  <div class="form-group">
+    <div class="col-md-offset-11 col-md-11">
+      <input type="button" class="btn btn-primary" value="Close" ng-click="closeThisDialog()"/>
+    </div>
+  </div>
+
+</form>

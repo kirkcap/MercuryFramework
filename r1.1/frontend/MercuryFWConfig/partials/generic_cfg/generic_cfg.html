@@ -1,18 +1,20 @@
 <a ui-sref="new{{vm.state_data.cfgname}}()" class="btn-primary btn-lg nodecoration">Add New {{vm.state_data.cfgname}}</a>
-
-<table class="table configtable">
-  <tr>
-    <td><h3>All {{vm.state_data.cfgname}} Parameters</h3></td>
-    <td></td>
-  </tr>
-  <tr ng-repeat="(key, value) in vm.configs">
-
-    <td>{{key}}</td>
-    <td ng-if="state_data.singleTypeParameters">{{value}}</td>
-    <td>
-      <a class="btn btn-primary" ui-sref="view{{vm.state_data.cfgname}}({cfg:key})" ng-if="!vm.metadata.singleTypeParameters">View</a>
-      <a class="btn btn-primary" ui-sref="edit{{vm.state_data.cfgname}}({cfg:key})">Edit</a-->
-      <a class="btn btn-danger" ng-click="vm.deleteConfig({key:key})">Delete</a>
-    </td>
-  </tr>
-</table>
+<div>
+  <div class="row">
+    <div class="col-sm-8">
+      <h3>All {{vm.state_data.cfgname}} Parameters</h3>
+    </div>
+  </div>
+  <div style="overflow-y: auto; max-height:400px; overflow-x: hidden">
+    <div class="row" ng-repeat="(key, value) in vm.configs">
+      <div class="col-md-5">
+        {{key}}
+      </div>
+      <div class="col-md-4">
+        <a class="btn btn-primary" ui-sref="view{{vm.state_data.cfgname}}({cfg:key,action:'view'})">View</a><!-- ng-if="!vm.metadata.singleTypeParameters"-->
+        <a class="btn btn-primary" ui-sref="edit{{vm.state_data.cfgname}}({cfg:key,action:'edit'})">Edit</a>
+        <a class="btn btn-danger" ng-click="vm.deleteConfig({key:key})">Delete</a>
+      </div>
+    </div>
+  </div>
+</div>

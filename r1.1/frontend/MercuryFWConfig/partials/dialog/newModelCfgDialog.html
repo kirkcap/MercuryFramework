@@ -1,0 +1,55 @@
+<form class="form-horizontal" role="form">
+  <div class="form-group">
+    <h2>New Model configuration</h2>
+  </div>
+  <div class="row">
+    <div class="col-md-5">
+      Please select a Database Config
+    </div>
+    <div class="col-md-5">
+      <select name="dbConfig" id="dbConfig" class="form-control" ng-model="newModelVM.data.config_body.dbCfgName" ng-change="alert('teste');newModelVM.getDbTablesList(newModelVM.data.config_body.dbCfgName)">
+        <option ng-repeat="(key,data) in newModelVM.dbConfigs" value="{{key}}">{{key+" - database: "+data.DB+"/"+data.DB_TYPE}}</option>
+      </select>
+    </div>
+  </div>
+  <div class="row" ng-if="newModelVM.data.config_body.dbCfgName!=''">
+    <div class="col-md-5">
+      Please select a Table
+    </div>
+    <div class="col-md-5">
+      <select name="tbName" id="tbName" class="form-control" ng-model="newModelVM.data.config_body.tb_name" ng-change="newModelVM.checkExistingModels(newModelVM.data.config_body.tb_name)">
+        <option ng-repeat="(name,type) in newModelVM.dbTables" value="{{name}}">{{name+" - type: "+type}}</option>
+      </select>
+    </div>
+  </div>
+  <div class="row" ng-if="newModelVM.existingModels">
+    <div class="col-md-5">
+      Attention: Existing Models for the table indicated
+      <br>
+      (you can create several models for the same table but, is that what you really want?)
+    </div>
+    <div class="col-md-5">
+      <select ng-disabled="true" name="existingModels" id="existingModels" class="form-control" multiple>
+        <option ng-repeat="model in newModelVM.existingModels" value="{{model}}">{{model}}</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="row" ng-if="newModelVM.data.config_body.tb_name!=''">
+    <div class="col-md-5">
+      Please indicate the Model Name
+    </div>
+    <div class="col-md-5">
+      <input type="text" class="form-control" ng-model="newModelVM.data.config_key.value" id="modelName" placeholder="{{newModelVM.data.config_key.placeholder}}"/>
+    </div>
+  </div>
+
+  <br>
+  <div class="form-group"  ng-if="newModelVM.data.config_body.dbCfgName!='' && newModelVM.data.config_body.tb_name!='' && newModelVM.name!=''">
+    <div class="col-md-offset-8 col-md-8">
+      <input type="button" class="btn btn-primary" value="Continue" ng-click="newModelVM.data.continue=true;closeThisDialog()"/>
+      <input type="button" class="btn btn-primary" value="Cancel" ng-click="newModelVM.data.continue=false;closeThisDialog()"/>
+    </div>
+  </div>
+
+</form>

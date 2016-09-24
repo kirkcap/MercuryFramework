@@ -1,16 +1,25 @@
-<table class="table parametertable">
-  <tr>
-    <td><h3>Details for Parameter {{vm.config_key.value}}</h3></td>
-    <td></td>
-  </tr>
-  <tr ng-repeat="(key, value) in vm.config_body">
-
-    <td>{{key}}</td>
-    <td>{{value}}</td>
-
-  </tr>
-
-</table>
-<div>
-  <a class="btn btn-primary" ui-sref="edit{{vm.state_data.cfgname}}({cfg:vm.config_key.value})">Edit</a>
-</div>
+<form class="form-horizontal" role="form" ng-submit="vm.updateConfig({cfg:vm.config_key.value})">
+  <div ng-include="'partials/generic_cfg/'+vm.form_include"></div>
+</form>
+<!--div>
+  <div class="row">
+    <div class="col-sm-8">
+      <h3>Details for Parameter {{vm.config_key.value}}</h3>
+    </div>
+  </div>
+  <div style="overflow-y: auto; max-height:400px; overflow-x: hidden">
+    <div class="row" ng-repeat="(key, value) in vm.config_body">
+      <div class="col-md-4">
+        {{key}}
+      </div>
+      <div class="col-md-5">
+        {{value}}
+      </div>
+    </div>
+  </div>
+  <br>
+  <div>
+    <a class="btn btn-primary" ui-sref="edit{{vm.state_data.cfgname}}({cfg:vm.config_key.value})">Edit</a>
+    <input type="button" class="btn btn-primary" onClick="history.go(-1)" value="Cancel"/>
+  </div>
+</div-->

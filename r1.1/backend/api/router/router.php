@@ -30,6 +30,8 @@ class router{
       $this->routes["teste"]     = json_decode("{\"controller\" : \"configurationController\", \"method\" : \"CRUD\", \"checkToken\" : false, \"model\" : \"teste\"}", true);
       $this->routes["config_files"]  = json_decode("{\"controller\" : \"configurationController\", \"method\" : \"CRUD\", \"checkToken\" : false, \"model\" : \"config_files\"}", true);
     }
+    $this->routes["dbMetadata"]  = json_decode("{\"controller\" : \"dbMetadataController\", \"method\" : \"getDBMetadata\", \"checkToken\" : false}", true);
+    $this->routes["dbMetadata.tbMetadata"]  = json_decode("{\"controller\" : \"dbMetadataController\", \"method\" : \"getTBMetadata\", \"checkToken\" : false}", true);
     //{  "object"              : {"controller" : "<controller>","method" : "<method>", "checkToken" : true/false, ["model" : "<model>"]}} where method = CRUD|Method Name, model=Model Name
   }
 
@@ -68,6 +70,8 @@ class router{
 
         if(array_key_exists("model",$value)){
           $route->setModel($value["model"]);
+        }elseif($value['controller']=='dbMetadataController'){ //If it´s a call to dbMetadataController, the first param is the DBConfig name, the 'model'
+          $route->setModel($parms[0]);
         }
         break;
       }

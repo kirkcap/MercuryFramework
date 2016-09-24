@@ -118,7 +118,11 @@ angular.module('mercuryFWConfigApp.constants', [])
           tb_key      : {fldtype: "array", placeholder: "Fill the list of field(s) which compose the key of the Table"},
           login_field : {fldtype: "string", placeholder: "Fill the Field which contains the user login(valid only for the model used for authentication)"},
           pwd_field   : {fldtype: "string", placeholder: "Fill the Field which contains the user password(valid only for the model used for authentication)"},
-          tb_columns  : {fldtype: "object", placeholder: "Fill the Field(s) and attributes of each one", useDialog: true,
+          tb_columns  : {fldtype: "object", placeholder: "Fill the Field(s) and attributes of each one",
+            useDialog: true,
+            dialogForm: "cfgDialogTbColumnsEdit.html",
+            dialogController: "CfgTbColumnsDialogEditController as TbColumnsVm",
+            dialogClass: "ngdialog-custom-tb_columns",
             structure: {
               field: {fldtype: "object", placeholder: "Fill the Field Name",
                 structure:{
@@ -131,11 +135,15 @@ angular.module('mercuryFWConfigApp.constants', [])
                               valid_values:{type: "array", values:[{key:"i", value:"Integer"}, {key:"d", value:"decimal"}, {key: "s", value: "string/date/time"}]}},
                   order:{fldtype:"select", placeholder: "Indicate the sort order if needed", valid_values:{type: "array", values:[{key: "asc", value:"Ascending"},{key: "desc", value:"Descending"}]}},
                   default:{fldtype:"object", placeholder: "Indicate default value if needed",
+                    useDialog: true,
+                    dialogForm: "cfgDialogTbColumnsFieldDefaultEdit.html",
+                    dialogController: "CfgTbColumnsFieldDefaultDialogEditController as FieldDefaultVm",
+                    dialogClass: "ngdialog-custom-tb_columns-field-default",
                     structure:{
-                      type:"select", placeholder: "Indicate the type of default", valid_values:{type: "array", values:[{key: "function", value:"Function"},{key: "Token", value:"Authorization Token"},{key:"Other", value:"Indicate the value:"}]},
-                      value:"string", placeholder: "Indicate the value",
-                      fill_on_insert: "boolean", placeholder: "Must be filled on insert?",
-                      fill_on_update: "boolean", placeholder: "Must be filled on update?"
+                      type: {fldtype:"select", placeholder: "Indicate the type of default", valid_values:{type: "array", values:[{key: "function", value:"PHP Function"},{key: "token_id", value:"Authorization Token"}]}},
+                      value:{fldtype:"select", placeholder: "Indicate the complementing value", depends_on: {field:"type", values:["function"]}, valid_values:{type: "array", values:[{key: "current_timestamp", value:"Gets Current Timestamp"},{key: "Other", value:"Indicate the function:"}]}},
+                      fill_on_insert: {fldtype:"boolean", placeholder: "Must be filled on insert?"},
+                      fill_on_update: {fldtype:"boolean", placeholder: "Must be filled on update?"}
                     }
                   }
                 }

@@ -200,6 +200,18 @@ class mySqlDB implements if_db{
       $stmt->buildStmt();
       return $stmt;
     }
+
+    public function getTablesListStatement(){
+      $stmt = new mySQLGetTableListStatement($this);
+      $stmt->buildStmt();
+      return $stmt;
+    }
+
+    public function getTableStructureStatement($tbName){
+      $stmt = new mySQLGetTableStructureStatement($this, $tbName);
+      $stmt->buildStmt();
+      return $stmt;
+    }
 }
 
 
@@ -445,6 +457,108 @@ class mySQLWHERECondition{
 }
 
 
+class mySQLGetTableListStatement extends mySQLStatement{
+  public function __construct($dbcon){
+    $this->dbcon = $dbcon;
+    $this->statement = "show full tables from ".$dbcon->getDBName();
+  }
+
+  public function execute(){
+
+    $result = [];
+
+    /* Prepare statement */
+    if($r = $this->dbcon->getMysqli()->query($this->statement)){
+      while($row = $r->fetch_assoc()){
+        $result[] = $row;
+      }
+      /* Fetch result to array * /
+      if(method_exists($stmt,'get_result')){
+        $r = $stmt->get_result();
+
+        if($r->num_rows > 0){
+          while($row = $r->fetch_assoc()){
+            $result[] = $row;
+          }
+        }
+      }else{
+
+        $stmt->store_result();
+        //custom class :D bind to Statement Result mambo jambo!
+        $sr = new Statement_Result($stmt);
+
+        if($stmt->num_rows > 0){
+
+          $result = [];
+
+          for($i=0;$i<$prep_stmt->num_rows;$i++){
+
+            $result[] = $sr->Get_Row($prep_stmt);
+            $prep_stmt->fetch();
+
+          }
+
+        }
+      }*/
+    }
+    return $result;
+  }
+
+
+}
+
+
+class mySQLGetTableStructureStatement extends mySQLStatement{
+  public function __construct($dbcon, $tbName){
+    $this->dbcon = $dbcon;
+    $this->tb_name = $tbName;
+    $this->statement = "show full columns from ".$dbcon->getDBName().'.'.$tbName;
+  }
+
+  public function execute(){
+
+    $result = [];
+
+    /* Prepare statement */
+    if($r = $this->dbcon->getMysqli()->query($this->statement)){
+      while($row = $r->fetch_assoc()){
+        $result[] = $row;
+      }
+      /* Fetch result to array * /
+      if(method_exists($stmt,'get_result')){
+
+        $r = $stmt->get_result();
+
+        if($r->num_rows > 0){
+          while($row = $r->fetch_assoc()){
+            $result[] = $row;
+          }
+        }
+      }else{
+
+        $stmt->store_result();
+        //custom class :D bind to Statement Result mambo jambo!
+        $sr = new Statement_Result($stmt);
+
+        if($stmt->num_rows > 0){
+
+          $result = [];
+
+          for($i=0;$i<$prep_stmt->num_rows;$i++){
+
+            $result[] = $sr->Get_Row($prep_stmt);
+            $prep_stmt->fetch();
+
+          }
+
+        }
+      }*/
+    }
+    return $result;
+  }
+
+
+}
 
 
 

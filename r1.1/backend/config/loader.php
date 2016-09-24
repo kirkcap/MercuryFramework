@@ -5,6 +5,7 @@ require_once __ROOT__."/backend/api/application/helpers/auth_helper.php";
 require_once __ROOT__."/backend/api/application/helpers/models_helper.php";
 require_once __ROOT__."/backend/api/router/router.php";
 require_once __ROOT__."/backend/api/controllers/configurationController.php";
+require_once __ROOT__."/backend/api/controllers/dbMetadataController.php";
 require_once __ROOT__."/backend/api/controllers/ControllerFactory.php";
 require_once __ROOT__."/backend/api/controllers/genericCRUDController.php";
 require_once __ROOT__."/backend/api/controllers/genericAuthController.php";

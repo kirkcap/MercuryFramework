@@ -1,0 +1,32 @@
+<form class="form-horizontal" role="form">
+  <div class="form-group">
+    <!--{{ngDialogData.detail_key}}-->
+    <label for="configkey" class="col-md-4 control-label">'{{FieldDefaultVm.data.detail_key}}' data for field '{{FieldDefaultVm.data.field}}'</label>
+  </div>
+  <div class="row">
+    <div class="{{meta_data.fldtype!='boolean'?'col-md-4':'col-md-2'}}" ng-repeat="(meta_key, meta_data) in FieldDefaultVm.data.metadata.meta[FieldDefaultVm.data.detail_key].structure">
+      <b>{{meta_key}}</b>
+      <div>({{FieldDefaultVm.data.metadata.meta[FieldDefaultVm.data.detail_key].structure[meta_key].placeholder}})</div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="{{meta_data.fldtype!='boolean'?'col-md-4':'col-md-2'}}" ng-repeat="(meta_key, meta_data) in FieldDefaultVm.data.metadata.meta[FieldDefaultVm.data.detail_key].structure">
+      <input type="text" ng-disabled="FieldDefaultVm.data.action=='view'" ng-if="meta_data.fldtype=='string' && (!meta_data.depends_on || meta_data.depends_on.values.indexOf(FieldDefaultVm.data.config_body[meta_data.depends_on.field])!=-1)" class="form-control" ng-model="FieldDefaultVm.data.config_body[meta_key]" id="field{{subkey}}" placeholder="{{meta_data.placeholder}}"/>
+      <input type="number" ng-disabled="FieldDefaultVm.data.action=='view'" ng-if="meta_data.fldtype=='number'" string-to-number  class="form-control" ng-model="FieldDefaultVm.data.config_body[meta_key]" id="field{{subkey}}" placeholder="{{meta_data.placeholder}}"/>
+      <input type="checkbox" ng-disabled="FieldDefaultVm.data.action=='view'" ng-if="meta_data.fldtype=='boolean'" class="form-control" ng-model="FieldDefaultVm.data.config_body[meta_key]" ng-true-value="true" ng-false-value="false" id="field{{subkey}}"/>
+      <select name="field{{key}}" ng-disabled="FieldDefaultVm.data.action=='view'" ng-if="meta_data.fldtype=='select'" id="field{{key}}" class="form-control" ng-model="FieldDefaultVm.data.config_body[meta_key]">
+        <option ng-repeat="vvalue in meta_data.valid_values.values" value="{{vvalue.key}}">{{vvalue.key+(vvalue.value!=""?" - "+vvalue.value:"")}}</option>
+      </select>
+      <input type="text" ng-disabled="FieldDefaultVm.data.action=='view'" ng-if="meta_data.fldtype=='select' && FieldDefaultVm.data.config_body[meta_key]=='Other'" class="form-control" ng-model="FieldDefaultVm.data.others[key]" id="field{{key}}_other" placeholder="{{meta_data.placeholder}}"/>
+    </div>
+  </div>
+
+  <br>
+  <div class="form-group">
+    <div class="col-md-offset-11 col-md-11">
+      <input type="button" class="btn btn-primary" value="Close" ng-click="closeThisDialog()"/>
+    </div>
+  </div>
+
+</form>
