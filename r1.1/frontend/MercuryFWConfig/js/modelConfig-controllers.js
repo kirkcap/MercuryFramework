@@ -19,7 +19,7 @@ angular.module('mercuryFWConfigApp.controllers')
   };
 
 })
-.controller('ModelConfigCreateController', function($state, $stateParams, CONFIG_API, ConfigMetadata, ngDialog) {
+.controller('ModelConfigCreateController', function($state, $stateParams, CONFIG_API, ConfigMetadata, ngDialog, Utils) {
   var vm = this;
 
   vm.state_data = $state.current;
@@ -37,7 +37,7 @@ angular.module('mercuryFWConfigApp.controllers')
 
   vm.action = "new";
   vm.config_key = {"value":"","placeholder":vm.metadata.meta['param_key'].placeholder};
-  vm.config_body = vm.metadata.schema; //Used only on complex parameters
+  vm.config_body = JSON.parse( JSON.stringify(vm.metadata.schema)); //Used only on complex parameters
   angular.forEach(vm.config_body, function(value, key){
     if(vm.metadata.meta[key].fldtype == "select" && vm.metadata.meta[key].valid_values.type=="service_call"){
       vm.cfg_values = CONFIG_API.query({ service: vm.metadata.meta[key].valid_values.service }, function(){
@@ -68,6 +68,49 @@ angular.module('mercuryFWConfigApp.controllers')
     });
   };
 
+  vm.buildTbColumns = function(){
+    vm.config_body.tb_columns = vm.metadata.tb_columns_schema;
+    /*Sample of Field definition:
+      [{
+        "Field": "attcod",
+        "Type": "int(11) unsigned",
+        "Collation": null,
+        "Null": "NO",
+        "Key": "PRI",
+        "Default": null,
+        "Extra": "",
+        "Privileges": "select,insert,update",
+        "Comment": "Attribute Code"
+      },
+      ...]
+    */
+    for($i=0;$i<vm.tableStructure.length;$i++){
+      vm.config_body.tb_columns[vm.tableStructure[$i].Field] = JSON.parse(JSON.stringify(vm.metadata.tb_columns_field_schema));
+      angular.forEach(vm.tableStructure[$i], function(data,key){
+        lkey = key.toLowerCase();
+        switch(lkey){
+          case 'type':
+            vm.config_body.tb_columns[vm.tableStructure[$i].Field].dbtype = data;
+            vm.config_body.tb_columns[vm.tableStructure[$i].Field].bind_type = Utils.getBindType(data);
+            break;
+          case 'key':
+            if(data=='PRI'){
+              vm.config_body.tb_columns[vm.tableStructure[$i].Field].key = true;
+              vm.config_body.tb_columns[vm.tableStructure[$i].Field].update = false;
+              vm.config_body.tb_key[vm.config_body.tb_key.length] = vm.tableStructure[$i].Field;
+            }else{
+              vm.config_body.tb_columns[vm.tableStructure[$i].Field].key = false;
+            }
+            break;
+          case 'comment':
+            vm.config_body.tb_columns[vm.tableStructure[$i].Field].label = data;
+            break;
+        }
+      });
+    }
+    alert('Structure building complete !');
+  }
+
   vm.newModelDialog = function() {
     vm.continue = false;
     var dialog = ngDialog.open({ template: 'partials/dialog/newModelCfgDialog.html',
@@ -80,7 +123,7 @@ angular.module('mercuryFWConfigApp.controllers')
                     cache: false,
                     preCloseCallback: function(value) {
                       if(!vm.continue){
-                        if (confirm('Are you sure you want to close without saving your changes?')) {
+                        if (confirm('Data filled will be lost, are you sure you want to close ?')) {
                             return true;
                         }
                         return false;
@@ -89,10 +132,12 @@ angular.module('mercuryFWConfigApp.controllers')
                    });
 
     dialog.closePromise.then(function (data) {
-        alert(data.id + ' has been dismissed.');
+        //alert(data.id + ' has been dismissed.');
         if(!vm.continue){
           vm.config_body = {};
           history.go(-1);
+        }else{
+          vm.buildTbColumns();
         }
     });
   };
@@ -103,10 +148,19 @@ angular.module('mercuryFWConfigApp.controllers')
   vm.cfgDialog = function(cfg) {
 
     vm.detail_key = cfg.key;
+    var vmeta = vm.metadata.meta[cfg.key].structure.field.structure
+    vm.metadata.meta[cfg.key].structure.field.filteredStructure = {};
+    angular.forEach(vmeta, function(meta, key){
+      if(!meta.noShow){
+        vm.metadata.meta[cfg.key].structure.field.filteredStructure[key] = vmeta[key];
+      }
+    });
+
     ngDialog.open({ template: 'partials/dialog/'+ vm.metadata.meta[vm.detail_key].dialogForm, //cfgDialogTbColumnsEdit.html',
                     className: 'ngdialog-theme-default',
                     appendClassName: vm.metadata.meta[vm.detail_key].dialogClass, //'ngdialog-custom',
                     width: '98%',
+                    cache: false,
                     controller: vm.metadata.meta[vm.detail_key].dialogController, //'CfgDialogEditController as dialogVm',
                     data: vm });
 
@@ -219,9 +273,9 @@ angular.module('mercuryFWConfigApp.controllers')
   vm.checkExistingModels = function(tb_name){
     $i=0;
     vm.existingModels = [];
-    vm.tableStructure = DBTableStructure.get({db_name:vm.data.config_body.dbCfgName, tb_name:tb_name});
+    vm.data.tableStructure = DBTableStructure.get({db_name:vm.data.config_body.dbCfgName, tb_name:tb_name});
     angular.forEach(vm.modelConfigs,function(data, model_name){
-      if(data.tb_name==tb_name){
+      if(data.tb_name==tb_name && ((!data.dbCfgName && vm.data.config_body.dbCfgName =='default') || (data.dbCfgName==vm.data.config_body.dbCfgName))){
         vm.existingModels[$i++] = model_name;
       }
     });

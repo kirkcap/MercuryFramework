@@ -98,15 +98,14 @@ angular.module('mercuryFWConfigApp.constants', [])
             entity_name : "",
             tb_name     : "",
             tb_key      : [],
+            isAuthModel : false,
             login_field : "",
             pwd_field   : "",
             tb_columns  : {}
         },
-        tb_columns_schema: {
-                             field  : {}
-                           },
+        tb_columns_schema: { },
         tb_columns_field_schema: {
-                                   key : false , show : false , insert : false, update : false, bind_type : "", order:"", default:{}
+                                   label: "", dbtype: "", key : false , show : false , insert : false, update : false, bind_type : "", order:"", default:{}
                                  },
         tb_columns_field_default_schema: {type:"", value:"", fill_on_insert: false, fill_on_update: false},
         meta:{
@@ -116,8 +115,9 @@ angular.module('mercuryFWConfigApp.constants', [])
           entity_name : {fldtype: "string", placeholder: "Fill the Entity Name which is represented by this Model"},
           tb_name     : {fldtype: "string", placeholder: "Fill the Table Name which is represented by this Model"},
           tb_key      : {fldtype: "array", placeholder: "Fill the list of field(s) which compose the key of the Table"},
-          login_field : {fldtype: "string", placeholder: "Fill the Field which contains the user login(valid only for the model used for authentication)"},
-          pwd_field   : {fldtype: "string", placeholder: "Fill the Field which contains the user password(valid only for the model used for authentication)"},
+          isAuthModel : {fldtype: "boolean", placeholder: "Is this model used for authentication?"},
+          login_field : {fldtype: "string", placeholder: "Fill the Field which contains the user login(valid only for the model used for authentication)", depends_on: {field:"isAuthModel", values:[true]} },
+          pwd_field   : {fldtype: "string", placeholder: "Fill the Field which contains the user password(valid only for the model used for authentication)", depends_on: {field:"isAuthModel", values:[true]} },
           tb_columns  : {fldtype: "object", placeholder: "Fill the Field(s) and attributes of each one",
             useDialog: true,
             dialogForm: "cfgDialogTbColumnsEdit.html",
@@ -126,15 +126,18 @@ angular.module('mercuryFWConfigApp.constants', [])
             structure: {
               field: {fldtype: "object", placeholder: "Fill the Field Name",
                 structure:{
-                  key: {fldtype: "boolean", placeholder: "Is a Key Field?"},
-                  show:{fldtype: "boolean", placeholder: "Must be shown?"},
-                  insert: {fldtype: "boolean", placeholder: "Can be inserted by User?"},
-                  update: {fldtype: "boolean", placeholder: "Can be updated by User?"},
+                  label: {fldtype: "string", placeholder: "Fill a Label for the Field(for a good surprise soon... :)", noShow: true},
+                  dbtype: {fldtype: "string", placeholder: "Database type", noShow: true},
+                  key: {fldtype: "boolean", placeholder: "Is a Key Field?", noShow: false},
+                  show:{fldtype: "boolean", placeholder: "Must be shown?", noShow: false},
+                  insert: {fldtype: "boolean", placeholder: "Can be inserted by User?", noShow: false},
+                  update: {fldtype: "boolean", placeholder: "Can be updated by User?", noShow: false},
                   bind_type: {fldtype:"select",
                               placeholder: "Indicate the bind_type",
+                              noShow: false,
                               valid_values:{type: "array", values:[{key:"i", value:"Integer"}, {key:"d", value:"decimal"}, {key: "s", value: "string/date/time"}]}},
-                  order:{fldtype:"select", placeholder: "Indicate the sort order if needed", valid_values:{type: "array", values:[{key: "asc", value:"Ascending"},{key: "desc", value:"Descending"}]}},
-                  default:{fldtype:"object", placeholder: "Indicate default value if needed",
+                  order:{fldtype:"select", placeholder: "Indicate the sort order if needed", noShow: false, valid_values:{type: "array", values:[{key: "asc", value:"Ascending"},{key: "desc", value:"Descending"}]}},
+                  default:{fldtype:"object", placeholder: "Indicate default value if needed", noShow: false,
                     useDialog: true,
                     dialogForm: "cfgDialogTbColumnsFieldDefaultEdit.html",
                     dialogController: "CfgTbColumnsFieldDefaultDialogEditController as FieldDefaultVm",
@@ -180,6 +183,37 @@ angular.module('mercuryFWConfigApp.constants', [])
         }
       }
 
+
+    })
+
+    .constant('DBTypes_X_BindTypes',{
+
+      "char":"s",
+      "varchar":"s",
+      "tinytext":"s",
+      "text":"s",
+      "blob":"s",
+      "mediumtext":"s",
+      "mediumblob":"s",
+      "longtext":"s",
+      "longblob":"s",
+
+      "tinyint":"i",
+      "smallint":"i",
+      "mediumint":"i",
+      "int":"i",
+      "bigint":"i",
+      "float":"d",
+      "double":"d",
+      "decimal":"d",
+
+      "date":"s",
+      "datetime":"s",
+      "timestamp":"s",
+      "time":"s",
+      "year":"s",
+
+      "default":"s"
 
     })
 

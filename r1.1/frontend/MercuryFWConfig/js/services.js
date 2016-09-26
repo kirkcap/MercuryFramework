@@ -19,10 +19,23 @@ angular.module('mercuryFWConfigApp.services', [])
 })
 
 
-.factory('Utils', function(){
+.factory('Utils', function(DBTypes_X_BindTypes){
   return {
+    getBindType: function(data_type){
+
+      if(data_type.indexOf('(') >= 0){
+        dtype = data_type.substr(0,data_type.indexOf('(')).toLowerCase();
+      }
+      if(DBTypes_X_BindTypes[dtype]){
+        return DBTypes_X_BindTypes[dtype];
+      }else{
+        return DBTypes_X_BindTypes['default'];
+      }
+    },
+
     isSingleType: function(data){
-      $data_type = ucase( typeof data );
+      $data_type = typeof data;
+      $data_type = $data_type.toUpperCase();
       switch($data_type){
         case "STRING":
           return true;

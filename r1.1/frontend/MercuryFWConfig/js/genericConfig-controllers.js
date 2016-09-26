@@ -162,6 +162,15 @@ angular.module('mercuryFWConfigApp.controllers',[])
   vm.cfgDialog = function(cfg) {
 
     vm.detail_key = cfg.key;
+
+    var vmeta = vm.metadata.meta[cfg.key].structure.field.structure
+    vm.metadata.meta[cfg.key].structure.field.filteredStructure = {};
+    angular.forEach(vmeta, function(meta, key){
+      if(!meta.noShow){
+        vm.metadata.meta[cfg.key].structure.field.filteredStructure[key] = vmeta[key];
+      }
+    });
+
     ngDialog.open({ template: 'partials/dialog/'+ vm.metadata.meta[vm.detail_key].dialogForm, //cfgDialogTbColumnsEdit.html',
                     className: 'ngdialog-theme-default',
                     appendClassName: vm.metadata.meta[vm.detail_key].dialogClass, //'ngdialog-custom',

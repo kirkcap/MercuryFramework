@@ -7,7 +7,7 @@
     <div class="col-md-2">
       <b>Field</b>
     </div>
-    <div class="{{meta_data.fldtype=='boolean'?'col-md-1':'col-md-2'}}" ng-repeat="(meta_key, meta_data) in TbColumnsVm.data.metadata.meta[TbColumnsVm.data.detail_key].structure.field.structure">
+    <div class="{{meta_data.fldtype=='boolean'?'col-md-1':'col-md-2'}}" ng-repeat="(meta_key, meta_data) in TbColumnsVm.data.metadata.meta[TbColumnsVm.data.detail_key].structure.field.filteredStructure">
       <b>{{meta_key}}</b>
       <div>({{meta_data.placeholder}})</div>
     </div>
@@ -16,9 +16,10 @@
 
     <div class="row" ng-repeat="(key, value) in TbColumnsVm.data.config_body[TbColumnsVm.data.detail_key]">
       <div class="col-md-2">
-        <b>{{key}}</b>
+        <b>{{key}} - {{TbColumnsVm.data.config_body[TbColumnsVm.data.detail_key][key]['dbtype']}}</b>
+        <input type="text" ng-disabled="TbColumnsVm.data.action=='view'" class="form-control" ng-model="TbColumnsVm.data.config_body[TbColumnsVm.data.detail_key][key]['label']" id="fieldLabel" placeholder="{{TbColumnsVm.data.metadata.meta[TbColumnsVm.data.detail_key].structure.field.structure['label'].placeholder}}"/>
       </div>
-      <div class="{{meta_data.fldtype=='boolean'?'col-md-1':'col-md-2'}}" ng-repeat="(meta_key, meta_data) in TbColumnsVm.data.metadata.meta[TbColumnsVm.data.detail_key].structure.field.structure">
+      <div class="{{meta_data.fldtype=='boolean'?'col-md-1':'col-md-2'}}" ng-repeat="(meta_key, meta_data) in TbColumnsVm.data.metadata.meta[TbColumnsVm.data.detail_key].structure.field.filteredStructure">
         <input type="text" ng-disabled="TbColumnsVm.data.action=='view'" ng-if="meta_data.fldtype=='string'" class="form-control" ng-model="TbColumnsVm.data.config_body[TbColumnsVm.data.detail_key][key][meta_key]" id="field{{meta_key}}" placeholder="{{meta_data.placeholder}}"/>
         <input type="number" ng-disabled="TbColumnsVm.data.action=='view'" ng-if="meta_data.fldtype=='number'" string-to-number  class="form-control" ng-model="TbColumnsVm.data.config_body[TbColumnsVm.data.detail_key][key][meta_key]" id="field{{meta_key}}" placeholder="{{meta_data.placeholder}}"/>
         <input type="checkbox" ng-disabled="TbColumnsVm.data.action=='view'" ng-if="meta_data.fldtype=='boolean'" class="form-control" ng-model="TbColumnsVm.data.config_body[TbColumnsVm.data.detail_key][key][meta_key]" ng-true-value="true" ng-false-value="false" id="field{{meta_key}}"/>
