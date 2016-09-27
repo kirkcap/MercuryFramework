@@ -19,7 +19,7 @@ angular.module('mercuryFWConfigApp.controllers')
   };
 
 })
-.controller('ModelConfigCreateController', function($state, $stateParams, CONFIG_API, ConfigMetadata, ngDialog, Utils) {
+.controller('ModelConfigCreateController', function($state, $stateParams, CONFIG_API, ConfigMetadata, ngDialog, Utils, ModelMetadataLoader) {
   var vm = this;
 
   vm.state_data = $state.current;
@@ -68,7 +68,7 @@ angular.module('mercuryFWConfigApp.controllers')
     });
   };
 
-  vm.buildTbColumns = function(){
+  /*vm.buildTbColumns = function(){
     vm.config_body.tb_columns = vm.metadata.tb_columns_schema;
     /*Sample of Field definition:
       [{
@@ -83,7 +83,7 @@ angular.module('mercuryFWConfigApp.controllers')
         "Comment": "Attribute Code"
       },
       ...]
-    */
+    * /
     for($i=0;$i<vm.tableStructure.length;$i++){
       vm.config_body.tb_columns[vm.tableStructure[$i].Field] = JSON.parse(JSON.stringify(vm.metadata.tb_columns_field_schema));
       angular.forEach(vm.tableStructure[$i], function(data,key){
@@ -109,7 +109,7 @@ angular.module('mercuryFWConfigApp.controllers')
       });
     }
     alert('Structure building complete !');
-  }
+  }*/
 
   vm.newModelDialog = function() {
     vm.continue = false;
@@ -137,7 +137,11 @@ angular.module('mercuryFWConfigApp.controllers')
           vm.config_body = {};
           history.go(-1);
         }else{
-          vm.buildTbColumns();
+          //vm.buildTbColumns();
+          ModelMetadataLoader.modelStructurePrepare(vm.config_body, vm.metadata);
+          //var $updated_config_body = ModelMetadataLoader.modelStructurePrepare(vm.config_body, vm.metadata, function(){
+          //  vm.config_body = $updated_config_body;
+          //});
         }
     });
   };
@@ -167,7 +171,7 @@ angular.module('mercuryFWConfigApp.controllers')
   };
 
 
-}).controller('ModelConfigViewEditController', function($state, $stateParams, $filter, CONFIG_API, ConfigMetadata, ngDialog) {
+}).controller('ModelConfigViewEditController', function($state, $stateParams, $filter, CONFIG_API, ConfigMetadata, ngDialog, ModelMetadataLoader) {
   var vm = this;
 
   vm.state_data = $state.current;
@@ -235,7 +239,8 @@ angular.module('mercuryFWConfigApp.controllers')
               vm.config_body[key] = "Other";
             }
           }
-        })
+        });
+        ModelMetadataLoader.modelStructurePrepare(vm.config_body, vm.metadata);
       }
     });
 
@@ -244,6 +249,15 @@ angular.module('mercuryFWConfigApp.controllers')
   vm.cfgDialog = function(cfg) {
 
     vm.detail_key = cfg.key;
+
+    var vmeta = vm.metadata.meta[cfg.key].structure.field.structure
+    vm.metadata.meta[cfg.key].structure.field.filteredStructure = {};
+    angular.forEach(vmeta, function(meta, key){
+      if(!meta.noShow){
+        vm.metadata.meta[cfg.key].structure.field.filteredStructure[key] = vmeta[key];
+      }
+    });
+
     ngDialog.open({ template: 'partials/dialog/'+ vm.metadata.meta[vm.detail_key].dialogForm, //cfgDialogTbColumnsEdit.html',
                     className: 'ngdialog-theme-default',
                     appendClassName: vm.metadata.meta[vm.detail_key].dialogClass, //'ngdialog-custom',
@@ -255,6 +269,7 @@ angular.module('mercuryFWConfigApp.controllers')
 
 
   vm.loadConfig(); // Load a attribute which can be edited on UI
+
 
 }).controller('CfgDialogNewModelController', function($scope, ConfigMetadata, CONFIG_API, DBTableStructure){
   var vm = this;

@@ -18,6 +18,89 @@ angular.module('mercuryFWConfigApp.services', [])
   });
 })
 
+.factory('ModelMetadataLoader', function(DBTableStructure, Utils){
+  return {
+    modelStructurePrepare: function($config_body, $metadata){
+      var tableStructure = DBTableStructure.get({db_name:$config_body.dbCfgName, tb_name:$config_body.tb_name},function(){
+        if(!$config_body.tb_columns){
+          $config_body.tb_columns = $metadata.tb_columns_schema;
+        }
+        /*Sample of Field definition:
+          [{
+            "Field": "attcod",
+            "Type": "int(11) unsigned",
+            "Collation": null,
+            "Null": "NO",
+            "Key": "PRI",
+            "Default": null,
+            "Extra": "",
+            "Privileges": "select,insert,update",
+            "Comment": "Attribute Code"
+          },
+          ...]
+        */
+        $config_body.tb_key = [];
+        for($i=0;$i<tableStructure.length;$i++){
+          if(!$config_body.tb_columns[tableStructure[$i].Field]){
+            $new = true;
+            $config_body.tb_columns[tableStructure[$i].Field] = JSON.parse(JSON.stringify($metadata.tb_columns_field_schema));
+          }else{
+            $new = false;
+          }
+          angular.forEach(tableStructure[$i], function(data,key){
+            lkey = key.toLowerCase();
+            switch(lkey){
+              case 'type':
+                $config_body.tb_columns[tableStructure[$i].Field].dbtype = data;
+                $config_body.tb_columns[tableStructure[$i].Field].bind_type = Utils.getBindType(data);
+                break;
+              case 'key':
+                if(data=='PRI'){
+                  $config_body.tb_columns[tableStructure[$i].Field].key = true;
+                  if($new){
+                    $config_body.tb_columns[tableStructure[$i].Field].update = false;
+                  }
+                  $config_body.tb_key[$config_body.tb_key.length] = tableStructure[$i].Field;
+                }else{
+                  $config_body.tb_columns[tableStructure[$i].Field].key = false;
+                }
+                break;
+              case 'comment':
+                if($new || !$config_body.tb_columns[tableStructure[$i].Field].label || $config_body.tb_columns[tableStructure[$i].Field].label == ""){
+                  $config_body.tb_columns[tableStructure[$i].Field].label = data;
+                }
+                break;
+            }
+          });
+        }
+        var $deletedFields = [];
+        angular.forEach($config_body.tb_columns, function(meta, key){
+          var $found = false;
+          for($i=0;$i<tableStructure.length;$i++){
+            if(tableStructure[$i].Field == key){
+              $found = true;
+              break;//Exits the loop for
+            }
+          }
+          if(!$found){
+            $deletedFields[$deletedField.length] = key;
+            delete $config_body.tb_columns[key];
+          }
+        });
+        if($deletedFields.length>0){
+          var $delFieldsList="";
+          var $sep = "";
+          for($i=0;$i<$deletedFields.length;$i++){
+            $delFieldsList += $sep + $deletedFields[$i];
+            $sep = ", ";
+          }
+          alert('The following fields where deleted from the model(as they are not present in the table structure anymore):'+$delFieldsList);
+        }
+        //return $config_body;
+      });
+    }
+  }
+})
 
 .factory('Utils', function(DBTypes_X_BindTypes){
   return {

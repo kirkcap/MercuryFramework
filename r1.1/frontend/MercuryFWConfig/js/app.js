@@ -140,7 +140,7 @@ angular.module('mercuryFWConfigApp').config(function($stateProvider) {
   }).state('editModelConfig', { //state for updating a attribute
     url: '/model_config/:cfg/edit',
     templateUrl: 'partials/generic_cfg/generic_cfg-edit.html',
-    controller: 'GenericConfigViewEditController as vm',
+    controller: 'ModelConfigViewEditController as vm',
     cfgname: 'ModelConfig',
     action: 'edit'
   })
