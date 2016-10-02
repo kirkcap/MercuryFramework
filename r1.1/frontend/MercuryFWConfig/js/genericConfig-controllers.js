@@ -18,23 +18,7 @@ angular.module('mercuryFWConfigApp.controllers',[])
 
   };
 
-})
-/*Substituted by the GenericConfigViewEditController, which does both actions, according to parameter set in the state configuration
-.controller('GenericConfigViewController', function( $state, $stateParams, CONFIG_API, Utils, ConfigMetadata) {
-  var vm = this;
-
-  vm.state_data = $state.current;
-  vm.metadata = ConfigMetadata[vm.state_data.cfgname];
-  vm.config_key = {"value" : $stateParams.cfg };
-  vm.config = CONFIG_API.get({ service: vm.metadata.svcname, cfg: vm.config_key.value }, function(){
-    if(!vm.metadata.singleTypeParameters){
-      vm.config_body = vm.config[vm.config_key.value];
-    }
-  }); //Get a single attribute.Issues a GET to /api/attributes/:id
-
-})
-*/
-.controller('GenericConfigCreateController', function($state, $stateParams, CONFIG_API, ConfigMetadata) {
+}).controller('GenericConfigCreateController', function($state, $stateParams, CONFIG_API, ConfigMetadata) {
   var vm = this;
 
   vm.state_data = $state.current;
@@ -159,6 +143,7 @@ angular.module('mercuryFWConfigApp.controllers',[])
 
   };
 
+  /* Used by modelConfig only...
   vm.cfgDialog = function(cfg) {
 
     vm.detail_key = cfg.key;
@@ -178,35 +163,11 @@ angular.module('mercuryFWConfigApp.controllers',[])
                     controller: vm.metadata.meta[vm.detail_key].dialogController, //'CfgDialogEditController as dialogVm',
                     data: vm });
 
+
   };
+  */
 
 
   vm.loadConfig(); // Load a attribute which can be edited on UI
-
-}).controller('CfgTbColumnsDialogEditController', function($scope, ngDialog){
-  var vm = this;
-  vm.data = $scope.ngDialogData;
-  vm.data.others = {};
-
-  vm.cfgSubDialog = function(cfg) {
-    var data = {};
-    data.action     = cfg.action;
-    data.field      = cfg.field;
-    data.detail_key = cfg.attribute;
-    data.config_body = cfg.data;
-    data.metadata = {};
-    data.metadata.meta = $scope.ngDialogData.metadata.meta.tb_columns.structure.field.structure;
-    ngDialog.open({ template: 'partials/dialog/'+data.metadata.meta[data.detail_key].dialogForm, //cfgTbColumnsFieldDefaultDialogEdit.html',
-                    className: 'ngdialog-theme-default',
-                    appendClassName: data.metadata.meta[data.detail_key].dialogClass, //'ngdialog-custom',
-                    width: '80%',
-                    controller: data.metadata.meta[data.detail_key].dialogController, //'CfgDialogEditController as subDialogVm',
-                    data: data });
-  };
-
-}).controller('CfgTbColumnsFieldDefaultDialogEditController', function($scope, ngDialog){
-  var vm = this;
-  vm.data = $scope.ngDialogData;
-  vm.data.others = {};
 
 })

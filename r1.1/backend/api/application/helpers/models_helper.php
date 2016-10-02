@@ -1,5 +1,7 @@
 <?php
 namespace com\mercuryfw\helpers;
+use \Exception as Exception;
+
 class Models{
 
   private $ModelsData;

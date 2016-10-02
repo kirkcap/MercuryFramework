@@ -18,7 +18,6 @@ class configurationController{
     }
 
     public function execute($method, $parameter){
-      //$token = Token::getInstance(); It works !!!!
       $this->$method($parameter);
     }
 

@@ -4,9 +4,9 @@ define('__ROOT__', dirname(dirname(__FILE__)));
 require_once __ROOT__."/backend/api/application/helpers/REST_helper.php";
 require_once __ROOT__."/backend/config/loader.php";
 use com\mercuryfw\helpers\REST as REST;
-use com\mercuryfw\helpers\Token as Token;
 use com\mercuryfw\routers\router as router;
 use com\mercuryfw\controllers\ControllerFactory as ControllerFactory;
+use com\mercuryfw\helpers\Token as Token;
 
 class API {
   public function __construct(){

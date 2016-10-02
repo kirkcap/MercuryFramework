@@ -22,6 +22,7 @@ angular.module('mercuryFWConfigApp.constants', [])
     .constant('ConfigMetadata',{
 
       AdminConfig:{
+        configEntity: "Administration",
         singleTypeParameters: true,
         svcname:   'admin_cfg',
         sourceUrl: 'adminConfig',
@@ -34,6 +35,7 @@ angular.module('mercuryFWConfigApp.constants', [])
       },
 
       AuthConfig:{
+        configEntity: "Authorization Token",
         singleTypeParameters: true,
         svcname:   'auth_cfg',
         sourceUrl: 'authConfig',
@@ -47,6 +49,7 @@ angular.module('mercuryFWConfigApp.constants', [])
       },
 
       ConfigFile:{
+        configEntity: "Config File",
         singleTypeParameters: true,
         svcname:   'config_files',
         sourceUrl: 'configFiles',
@@ -64,6 +67,7 @@ angular.module('mercuryFWConfigApp.constants', [])
       },
 
       DbConfig:{
+        configEntity: "Database Connection",
         singleTypeParameters: false,
         svcname:   'databases',
         sourceUrl: 'dbConfig',
@@ -89,6 +93,7 @@ angular.module('mercuryFWConfigApp.constants', [])
       },
 
       ModelConfig:{
+        configEntity: "Model",
         singleTypeParameters: false,
         svcname:   'models',
         sourceUrl: 'modelConfig',
@@ -123,30 +128,34 @@ angular.module('mercuryFWConfigApp.constants', [])
             dialogForm: "cfgDialogTbColumnsEdit.html",
             dialogController: "CfgTbColumnsDialogEditController as TbColumnsVm",
             dialogClass: "ngdialog-custom-tb_columns",
+            field_groups: {0: 'Basic Field Data Configuration',
+                           1: 'Show/Insert/Update Configuration',
+                           2: 'Default Data Configuration'},
             structure: {
               field: {fldtype: "object", placeholder: "Fill the Field Name",
                 structure:{
-                  label: {fldtype: "string", placeholder: "Fill a Label for the Field(for a good surprise soon... :)", noShow: true},
-                  dbtype: {fldtype: "string", placeholder: "Database type", noShow: true},
-                  key: {fldtype: "boolean", placeholder: "Is a Key Field?", noShow: false},
-                  show:{fldtype: "boolean", placeholder: "Must be shown?", noShow: false},
-                  insert: {fldtype: "boolean", placeholder: "Can be inserted by User?", noShow: false},
-                  update: {fldtype: "boolean", placeholder: "Can be updated by User?", noShow: false},
+                  key: {fldtype: "boolean", group:0, placeholder: "Is a Key Field?", noEdit: true, noShow: false},
+                  label: {fldtype: "string", group:0, placeholder: "Fill a Label for the Field", noShow: false},
+                  dbtype: {fldtype: "string", group:0, placeholder: "Database type", noEdit: true, noShow: false},
+                  show:{fldtype: "boolean", group:1, placeholder: "Can be shown/returned in query?", noShow: false},
+                  insert: {fldtype: "boolean", group:1, placeholder: "Can be inserted by User?", noShow: false},
+                  update: {fldtype: "boolean", group:1, placeholder: "Can be updated by User?", noShow: false},
                   bind_type: {fldtype:"select",
+                              group:0,
                               placeholder: "Indicate the bind_type",
                               noShow: false,
                               valid_values:{type: "array", values:[{key:"i", value:"Integer"}, {key:"d", value:"decimal"}, {key: "s", value: "string/date/time"}]}},
-                  order:{fldtype:"select", placeholder: "Indicate the sort order if needed", noShow: false, valid_values:{type: "array", values:[{key: "asc", value:"Ascending"},{key: "desc", value:"Descending"}]}},
-                  default:{fldtype:"object", placeholder: "Indicate default value if needed", noShow: false,
+                  order:{fldtype:"select", group:0, placeholder: "Indicate the sort order if needed", noShow: false, valid_values:{type: "array", values:[{key: "", value:""},{key: "asc", value:"Ascending"},{key: "desc", value:"Descending"}]}},
+                  default:{fldtype:"object", placeholder: "Indicate default value if needed", noShow: true,
                     useDialog: true,
                     dialogForm: "cfgDialogTbColumnsFieldDefaultEdit.html",
                     dialogController: "CfgTbColumnsFieldDefaultDialogEditController as FieldDefaultVm",
                     dialogClass: "ngdialog-custom-tb_columns-field-default",
                     structure:{
-                      type: {fldtype:"select", placeholder: "Indicate the type of default", valid_values:{type: "array", values:[{key: "function", value:"PHP Function"},{key: "token_id", value:"Authorization Token"}]}},
-                      value:{fldtype:"select", placeholder: "Indicate the complementing value", depends_on: {field:"type", values:["function"]}, valid_values:{type: "array", values:[{key: "current_timestamp", value:"Gets Current Timestamp"},{key: "Other", value:"Indicate the function:"}]}},
-                      fill_on_insert: {fldtype:"boolean", placeholder: "Must be filled on insert?"},
-                      fill_on_update: {fldtype:"boolean", placeholder: "Must be filled on update?"}
+                      type: {fldtype:"select", group:2, placeholder: "Indicate the type of default", noShow: false, valid_values:{type: "array", values:[{key: "", value:""},{key: "function", value:"PHP Function"},{key: "token_id", value:"Authorization Token"}]}},
+                      value:{fldtype:"select", group:2, placeholder: "Indicate the complementing value", noShow: false, depends_on: {field:"type", values:["function"]}, valid_values:{type: "array", values:[{key: "", value:""},{key: "current_timestamp", value:"Gets Current Timestamp"}]}},
+                      fill_on_insert: {fldtype:"boolean", group:2, placeholder: "Must be filled on insert?", noShow: false},
+                      fill_on_update: {fldtype:"boolean", group:2, placeholder: "Must be filled on update?", noShow: false}
                     }
                   }
                 }
@@ -157,6 +166,7 @@ angular.module('mercuryFWConfigApp.constants', [])
       },
 
       RouteConfig:{
+        configEntity: "Route",
         singleTypeParameters: false,
         svcname:   'routes',
         sourceUrl: 'routeConfig',

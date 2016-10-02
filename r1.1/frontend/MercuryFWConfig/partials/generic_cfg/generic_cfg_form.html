@@ -1,24 +1,37 @@
 <div class="form-group">
-  <label for="configkey" class="col-sm-2 control-label">{{vm.state_data.cfgname}} Parameter</label>
-  <div class="col-sm-10">
+  <label for="configkey" class="col-sm-2 control-label">{{vm.metadata.configEntity}} Name</label>
+  <div class="col-sm-8">
     <input type="text" ng-disabled="vm.action=='edit' || vm.action =='view'" ng-model="vm.config_key.value" class="form-control" id="configkey" placeholder="{{vm.config_key.placeholder}}"/>
   </div>
 </div>
 
-<div class="form-group" ng-repeat="(meta_key, meta_val) in vm.metadata.schema"> <!--ng-repeat="(key, value) in vm.config_body"-->
-  <label for="field{{meta_key}}" ng-if="!vm.metadata.meta[meta_key].depends_on || vm.metadata.meta[meta_key].depends_on.values.indexOf(vm.config_body[vm.metadata.meta[meta_key].depends_on.field])>=0" class="col-sm-2 control-label">{{meta_key}}</label>
-  <div class="col-sm-10" ng-if="!vm.metadata.meta[meta_key].depends_on || vm.metadata.meta[meta_key].depends_on.values.indexOf(vm.config_body[vm.metadata.meta[meta_key].depends_on.field])>=0">
-    <input type="text" ng-disabled="vm.action=='view'" ng-if="vm.metadata.meta[meta_key].fldtype=='string'" ng-model="vm.config_body[meta_key]" class="form-control" id="field{{key}}" placeholder="{{vm.metadata.meta[meta_key].placeholder}}"/>
-    <input type="number" ng-disabled="vm.action=='view'" ng-if="vm.metadata.meta[meta_key].fldtype=='number'" string-to-number  ng-model="vm.config_body[meta_key]" class="form-control" id="field{{key}}" placeholder="{{vm.metadata.meta[meta_key].placeholder}}"/>
-    <input type="checkbox" ng-disabled="vm.action=='view'" ng-if="vm.metadata.meta[meta_key].fldtype=='boolean'" ng-model="vm.config_body[meta_key]" ng-true-value="true" ng-false-value="false" class="form-control" id="field{{key}}"/><div ng-if="vm.metadata.meta[meta_key].fldtype=='boolean'">{{vm.metadata.meta[meta_key].placeholder}}</div>
-    <select name="field{{key}}" ng-disabled="vm.action=='view'" ng-if="vm.metadata.meta[meta_key].fldtype=='select'" id="field{{key}}" ng-model="vm.config_body[meta_key]">
-      <option ng-repeat="value in vm.metadata.meta[meta_key].valid_values.values" value="{{value.key}}">{{value.key+(value.value!=""?" - "+value.value:"")}}</option>
-    </select>
-    <input type="text" ng-disabled="vm.action=='view'" ng-if="vm.metadata.meta[meta_key].fldtype=='select' && vm.config_body[meta_key]=='Other'" ng-model="vm.others[meta_key]" class="form-control" id="field{{key}}_other" placeholder="{{vm.metadata.meta[meta_key].placeholder}}"/>
-    <a class="btn btn-primary" ng-if="vm.metadata.meta[meta_key].fldtype=='object'" ng-click="vm.cfgDialog({key:meta_key})">...</a>
+<div style="overflow-y: auto; max-height:430px; overflow-x: hidden">
+
+  <div class="form-group" ng-repeat="(meta_key, meta_val) in vm.metadata.schema"> <!--ng-repeat="(key, value) in vm.config_body"-->
+    <label for="field{{meta_key}}" ng-if="!vm.metadata.meta[meta_key].depends_on || vm.metadata.meta[meta_key].depends_on.values.indexOf(vm.config_body[vm.metadata.meta[meta_key].depends_on.field])>=0" class="col-sm-2 col-sm-offset-1 control-label">{{meta_key}}</label>
+    <div class="col-sm-8" ng-if="!vm.metadata.meta[meta_key].depends_on || vm.metadata.meta[meta_key].depends_on.values.indexOf(vm.config_body[vm.metadata.meta[meta_key].depends_on.field])>=0">
+      <input type="text" ng-disabled="vm.action=='view'" ng-if="vm.metadata.meta[meta_key].fldtype=='string'" ng-model="vm.config_body[meta_key]" class="form-control" id="field{{key}}" placeholder="{{vm.metadata.meta[meta_key].placeholder}}"/>
+      <input type="number" ng-disabled="vm.action=='view'" ng-if="vm.metadata.meta[meta_key].fldtype=='number'" string-to-number  ng-model="vm.config_body[meta_key]" class="form-control" id="field{{key}}" placeholder="{{vm.metadata.meta[meta_key].placeholder}}"/>
+      <div class="col-sm-2" ng-if="vm.metadata.meta[meta_key].fldtype=='boolean'">
+        <input type="checkbox" ng-disabled="vm.action=='view'" ng-if="vm.metadata.meta[meta_key].fldtype=='boolean'" ng-model="vm.config_body[meta_key]" ng-true-value="true" ng-false-value="false" class="form-control" id="field{{key}}"/>
+      </div>
+      <div class="col-sm-10" ng-if="vm.metadata.meta[meta_key].fldtype=='boolean'">
+        <div style="font-size: xx-small;"><br>{{vm.metadata.meta[meta_key].placeholder}}</div>
+      </div>
+      <select ng-disabled="true" name="field{{meta_key}}" ng-if="vm.metadata.meta[meta_key].fldtype=='array'" id="field{{meta_key}}" ng-model="vm.config_body[meta_key]" class="form-control" multiple>
+        <option ng-repeat="arr_key in vm.config_body[meta_key]" value="{{arr_key}}">{{arr_key}}</option>
+      </select>
+      <select name="field{{key}}" ng-disabled="vm.action=='view'" ng-if="vm.metadata.meta[meta_key].fldtype=='select'" id="field{{key}}" ng-model="vm.config_body[meta_key]" class="form-control">
+        <option ng-repeat="value in vm.metadata.meta[meta_key].valid_values.values" value="{{value.key}}">{{value.key+(value.value!=""?" - "+value.value:"")}}</option>
+      </select>
+      <input type="text" ng-disabled="vm.action=='view'" ng-if="vm.metadata.meta[meta_key].fldtype=='select' && vm.config_body[meta_key]=='Other'" ng-model="vm.others[meta_key]" class="form-control" id="field{{key}}_other" placeholder="{{vm.metadata.meta[meta_key].placeholder}}"/>
+      <a class="btn btn-primary" ng-if="vm.metadata.meta[meta_key].fldtype=='object'" ng-click="vm.cfgDialog({key:meta_key})">...</a>
+    </div>
   </div>
+
 </div>
 
+<br>
 <div class="form-group">
   <div class="col-sm-offset-2 col-sm-10">
     <input type="submit" class="btn btn-primary" value="Save" ng-if="vm.action!='view'"/>

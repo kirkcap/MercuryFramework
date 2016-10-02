@@ -2,6 +2,8 @@
 namespace com\mercuryfw\models;
 require_once(__ROOT__."/backend/api/model/baseModel.php");
 require_once(__ROOT__."/backend/api/application/helpers/error_helper.php");
+use com\mercuryfw\helpers\ErrorCatcher as ErrorCatcher;
+use \Exception as Exception;
 
 class genericModel extends baseModel{
 
@@ -19,7 +21,6 @@ class genericModel extends baseModel{
     catch(Exception $e){
       $this->exception_ocurred = true;
       $this->err = new ErrorCatcher($e);
-      //print_r($e);
     }
 
     return $result;
@@ -34,7 +35,6 @@ class genericModel extends baseModel{
       $result = $SelectStmt->execute(genericModel::SelectFIRST_ONLY);
     }
     catch(Exception $e){
-      //print_r($e);
       $this->exception_ocurred = true;
       $this->err = new ErrorCatcher($e);
     }
@@ -52,7 +52,6 @@ class genericModel extends baseModel{
       $result = $SelectStmt->execute(genericModel::SelectFIRST_ONLY);
     }
     catch(Exception $e){
-      //print_r($e);
       $this->exception_ocurred = true;
       $this->err = new ErrorCatcher($e);
     }
@@ -106,7 +105,6 @@ class genericModel extends baseModel{
         }
       }
       catch(Exception $e){
-        //print_r($e);
         $this->exception_ocurred = true;
         $this->err = new ErrorCatcher($e);
       }
@@ -134,7 +132,6 @@ class genericModel extends baseModel{
         }
       }
       catch(Exception $e){
-        //print_r($e);
         $this->exception_ocurred = true;
         $this->err = new ErrorCatcher($e);
       }

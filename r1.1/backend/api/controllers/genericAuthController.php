@@ -2,6 +2,8 @@
 namespace com\mercuryfw\controllers;
 require_once("genericCRUDController.php");
 use com\mercuryfw\helpers\REST as REST;
+use com\mercuryfw\helpers\Token as Token;
+use com\mercuryfw\models\genericModel as genericModel;
 
 class genericAuthController extends genericCRUDController{
 

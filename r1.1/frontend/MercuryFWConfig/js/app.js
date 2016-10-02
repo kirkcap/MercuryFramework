@@ -129,7 +129,7 @@ angular.module('mercuryFWConfigApp').config(function($stateProvider) {
   }).state('viewModelConfig', { //state for showing single attribute
     url: '/model_config/:cfg/view',
     templateUrl: 'partials/generic_cfg/generic_cfg-view.html',
-    controller: 'GenericConfigViewEditController as vm',
+    controller: 'ModelConfigViewEditController as vm',
     cfgname: 'ModelConfig',
     action: 'view',
   }).state('newModelConfig', { //state for adding a new attribute

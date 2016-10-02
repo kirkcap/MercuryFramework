@@ -152,19 +152,13 @@ angular.module('mercuryFWConfigApp.controllers')
   vm.cfgDialog = function(cfg) {
 
     vm.detail_key = cfg.key;
-    var vmeta = vm.metadata.meta[cfg.key].structure.field.structure
-    vm.metadata.meta[cfg.key].structure.field.filteredStructure = {};
-    angular.forEach(vmeta, function(meta, key){
-      if(!meta.noShow){
-        vm.metadata.meta[cfg.key].structure.field.filteredStructure[key] = vmeta[key];
-      }
-    });
 
     ngDialog.open({ template: 'partials/dialog/'+ vm.metadata.meta[vm.detail_key].dialogForm, //cfgDialogTbColumnsEdit.html',
                     className: 'ngdialog-theme-default',
                     appendClassName: vm.metadata.meta[vm.detail_key].dialogClass, //'ngdialog-custom',
                     width: '98%',
                     cache: false,
+                    closeByDocument: false,
                     controller: vm.metadata.meta[vm.detail_key].dialogController, //'CfgDialogEditController as dialogVm',
                     data: vm });
 
@@ -250,18 +244,12 @@ angular.module('mercuryFWConfigApp.controllers')
 
     vm.detail_key = cfg.key;
 
-    var vmeta = vm.metadata.meta[cfg.key].structure.field.structure
-    vm.metadata.meta[cfg.key].structure.field.filteredStructure = {};
-    angular.forEach(vmeta, function(meta, key){
-      if(!meta.noShow){
-        vm.metadata.meta[cfg.key].structure.field.filteredStructure[key] = vmeta[key];
-      }
-    });
-
     ngDialog.open({ template: 'partials/dialog/'+ vm.metadata.meta[vm.detail_key].dialogForm, //cfgDialogTbColumnsEdit.html',
                     className: 'ngdialog-theme-default',
                     appendClassName: vm.metadata.meta[vm.detail_key].dialogClass, //'ngdialog-custom',
                     width: '98%',
+                    cache: false,
+                    closeByDocument: false,
                     controller: vm.metadata.meta[vm.detail_key].dialogController, //'CfgDialogEditController as dialogVm',
                     data: vm });
 
@@ -270,6 +258,56 @@ angular.module('mercuryFWConfigApp.controllers')
 
   vm.loadConfig(); // Load a attribute which can be edited on UI
 
+
+}).controller('CfgTbColumnsDialogEditController', function($scope, ngDialog){
+  var vm = this;
+  vm.data = $scope.ngDialogData;
+  vm.data.others = {};
+  vm.data.group = 0;//Start viewing fields from group 0
+  vm.data.zebra = 0;
+  vm.setGroup = function(move_by){
+    vm.data.group = move_by;//vm.data.group + move_by;
+    vm.data.metadata.meta[vm.data.detail_key].structure.field.filteredStructure = {};
+    var vmeta = vm.data.metadata.meta[vm.data.detail_key].structure.field.structure
+    angular.forEach(vmeta, function(meta, key){
+      if(meta.group == vm.data.group && !meta.noShow){
+        vm.data.metadata.meta[vm.data.detail_key].structure.field.filteredStructure[key] = vmeta[key];
+      }
+    });
+  }
+
+  vm.setZebra = function(){
+    if(vm.data.zebra==0){
+      vm.data.zebra = 1;
+    }else{
+      vm.data.zebra = 0;
+    }
+    return vm.data.zebra;
+  }
+
+  vm.setGroup(0);
+  vm.cfgSubDialog = function(cfg) {
+    var data = {};
+    data.action     = cfg.action;
+    data.field      = cfg.field;
+    data.detail_key = cfg.attribute;
+    data.config_body = cfg.data;
+    data.metadata = {};
+    data.metadata.meta = $scope.ngDialogData.metadata.meta.tb_columns.structure.field.structure;
+    ngDialog.open({ template: 'partials/dialog/'+data.metadata.meta[data.detail_key].dialogForm, //cfgTbColumnsFieldDefaultDialogEdit.html',
+                    className: 'ngdialog-theme-default',
+                    appendClassName: data.metadata.meta[data.detail_key].dialogClass, //'ngdialog-custom',
+                    width: '80%',
+                    cache: false,
+                    closeByDocument: false,
+                    controller: data.metadata.meta[data.detail_key].dialogController, //'CfgDialogEditController as subDialogVm',
+                    data: data });
+  };
+
+}).controller('CfgTbColumnsFieldDefaultDialogEditController', function($scope, ngDialog){
+  var vm = this;
+  vm.data = $scope.ngDialogData;
+  vm.data.others = {};
 
 }).controller('CfgDialogNewModelController', function($scope, ConfigMetadata, CONFIG_API, DBTableStructure){
   var vm = this;

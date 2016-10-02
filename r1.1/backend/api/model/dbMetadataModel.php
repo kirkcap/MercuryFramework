@@ -4,6 +4,7 @@ require_once(__ROOT__."/backend/api/application/helpers/error_helper.php");
 require_once(__ROOT__."/backend/api/application/helpers/db_helper.php");
 use com\mercuryfw\helpers\REST as REST;
 use com\mercuryfw\helpers\DBFactory as DBFactory;
+use \Exception as Exception;
 
 class dbMetadataModel{
 
