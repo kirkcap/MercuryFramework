@@ -62,6 +62,10 @@ angular.module('mercuryFWConfigApp.controllers',[])
           vm.config[vm.config_key.value][key] = vm.others[key];
         }
       })
+    }else{
+      if(vm.metadata.meta[vm.config_key.value].fldtype == "select" && vm.config[vm.config_key.value] == "Other"){
+        vm.config[vm.config_key.value] = vm.others[vm.config_key.value];
+      }
     }
 
     vm.config.$save({ service: vm.metadata.svcname, cfg: vm.config_key.value }, function() {
@@ -97,7 +101,12 @@ angular.module('mercuryFWConfigApp.controllers',[])
           vm.config[vm.config_key.value][key] = vm.others[key];
         }
       })
+    }else{
+      if(vm.metadata.meta[vm.config_key.value].fldtype == "select" && vm.config[vm.config_key.value] == "Other"){
+        vm.config[vm.config_key.value] = vm.others[vm.config_key.value];
+      }
     }
+
     vm.config.$update({ service: vm.metadata.svcname, cfg: vm.config_key.value }, function() {
       $state.go(vm.metadata.sourceUrl);//'teste'); // on success go back to home i.e. attributes state.
     });
@@ -138,6 +147,13 @@ angular.module('mercuryFWConfigApp.controllers',[])
             }
           }
         })
+      }else{
+        if(vm.metadata.meta[vm.config_key.value].fldtype == "select" && vm.metadata.meta[vm.config_key.value].valid_values.type=="array"){
+          if($filter('filter')(vm.metadata.meta[vm.config_key.value].valid_values.values, vm.config[vm.config_key.value], true).length==0){
+            vm.others[vm.config_key.value] = vm.config[vm.config_key.value];
+            vm.config[vm.config_key.value] = "Other";
+          }
+        }
       }
     });
 

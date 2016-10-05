@@ -20,15 +20,14 @@ class router{
   public function __construct(){
     $this->routes = json_decode(file_get_contents(__ROOT__."/backend/config/routes.json"), true); //Getting routes config data
     $cfgModel = new configModel("admin_cfg");
-    $adm_fe_allowed = $cfgModel->findByKey("admin_frontend_allowed");
-    if($adm_fe_allowed){
+    $r = $cfgModel->findByKey("admin_frontend_allowed");
+    if(sizeOf($r)>0 && $r["admin_frontend_allowed"]){
       $this->routes["admin_cfg"] = json_decode("{\"controller\" : \"configurationController\", \"method\" : \"CRUD\", \"checkToken\" : false, \"model\" : \"admin_cfg\"}", true);
       $this->routes["auth_cfg"]  = json_decode("{\"controller\" : \"configurationController\", \"method\" : \"CRUD\", \"checkToken\" : false, \"model\" : \"auth_cfg\"}", true);
       $this->routes["databases"] = json_decode("{\"controller\" : \"configurationController\", \"method\" : \"CRUD\", \"checkToken\" : false, \"model\" : \"databases\"}", true);
       $this->routes["models"]    = json_decode("{\"controller\" : \"configurationController\", \"method\" : \"CRUD\", \"checkToken\" : false, \"model\" : \"models\"}", true);
       $this->routes["routes"]    = json_decode("{\"controller\" : \"configurationController\", \"method\" : \"CRUD\", \"checkToken\" : false, \"model\" : \"routes\"}", true);
-      $this->routes["teste"]     = json_decode("{\"controller\" : \"configurationController\", \"method\" : \"CRUD\", \"checkToken\" : false, \"model\" : \"teste\"}", true);
-      $this->routes["config_files"]  = json_decode("{\"controller\" : \"configurationController\", \"method\" : \"CRUD\", \"checkToken\" : false, \"model\" : \"config_files\"}", true);
+      //$this->routes["config_files"]  = json_decode("{\"controller\" : \"configurationController\", \"method\" : \"CRUD\", \"checkToken\" : false, \"model\" : \"config_files\"}", true);
     }
     $this->routes["dbMetadata"]  = json_decode("{\"controller\" : \"dbMetadataController\", \"method\" : \"getDBMetadata\", \"checkToken\" : false}", true);
     $this->routes["dbMetadata.tbMetadata"]  = json_decode("{\"controller\" : \"dbMetadataController\", \"method\" : \"getTBMetadata\", \"checkToken\" : false}", true);
