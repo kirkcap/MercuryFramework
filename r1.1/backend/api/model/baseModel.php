@@ -170,22 +170,24 @@ class baseModel extends helpers\ModelData{
     return DBFactory::getInstance()->getDB($this->getDbCfgName())->getDeleteStatement( $this->getTableName(), $this->WhereConditionElements );
   }
 
-  public function prepareDynamicSelectStmt( $keys, $values){
+  public function prepareDynamicSelectStmt( $keys, $values, $filter = null){
 
     $this->prepareDefaultSelectElements();
 
-    $this->prepareDynamicWhere($keys, $values);
+    $this->prepareDynamicWhere($keys, $values, $filter);
 
     return $this->getSelectStatement();
 
   }
 
-  private function prepareDynamicWhere($keys, $values){
+  private function prepareDynamicWhere($keys, $values, $filter){
+    $condCounter = 0;
     if(sizeof($keys) > 0){
       $this->_PREPARE_WHERE();
       $values_local = array();
 
       if($values!=null){
+        $keysSet = true;
         $values_local = $this->parse_keys_values($keys, $values);
 
         $idx = 0;
@@ -196,15 +198,18 @@ class baseModel extends helpers\ModelData{
              $this->getTableColumn($keys[$idxkey])->getFieldDetails()->getDefault()->getType()==FieldDefault::type_TOKEN_ID){ //If there is a key field filled with token id, get token automatically
              if($idxkey == 0){
                $this->_CONDITION( $this->getTableColumn($keys[$idxkey++])->getField( DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB() ) , "=", Token::getInstance()->getId() );
+               $condCounter += 1;
              }else{
                $this->_AND( $this->getTableColumn($keys[$idxkey++])->getField( DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB() ) , "=", Token::getInstance()->getId() );
+               $condCounter += 1;
              }
-
           }
           if($idxkey == 0){
             $this->_CONDITION( $this->getTableColumn($keys[$idxkey++])->getField( DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB() ) , "=", $values_local[$idx++] );
+            $condCounter += 1;
           }else{
             $this->_AND( $this->getTableColumn($keys[$idxkey++])->getField( DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB() ) , "=", $values_local[$idx++] );
+            $condCounter += 1;
           }
 
         }
@@ -212,11 +217,24 @@ class baseModel extends helpers\ModelData{
         for($i=0;$i<sizeof($keys);$i++){
           if($this->getTableColumn($keys[$i])->getFieldDetails()->getDefault()!=null and
              $this->getTableColumn($keys[$i])->getFieldDetails()->getDefault()->getType()==FieldDefault::type_TOKEN_ID){ //If there is a key field filled with token id, get token automatically
-             //if($idx == 0){
+             if($condCounter == 0){
                $this->_CONDITION( $this->getTableColumn($keys[$i])->getField( DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB() ) , "=", Token::getInstance()->getId() );
-             //}else{
-             //  $this->_AND( $this->getTableColumn($keys[$i])->getField( DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB() ) , "=", Token::getInstance()->getId() );
-             //}
+               $condCounter += 1;
+             }else{
+               $this->_AND( $this->getTableColumn($keys[$i])->getField( DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB() ) , "=", Token::getInstance()->getId() );
+               $condCounter += 1;
+             }
+          }
+        }
+      }
+      if($filter!=null){
+        for($i=0;$i<sizeOf($filter);$i++){
+          if($condCounter == 0){
+            $this->_CONDITION( $this->getTableColumn($filter[$i]->getName())->getField( DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB() ) , "=", $filter[$i]->getValue() );
+            $condCounter += 1;
+          }else{
+            $this->_AND( $this->getTableColumn($filter[$i]->getName())->getField( DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB() ) , "=", $filter[$i]->getValue() );
+            $condCounter += 1;
           }
         }
       }

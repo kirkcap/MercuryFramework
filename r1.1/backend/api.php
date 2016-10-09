@@ -21,19 +21,14 @@ class API {
 	 * Dynmically call the method based on the query string
 	 */
 	public function processApi(){
-    $logger = Logger::getInstance();
-
     $REST = REST::getInstance();
 
-    $pathInfo = $REST->getPathInfo(); //Gets the REST path info containing object(s) and parameter(s)
-    $logger->log('API->processApi', Logger::LOG_TYPE_Info, ['$pathInfo'=>$pathInfo]);
+    $reqInfo = $REST->getRequestInfo(); //Gets the REST path info containing object(s) and parameter(s)
 
-    $request_parts = explode( "/", $pathInfo ); //Separating request parts
-    $logger->log('API->processApi', Logger::LOG_TYPE_Info, ['$request_parts' => $request_parts]);
+    $request_parts = explode( "/", $reqInfo->getPathInfo() ); //Separating request parts
 
     $router = new router(); //Initializing router
     $route = $router->getRoute($REST->get_request_method(), $request_parts ); //Obtaining route, containing controller to be instantiated and method to be called, and additional data
-    $logger->log('API->processApi', Logger::LOG_TYPE_Info, ['$route' => $route]);
 
     if($route->getController()!=null){
       $continue = true;
@@ -62,8 +57,7 @@ class API {
 
           }
         }
-
-        $controller->execute($route->getControllerMethod(), $route->getControllerParameters());
+        $controller->execute($route->getControllerMethod(), $route->getControllerParameters(), $reqInfo->getParameters());
 
       }
     }else

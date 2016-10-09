@@ -11,11 +11,11 @@ class genericModel extends baseModel{
   private $exception_ocurred = false;
   private $err;
 
-  public function listAll($parm){
+  public function listAll($parm, $filter){
     $result = [0];
 
     try{
-      $SelectStmt = $this->prepareDynamicSelectStmt( $this->getTableKey(), $parm  );
+      $SelectStmt = $this->prepareDynamicSelectStmt( $this->getTableKey(), $parm, $filter );
       $result = $SelectStmt->execute(genericModel::SelectALL_RECORDS);
     }
     catch(Exception $e){

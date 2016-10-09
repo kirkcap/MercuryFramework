@@ -8,6 +8,7 @@ class genericCRUDController{
 
     protected $API;
     protected $modelName;
+    protected $filter;
 
 
     public function __construct($ModelName){
@@ -17,10 +18,14 @@ class genericCRUDController{
 
     }
 
-    public function execute($method, $parameter){
+    public function execute($method, $parameter, $filter){
+      $this->setFilter($filter);
       $this->$method($parameter);
     }
 
+    public function setFilter($filter){
+      $this->filter = $filter;
+    }
 
 
     public function index($parm){
@@ -30,7 +35,7 @@ class genericCRUDController{
 
       $modelObj = new genericModel($this->modelName);
 
-      $r = $modelObj->listAll($parm);
+      $r = $modelObj->listAll($parm, $this->filter);
       if($modelObj->exceptionOcurred()){
         $this->API->response($modelObj->getErrorData()->getFrontEndResponse(),200);
       }else{

@@ -1,6 +1,6 @@
 <?php
 namespace com\mercuryfw\helpers;
-
+use com\mercuryfw\helpers\Logger as Logger;
 class REST {
 
 	public $_allow = array();
@@ -97,19 +97,10 @@ class REST {
 		return $clean_input;
 	}
 
-  public function getPathInfo(){
-    if(!empty($_SERVER['PATH_INFO'])){
-      $pathInfo = ltrim(rtrim($_SERVER['PATH_INFO'], "/"),"/");//Removing first and last /
-    }else{
-      $baseUrl     = preg_replace('/index*.php$/', '', $_SERVER['SCRIPT_NAME']);//Removing script name to get the baseUrl(if script is hosted in subfolder from the root)
-      $scriptName  = basename($_SERVER["SCRIPT_FILENAME"]);//Obtaining the exact name of the index*.php script
-      $pathInfo    = substr($_SERVER['REQUEST_URI'], mb_strlen($baseUrl));//Removing the baseUrl from the REQUEST_URI, to get pathInfo
-      if(strpos($pathInfo, $scriptName)!==false){ //If script name is on the REQUEST_URI, remove it also...
-        $pathInfo    = substr($pathInfo, mb_strlen($scriptName));
-      }
-      $pathInfo = ltrim(rtrim($pathInfo, "/"),"/");//Removing first and last /
-    }
-    return $pathInfo;
+  public function getRequestInfo(){
+
+    return new RequestInfo;
+
   }
 
   /*
@@ -152,6 +143,98 @@ class REST {
   private function __wakeup(){
   }
 
+
+}
+
+class RequestInfo{
+	private $pathInfo;
+	private $parameters = [];
+
+	public function __construct(){
+    $this->prepare();
+	}
+
+	public function prepare(){
+    if(!empty($_SERVER['PATH_INFO'])){
+      $this->pathInfo = ltrim(rtrim($_SERVER['PATH_INFO'], "/"),"/");//Removing first and last /
+			if(!empty($_SERVER["QUERY_STRING"])){
+				$params = explode('&', empty($_SERVER["QUERY_STRING"]));
+				$this->processParameters($params);
+			}
+    }else{
+			if(!empty($_SERVER["QUERY_STRING"]) || !empty($_SERVER["REDIRECT_QUERY_STRING"])){
+				if(!empty($_SERVER["QUERY_STRING"])){
+			    $queryStr    = $_SERVER["QUERY_STRING"];
+				}else {
+					$queryStr    = $_SERVER["REDIRECT_QUERY_STRING"];
+				}
+				$queryParts  = explode('&', $queryStr);//Separating first part from the rest...
+				if(sizeOf($queryParts)>0){
+					$this->pathInfo = explode('=', $queryParts[0])[1];//Expecting <var>=pathInfo
+					for($i=0;$i<sizeOf($queryParts)-1;$i++){
+					  $queryParts[$i] = $queryParts[$i+1];// Overwriting first position, which contains the pathInfo data, the remaining, are query string parameters...
+					}
+					unset($queryParts[sizeOf($queryParts)-1]);//Removing last position
+					$this->processParameters($queryParts);
+				}
+			}else{
+	      $baseUrl     = preg_replace('/index*.php$/', '', $_SERVER['SCRIPT_NAME']);//Removing script name to get the baseUrl(if script is hosted in subfolder from the root)
+	      $scriptName  = basename($_SERVER["SCRIPT_FILENAME"]);//Obtaining the exact name of the index*.php script
+	      $this->pathInfo    = substr($_SERVER['REQUEST_URI'], mb_strlen($baseUrl));//Removing the baseUrl from the REQUEST_URI, to get pathInfo
+				if(strpos($this->pathInfo, $scriptName)!==false){ //If script name is on the REQUEST_URI, remove it also...
+	        $this->pathInfo    = substr($pathInfo, mb_strlen($scriptName));
+				}
+	      $this->pathInfo = ltrim(rtrim($this->pathInfo, "/"),"/");//Removing first and last /
+		  }
+    }
+	}
+
+	public function processParameters($params){
+		$reqParams = [];
+		for($i=0;$i<sizeOf($params);$i++){
+			$reqParams[] = new RequestParameter($params[$i]);
+		}
+		$this->setParameters($reqParams);
+	}
+
+	public function setPathInfo($data){
+		$this->pathInfo = $data;
+	}
+	public function getPathInfo(){
+		return $this->pathInfo;
+	}
+
+	public function setParameters($data){
+		$this->parameters = $data;
+	}
+	public function getParameters(){
+		return $this->parameters;
+	}
+}
+
+class RequestParameter{
+	private $name;
+	private $value;
+
+	public function __construct($param){
+		$parts = explode('=', $param);
+		$this->setName($parts[0]);
+		$this->setValue($parts[1]);
+	}
+
+	public function setName($data){
+		$this->name = $data;
+	}
+	public function getName(){
+		return $this->name;
+	}
+
+	public function setValue($data){
+		$this->value = $data;
+	}
+	public function getValue(){
+		return $this->value;
+	}
 
 }
 ?>
