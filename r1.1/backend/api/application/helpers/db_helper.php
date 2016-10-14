@@ -1108,9 +1108,6 @@ class mySQLSelectStatement extends mySQLStatement{
       }
 
       /* Execute statement */
-      if($prep_count_stmt !=null){
-        $prep_count_stmt->execute() or die($this->dbcon->getDBConn()->error.__LINE__);
-      }
       $prep_stmt->execute() or die($this->dbcon->getDBConn()->error.__LINE__);
 
       /* Fetch result to array */
@@ -1119,6 +1116,7 @@ class mySQLSelectStatement extends mySQLStatement{
 
         if($r->num_rows > 0){
           if($return_mode == self::ALL_RECORDS ){
+            $prep_count_stmt->execute() or die($this->dbcon->getDBConn()->error.__LINE__);
             $c = $prep_count_stmt->get_result();
             $rec = [];
             while($row = $r->fetch_assoc()){
@@ -1152,11 +1150,14 @@ class mySQLSelectStatement extends mySQLStatement{
               $prep_stmt->fetch();
 
             }
-
+            $prep_stmt->close();
+            
+            $prep_count_stmt->execute() or die($this->dbcon->getDBConn()->error.__LINE__);
             $c = $prep_count_stmt->store_result();
             $sr = new Statement_Result($prep_count_stmt);
             $countr = $sr->Get_Row($prep_count_stmt);
             $prep_count_stmt->fetch();
+            $prep_count_stmt->close();
             $result['records_count'] = $countr['records_count'];
             $result['range_low'] = $this->pagination_config['offset'];
             $result['range_high'] = ( $this->pagination_config['offset'] + sizeOf($rec) ) - 1;
