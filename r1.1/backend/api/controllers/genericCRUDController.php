@@ -9,6 +9,7 @@ class genericCRUDController{
     protected $API;
     protected $modelName;
     protected $filter;
+    protected $pagination;
 
 
     public function __construct($ModelName){
@@ -18,13 +19,19 @@ class genericCRUDController{
 
     }
 
-    public function execute($method, $parameter, $filter){
-      $this->setFilter($filter);
+    public function execute($method, $parameter, $filter_pagination=[]){
+      if(sizeOf($filter_pagination)>0){
+        $this->setFilter($filter_pagination['filter_criteria']);
+        $this->setPagination($filter_pagination['pagination']);
+      }
       $this->$method($parameter);
     }
 
     public function setFilter($filter){
       $this->filter = $filter;
+    }
+    public function setPagination($pagination){
+      $this->pagination = $pagination;
     }
 
 
@@ -35,13 +42,16 @@ class genericCRUDController{
 
       $modelObj = new genericModel($this->modelName);
 
-      $r = $modelObj->listAll($parm, $this->filter);
+      $r = $modelObj->listAll($parm, $this->filter, $this->pagination);
       if($modelObj->exceptionOcurred()){
         $this->API->response($modelObj->getErrorData()->getFrontEndResponse(),200);
       }else{
 
         if(sizeof($r) > 0){
-  				$this->API->response($this->API->json($r), 200); // send user details
+          $additional_headers = [];
+          $additional_headers[0] = ['name' => 'Content-Range', 'value' => $r['range_low'].'-'.$r['range_high'].'/'.$r['records_count']];
+          $additional_headers[1] = ['name' => 'Accept-Range', 'value' => $this->modelName.' '.$r['max_size']];
+          $this->API->response($this->API->json($r['data']), 200, $additional_headers); // send user details
   			}
         $this->API->response('',204);	// If no records "No Content" status
 

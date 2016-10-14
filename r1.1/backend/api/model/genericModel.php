@@ -11,12 +11,12 @@ class genericModel extends baseModel{
   private $exception_ocurred = false;
   private $err;
 
-  public function listAll($parm, $filter){
+  public function listAll($parm, $filter, $pagination=[]){
     $result = [0];
 
     try{
       $SelectStmt = $this->prepareDynamicSelectStmt( $this->getTableKey(), $parm, $filter );
-      $result = $SelectStmt->execute(genericModel::SelectALL_RECORDS);
+      $result = $SelectStmt->execute(genericModel::SelectALL_RECORDS, $pagination);
     }
     catch(Exception $e){
       $this->exception_ocurred = true;
@@ -49,7 +49,7 @@ class genericModel extends baseModel{
 
     try{
       $SelectStmt = $this->prepareDynamicSelectStmt( $critfields, $critvalues  );
-      $result = $SelectStmt->execute(genericModel::SelectFIRST_ONLY);
+      $result = $SelectStmt->execute(genericModel::SelectFIRST_ONLY );
     }
     catch(Exception $e){
       $this->exception_ocurred = true;

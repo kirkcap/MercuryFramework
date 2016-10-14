@@ -37,9 +37,9 @@ class REST {
 		return $_SERVER['HTTP_REFERER'];
 	}
 
-	public function response($data,$status){
+	public function response($data,$status,$additional_headers=[]){
 		$this->_code = ($status)?$status:200;
-		$this->set_headers();
+		$this->set_headers($additional_headers);
 		echo $data;
 		exit;
 	}
@@ -113,7 +113,7 @@ class REST {
 	}
 
 
-	private function set_headers(){
+	private function set_headers($additional_headers=[]){
 
 		header("HTTP/1.1 ".$this->_code." ".$this->get_status_message());
 		header("Content-Type:".$this->_content_type);
@@ -122,6 +122,11 @@ class REST {
 		header("Access-Control-Max-Age: 1000");
     header("Access-Control-Allow-Headers: Content-Type, token, Authorization, X-Requested-With");
     header("Access-Control-Allow-Credentials: true");
+		if(sizeOf($additional_headers)>0){
+			for($i=0;$i<sizeOf($additional_headers);$i++){
+				header($additional_headers[$i]['name'].":".$additional_headers[$i]['value']);
+			}
+		}
 
 	}
 
@@ -158,7 +163,8 @@ class RequestInfo{
     if(!empty($_SERVER['PATH_INFO'])){
       $this->pathInfo = ltrim(rtrim($_SERVER['PATH_INFO'], "/"),"/");//Removing first and last /
 			if(!empty($_SERVER["QUERY_STRING"])){
-				$params = explode('&', empty($_SERVER["QUERY_STRING"]));
+				$params = explode('&', $_SERVER["QUERY_STRING"]);
+
 				$this->processParameters($params);
 			}
     }else{
@@ -191,10 +197,16 @@ class RequestInfo{
 
 	public function processParameters($params){
 		$reqParams = [];
+		$pagParams = [];
 		for($i=0;$i<sizeOf($params);$i++){
-			$reqParams[] = new RequestParameter($params[$i]);
+			$reqParam = new RequestParameter($params[$i]);
+			if($reqParam->isFilterCriteria()){
+			  $reqParams[] = $reqParam;
+			}else{
+				$pagParams[] = $reqParam;
+			}
 		}
-		$this->setParameters($reqParams);
+		$this->setParameters(['filter_criteria' => $reqParams, 'pagination' => $pagParams]);
 	}
 
 	public function setPathInfo($data){
@@ -210,16 +222,36 @@ class RequestInfo{
 	public function getParameters(){
 		return $this->parameters;
 	}
+
+	public function setPagination($data){
+		$this->pagination = $data;
+	}
+	public function getPagination(){
+		return $this->pagination;
+	}
 }
 
 class RequestParameter{
 	private $name;
-	private $value;
+	private $value_low;
+	private $value_high;
+	private $type;
 
 	public function __construct($param){
 		$parts = explode('=', $param);
 		$this->setName($parts[0]);
-		$this->setValue($parts[1]);
+		if(strtolower($parts[0])=='_range'){
+			$range = explode('-', $parts[1]);
+			$this->setValueLow($range[0]);
+			$this->setValueHigh($range[1]);
+			$this->setType('pagination');
+		}elseif(strtolower($parts[0])=='_page' || strtolower($parts[0])=='_per_page'){
+			$this->setValue($parts[1]);
+			$this->setType('pagination');
+		}else{
+			$this->setValue($parts[1]);
+			$this->setType('filter_criteria');
+		}
 	}
 
 	public function setName($data){
@@ -230,11 +262,41 @@ class RequestParameter{
 	}
 
 	public function setValue($data){
-		$this->value = $data;
+		$this->value_low = $data;
 	}
 	public function getValue(){
-		return $this->value;
+		return $this->value_low;
 	}
+
+	public function setValueLow($data){
+		$this->value_low = $data;
+	}
+	public function getValueLow(){
+		return $this->value_low;
+	}
+
+	public function setValueHigh($data){
+		$this->value_high = $data;
+	}
+	public function getValueHigh(){
+		return $this->value_high;
+	}
+
+	public function setType($data){
+		$this->type = $data;
+	}
+	public function getType(){
+		return $this->type;
+	}
+
+	public function isFilterCriteria(){
+		return $this->type == 'filter_criteria';
+	}
+
+	public function isPagination(){
+		return $this->type == 'pagination';
+	}
+
 
 }
 ?>

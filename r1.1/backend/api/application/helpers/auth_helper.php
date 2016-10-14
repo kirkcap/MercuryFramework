@@ -1,5 +1,7 @@
 <?php
 namespace com\mercuryfw\helpers;
+use \JWT as JWT;
+
 class Token{
   private $id;
   private $issued_at;

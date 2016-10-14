@@ -180,7 +180,7 @@ class baseModel extends helpers\ModelData{
 
   }
 
-  private function prepareDynamicWhere($keys, $values, $filter){
+  private function prepareDynamicWhere($keys, $values, $filter=null){
     $condCounter = 0;
     if(sizeof($keys) > 0){
       $this->_PREPARE_WHERE();
@@ -229,13 +229,31 @@ class baseModel extends helpers\ModelData{
       }
       if($filter!=null){
         for($i=0;$i<sizeOf($filter);$i++){
-          if($condCounter == 0){
-            $this->_CONDITION( $this->getTableColumn($filter[$i]->getName())->getField( DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB() ) , "=", $filter[$i]->getValue() );
-            $condCounter += 1;
+          $values = explode(",", $filter[$i]->getValue());
+          if(sizeOf($values)==1){
+            if($condCounter == 0){
+              $this->_CONDITION( $this->getTableColumn($filter[$i]->getName())->getField( DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB() ) , "=", $filter[$i]->getValue() );
+              $condCounter += 1;
+            }else{
+              $this->_AND( $this->getTableColumn($filter[$i]->getName())->getField( DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB() ) , "=", $filter[$i]->getValue() );
+              $condCounter += 1;
+            }
           }else{
-            $this->_AND( $this->getTableColumn($filter[$i]->getName())->getField( DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB() ) , "=", $filter[$i]->getValue() );
-            $condCounter += 1;
+            for($j=0;$j<sizeOf($values);$j++){
+              if($j==0){
+                if($condCounter == 0){
+                  $this->GROUP_OPEN( )->_CONDITION( $this->getTableColumn($filter[$i]->getName())->getField( DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB() ) , "=", $values[$j] );
+                }else{
+                  $this->_AND( )->GROUP_OPEN( )->_CONDITION( $this->getTableColumn($filter[$i]->getName())->getField( DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB() ) , "=", $values[$j] );
+                }
+              }else{
+                $this->_OR( $this->getTableColumn($filter[$i]->getName())->getField( DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB() ) , "=", $values[$j] );
+                $condCounter += 1;
+              }
+            }
+            $this->GROUP_CLOSE( );
           }
+
         }
       }
     }

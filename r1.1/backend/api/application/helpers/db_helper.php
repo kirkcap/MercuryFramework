@@ -1,6 +1,8 @@
 <?php
 namespace com\mercuryfw\helpers;
 use \Exception as Exception;
+use \mysqli as mysqli;
+use \PDO as PDO;
 
 interface if_db{
 
@@ -25,6 +27,8 @@ interface if_db{
   public function getUpdateStatement($tb_name, $UpdateElements, $WhereConditionElements);
 
   public function getDeleteStatement($tb_name, $WhereConditionElements);
+
+  public function getDBConn();
 
 }
 
@@ -68,7 +72,11 @@ class dbFactory{
   public function getDB($db_cfg_name){
     if(array_key_exists($db_cfg_name, $this->DB_Config)){
       if($this->DB_Config[$db_cfg_name]["DB_TYPE"]=='mysql'){
-        return mySqlDB::getInstance($this->DB_Config[$db_cfg_name]); //$this->db_data);
+        return mySqlDB::getInstance($this->DB_Config[$db_cfg_name]);
+      }elseif($this->DB_Config[$db_cfg_name]["DB_TYPE"]=='mysql_PDO'){
+        return mySql_PDO_DB::getInstance($this->DB_Config[$db_cfg_name]);
+      }elseif($this->DB_Config[$db_cfg_name]["DB_TYPE"]=='pgsql_PDO'){
+        return postGreSql_PDO_DB::getInstance($this->DB_Config[$db_cfg_name]);
       }else{
         throw new Exception("Database Type ".$this->DB_Config[$db_cfg_name]["DB_TYPE"]." not supported yet!");
       }
@@ -125,10 +133,10 @@ class mySqlDB implements if_db{
         return static::$instance;
     }
 
-    public function getMysqli(){
+    public function getDBConn(){
 
       if($this->mysqli==null){
-        $this->mysqli = new \mysqli($this->conn_data['DB_SERVER'], $this->conn_data['DB_USER'], $this->conn_data['DB_PASSWORD'], $this->conn_data['DB']);
+        $this->mysqli = new mysqli($this->conn_data['DB_SERVER'], $this->conn_data['DB_USER'], $this->conn_data['DB_PASSWORD'], $this->conn_data['DB']);
       }
 
       return $this->mysqli;
@@ -217,6 +225,256 @@ class mySqlDB implements if_db{
 }
 
 
+class mySql_PDO_DB implements if_db{
+
+    public  $dbconn = null;
+    private $conn_data = null;
+    private $dbName = "";
+    private $prefix_db = false;
+    private $prefix_tb = false;
+
+
+    /**
+     * @var Singleton The reference to *Singleton* instance of this class
+     */
+    private static $instance;
+
+    /**
+     * Returns the *Singleton* instance of this class.
+     *
+     * @return Singleton The *Singleton* instance.
+     */
+    public static function getInstance($conn_data){
+
+        if (null === static::$instance) {
+            static::$instance = new static($conn_data);
+        }
+
+        return static::$instance;
+    }
+
+    public function getDBConn(){
+
+      if($this->dbconn==null){
+        $this->dbconn = new PDO('mysql:host='.$this->conn_data['DB_SERVER'].';dbname='.$this->conn_data['DB'].';charset=utf8mb4',
+                                $this->conn_data['DB_USER'],
+                                $this->conn_data['DB_PASSWORD'],
+                                array(PDO::ATTR_EMULATE_PREPARES => false, PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
+
+      }
+
+      return $this->dbconn;
+
+    }
+
+    /**
+     * Protected constructor to prevent creating a new instance of the
+     * *Singleton* via the `new` operator from outside of this class.
+     */
+    protected function __construct($conn_data){
+      if($this->conn_data == null){
+        $this->conn_data = $conn_data; //include( __ROOT__."/backend/api/application/config/database.php" );
+        $this->prefix_db = $this->conn_data['PREFIX_DB'];
+        $this->prefix_tb = $this->conn_data['PREFIX_TB'];
+        $this->dbName = $this->conn_data['DB'];
+      }
+    }
+
+    public function prefixDB(){
+      return $this->prefix_db;
+    }
+
+    public function prefixTB(){
+      return $this->prefix_tb;
+    }
+
+    public function getDBName(){
+      return $this->dbName;
+    }
+
+
+    /**
+     * Private clone method to prevent cloning of the instance of the
+     * *Singleton* instance.
+     *
+     * @return void
+     */
+    private function __clone(){
+    }
+
+    /**
+     * Private unserialize method to prevent unserializing of the *Singleton*
+     * instance.
+     *
+     * @return void
+     */
+    private function __wakeup(){
+    }
+
+
+    public function getSelectStatement($tb_name, $SelectionElements, $WhereConditionElements, $SelectionOrderElements){
+      $stmt = new mySQL_PDO_SelectStatement($this, $tb_name, $SelectionElements, $WhereConditionElements, $SelectionOrderElements);
+      $stmt->buildStmt();
+      return $stmt;
+    }
+
+    public function getInsertStatement( $tb_name, $InsertionElements ){
+      $stmt = new mySQL_PDO_InsertStatement($this, $tb_name, $InsertionElements);
+      $stmt->buildStmt();
+      return $stmt;
+    }
+
+    public function getUpdateStatement($tb_name, $UpdateElements, $WhereConditionElements){
+      $stmt = new mySQL_PDO_UpdateStatement($this, $tb_name, $UpdateElements, $WhereConditionElements);
+      $stmt->buildStmt();
+      return $stmt;
+    }
+
+    public function getDeleteStatement($tb_name, $WhereConditionElements){
+      $stmt = new mySQL_PDO_DeleteStatement($this, $tb_name, $WhereConditionElements);
+      $stmt->buildStmt();
+      return $stmt;
+    }
+
+    public function getTablesListStatement(){
+      $stmt = new mySQL_PDO_GetTableListStatement($this);
+      $stmt->buildStmt();
+      return $stmt;
+    }
+
+    public function getTableStructureStatement($tbName){
+      $stmt = new mySQL_PDO_GetTableStructureStatement($this, $tbName);
+      $stmt->buildStmt();
+      return $stmt;
+    }
+}
+
+class postGreSql_PDO_DB implements if_db{
+
+    public  $dbconn = null;
+    private $conn_data = null;
+    private $dbName = "";
+    private $prefix_db = false;
+    private $prefix_tb = false;
+
+
+    /**
+     * @var Singleton The reference to *Singleton* instance of this class
+     */
+    private static $instance;
+
+    /**
+     * Returns the *Singleton* instance of this class.
+     *
+     * @return Singleton The *Singleton* instance.
+     */
+    public static function getInstance($conn_data){
+
+        if (null === static::$instance) {
+            static::$instance = new static($conn_data);
+        }
+
+        return static::$instance;
+    }
+
+    public function getDBConn(){
+
+      if($this->dbconn==null){
+        $this->dbconn = new PDO('pgsql:dbname='.$this->conn_data['DB'].';host='.$this->conn_data['DB_SERVER'].'',
+                                 $this->conn_data['DB_USER'],
+                                 $this->conn_data['DB_PASSWORD']);
+      }
+
+      return $this->dbconn;
+
+    }
+
+    /**
+     * Protected constructor to prevent creating a new instance of the
+     * *Singleton* via the `new` operator from outside of this class.
+     */
+    protected function __construct($conn_data){
+      if($this->conn_data == null){
+        $this->conn_data = $conn_data; //include( __ROOT__."/backend/api/application/config/database.php" );
+        $this->prefix_db = $this->conn_data['PREFIX_DB'];
+        $this->prefix_tb = $this->conn_data['PREFIX_TB'];
+        $this->dbName = $this->conn_data['DB'];
+      }
+    }
+
+    public function prefixDB(){
+      return $this->prefix_db;
+    }
+
+    public function prefixTB(){
+      return $this->prefix_tb;
+    }
+
+    public function getDBName(){
+      return $this->dbName;
+    }
+
+    public function getDBUser(){
+      return $this->conn_data['DB_USER'];
+    }
+
+    /**
+     * Private clone method to prevent cloning of the instance of the
+     * *Singleton* instance.
+     *
+     * @return void
+     */
+    private function __clone(){
+    }
+
+    /**
+     * Private unserialize method to prevent unserializing of the *Singleton*
+     * instance.
+     *
+     * @return void
+     */
+    private function __wakeup(){
+    }
+
+
+    public function getSelectStatement($tb_name, $SelectionElements, $WhereConditionElements, $SelectionOrderElements){
+      $stmt = new pgSQL_PDO_SelectStatement($this, $tb_name, $SelectionElements, $WhereConditionElements, $SelectionOrderElements);
+      $stmt->buildStmt();
+      return $stmt;
+    }
+
+    public function getInsertStatement( $tb_name, $InsertionElements ){
+      $stmt = new mySQL_PDO_InsertStatement($this, $tb_name, $InsertionElements);
+      $stmt->buildStmt();
+      return $stmt;
+    }
+
+    public function getUpdateStatement($tb_name, $UpdateElements, $WhereConditionElements){
+      $stmt = new mySQL_PDO_UpdateStatement($this, $tb_name, $UpdateElements, $WhereConditionElements);
+      $stmt->buildStmt();
+      return $stmt;
+    }
+
+    public function getDeleteStatement($tb_name, $WhereConditionElements){
+      $stmt = new mySQL_PDO_DeleteStatement($this, $tb_name, $WhereConditionElements);
+      $stmt->buildStmt();
+      return $stmt;
+    }
+
+    public function getTablesListStatement(){
+      $stmt = new pgSQL_PDO_GetTableListStatement($this);
+      $stmt->buildStmt();
+      return $stmt;
+    }
+
+    public function getTableStructureStatement($tbName){
+      $stmt = new pgSQL_PDO_GetTableStructureStatement($this, $tbName);
+      $stmt->buildStmt();
+      return $stmt;
+    }
+}
+
+
 abstract class mySQLStatement{
   protected $dbcon;
   protected $statement;
@@ -230,6 +488,7 @@ abstract class mySQLStatement{
   protected $order;
   protected $bind_types;
   protected $bind_parms;
+  protected $pagination_config;
 
   public function setStatement($stmt){
     $this->statement = $stmt;
@@ -396,6 +655,42 @@ abstract class mySQLStatement{
     /*To be implemented*/
   }
 
+  public function preparePagination($pagination){
+    $this->pagination_config = [];
+    $mode__per_page = false;
+    $mode__per_range = false;
+    if(sizeOf($pagination)>0){
+      $offset = 0;
+      $page = 1;
+      $per_page = 100;
+      for($i=0;$i<sizeOf($pagination);$i++){
+        if($pagination[$i]->getName() == '_page'){
+          $page = $pagination[$i]->getValue();
+          $mode__per_page = true;
+        }elseif($pagination[$i]->getName() == '_per_page'){
+          $per_page = $pagination[$i]->getValue();
+          $mode__per_page = true;
+        }elseif($pagination[$i]->getName() == '_range'){
+          $page = '*';
+          $offset = $pagination[$i]->getValueLow();
+          $per_page = 1 + $pagination[$i]->getValueHigh() - $pagination[$i]->getValueLow();
+          $mode__per_range = true;
+        }
+      }
+      if($mode__per_page && $mode__per_range){
+        throw new Exception('Please use only one way of pagination(_range or _page + _per_page)!');
+      }elseif($mode__per_page){
+        $offset = ( ($page - 1) * $per_page );
+      }
+      $this->pagination_config['page'] = $page;
+      $this->pagination_config['offset'] = $offset;
+      $this->pagination_config['per_page'] = $per_page;
+    }
+  }
+
+  public function addPagination($pagination){
+    /*To be implemented*/
+  }
 }
 
 
@@ -470,7 +765,7 @@ class mySQLGetTableListStatement extends mySQLStatement{
     $result = [];
 
     /* Prepare statement */
-    if($r = $this->dbcon->getMysqli()->query($this->statement)){
+    if($r = $this->dbcon->getDBConn()->query($this->statement)){
       while($row = $r->fetch_assoc()){
         $result[] = $row;
       }
@@ -508,6 +803,72 @@ class mySQLGetTableListStatement extends mySQLStatement{
 
 
 }
+
+
+class mySQL_PDO_GetTableListStatement extends mySQLStatement{
+  public function __construct($dbcon){
+    $this->dbcon = $dbcon;
+    $this->statement = "SHOW FULL TABLES"; //.$dbcon->getDBName()
+  }
+
+  public function execute(){
+
+    $result = [];
+
+    /* Prepare statement */
+    $prep_stmt = $this->dbcon->getDBConn()->prepare($this->statement);
+
+    if($prep_stmt === false) {
+      throw new Exception('Wrong SQL: ' . $this->statement . ' Error: ' . $this->dbcon->getDBConn()->errorInfo() );
+    }
+    else{
+
+      /* Execute statement */
+      $prep_stmt->execute();
+
+
+      /* Fetch result to array */
+      $result = $prep_stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    }
+    return $result;
+  }
+
+
+}
+
+class pgSQL_PDO_GetTableListStatement extends mySQLStatement{
+  public function __construct($dbcon){
+    $this->dbcon = $dbcon;
+    $this->statement = "SELECT table_name, table_type FROM information_schema.tables WHERE table_schema = ?"; //.$dbcon->getDBName()
+  }
+
+  public function execute(){
+
+    $result = [];
+
+    /* Prepare statement */
+    $prep_stmt = $this->dbcon->getDBConn()->prepare($this->statement);
+
+    if($prep_stmt === false) {
+      throw new Exception('Wrong SQL: ' . $this->statement . ' Error: ' . $this->dbcon->getDBConn()->errorInfo() );
+    }
+    else{
+
+      /* Execute statement */
+      $prep_stmt->execute([$this->dbcon->getDBUser()]);
+
+
+      /* Fetch result to array */
+      $result = $prep_stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    }
+    return $result;
+  }
+
+
+}
+
 
 
 class mySQLGetTableStructureStatement extends mySQLStatement{
@@ -522,7 +883,7 @@ class mySQLGetTableStructureStatement extends mySQLStatement{
     $result = [];
 
     /* Prepare statement */
-    if($r = $this->dbcon->getMysqli()->query($this->statement)){
+    if($r = $this->dbcon->getDBConn()->query($this->statement)){
       while($row = $r->fetch_assoc()){
         $result[] = $row;
       }
@@ -563,15 +924,108 @@ class mySQLGetTableStructureStatement extends mySQLStatement{
 }
 
 
+class mySQL_PDO_GetTableStructureStatement extends mySQLStatement{
+  public function __construct($dbcon, $tbName){
+    $this->dbcon = $dbcon;
+    $this->tb_name = $tbName;
+    $this->statement = "show full columns from ".$dbcon->getDBName().'.'.$tbName;
+  }
+
+  public function execute(){
+
+    $result = [];
+
+    /* Prepare statement */
+    $prep_stmt = $this->dbcon->getDBConn()->prepare($this->statement);
+
+    if($prep_stmt === false) {
+      throw new Exception('Wrong SQL: ' . $this->statement . ' Error: ' . $this->dbcon->getDBConn()->errorInfo() );
+    }
+    else{
+
+      /* Execute statement */
+      $prep_stmt->execute();
+
+
+      /* Fetch result to array */
+      $result = $prep_stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    }
+
+    return $result;
+  }
+
+
+}
+
+class pgSQL_PDO_GetTableStructureStatement extends mySQLStatement{
+  public function __construct($dbcon, $tbName){
+    $this->dbcon = $dbcon;
+    $this->tb_name = $tbName;
+    $this->statement = "select column_name as \"Field\", data_type as \"Type\", collation_name as \"Collation\", is_nullable as \"Null\", '' as \"Key\", column_default as \"Default\", '' as \"Extra\", '' as \"Privileges\", column_name as \"Comment\" from INFORMATION_SCHEMA.COLUMNS where table_name = ? order by ordinal_position"; //.$dbcon->getDBName().'.'.$tbName;
+  }
+
+  public function execute(){
+
+    $result = [];
+
+    /* Prepare statement */
+    $prep_stmt = $this->dbcon->getDBConn()->prepare($this->statement);
+
+    if($prep_stmt === false) {
+      throw new Exception('Wrong SQL: ' . $this->statement . ' Error: ' . $this->dbcon->getDBConn()->errorInfo() );
+    }
+    else{
+
+      /* Execute statement */
+      $prep_stmt->execute([$this->tb_name]);
+
+      /* Fetch result to array */
+      $result = $prep_stmt->fetchAll(PDO::FETCH_ASSOC);
+
+      $get_key_stmt = "SELECT c.column_name as \"KeyField\" FROM information_schema.table_constraints tc JOIN information_schema.constraint_column_usage AS ccu USING (constraint_schema, constraint_name) JOIN information_schema.columns AS c ON c.table_schema = tc.constraint_schema AND tc.table_name = c.table_name AND ccu.column_name = c.column_name where constraint_type = 'PRIMARY KEY' and tc.table_name = ?";
+
+      $prep_stmt = $this->dbcon->getDBConn()->prepare($get_key_stmt);
+      if($prep_stmt === false) {
+        throw new Exception('Wrong SQL: ' . $this->statement . ' Error: ' . $this->dbcon->getDBConn()->errorInfo() );
+      }
+      else{
+        /* Execute statement */
+        $prep_stmt->execute([$this->tb_name]);
+
+        /* Fetch result to array */
+        $keys = $prep_stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        /* Identify table key fields in the return array*/
+        for($k=0;$k<sizeOf($keys);$k++){
+          for($i=0;$i<sizeOf($result);$i++){
+            if($result[$i]['Field'] == $keys[$k]['KeyField']){
+              $result[$i]['Key'] = 'PRI';
+              break;
+            }
+          }
+        }
+      }
+
+    }
+
+    return $result;
+  }
+
+
+}
+
 
 class mySQLSelectStatement extends mySQLStatement{
 
   const ALL_RECORDS = "ALL";
   const FIRST_ONLY  = "FIRST";
+  protected $count_statement;
 
   public function __construct($dbcon, $tb_name = null, $selectionElements = null, $whereConditionElements = null, $selectionOrderElements = null){
 
     $this->statement = "";
+    $this->count_statement = "";
     $this->columns = "";
     $this->tb_name = "";
     $this->order = "";
@@ -592,20 +1046,34 @@ class mySQLSelectStatement extends mySQLStatement{
   }
 
   public function buildStmt(){
+    $where = "";
+    $order = "";
 
     $this->statement = "SELECT " . $this->columns . " FROM " . ($this->dbcon->prefixDB()?$this->dbcon->getDBName().".":"") . $this->tb_name;
+    $this->count_statement = "SELECT count(*) as records_count FROM " . ($this->dbcon->prefixDB()?$this->dbcon->getDBName().".":"") . $this->tb_name;
 
     if(isset($this->WHERECond) and trim($this->WHERECond->getWHERE())!== ""){
-      $this->statement .= " WHERE " . $this->WHERECond->getWHERE();
+      $where = " WHERE " . $this->WHERECond->getWHERE();
     }
 
     if(trim($this->order)!==""){
-      $this->statement .= " ORDER BY ".$this->order;
+      $order = " ORDER BY ".$this->order;
     }
+    $this->statement .= $where . $order;
+    $this->count_statement .= $where . $order;
 
   }
 
-  public function execute($return_mode=self::ALL_RECORDS){
+  public function addPagination($pagination){
+    if(sizeOf($pagination)>0){
+      $this->preparePagination($pagination);
+      $offset = $this->pagination_config['offset'];
+      $per_page = $this->pagination_config['per_page'];
+      $this->statement .= '  LIMIT ' . $offset .','. $per_page;
+    }
+  }
+
+  public function execute($return_mode=self::ALL_RECORDS, $pagination=[]){
     $result = array();
     $bind_types = "";
     $parameters = [];
@@ -616,10 +1084,15 @@ class mySQLSelectStatement extends mySQLStatement{
     }
 
     /* Prepare statement */
-    $prep_stmt = $this->dbcon->getMysqli()->prepare($this->statement);
+    $prep_count_stmt = null;
+    if($return_mode == self::ALL_RECORDS ){
+      $this->addPagination($pagination);
+      $prep_count_stmt = $this->dbcon->getDBConn()->prepare($this->count_statement);
+    }
+    $prep_stmt = $this->dbcon->getDBConn()->prepare($this->statement);
 
     if($prep_stmt === false) {
-      throw new Exception('Wrong SQL: ' . $this->statement . ' Error: ' . $this->dbcon->getMysqli()->error.__LINE__ );
+      throw new Exception('Wrong SQL: ' . $this->statement . ' Error: ' . $this->dbcon->getDBConn()->error.__LINE__ );
     }
     else{
       if(trim($bind_types)!==""){
@@ -629,10 +1102,16 @@ class mySQLSelectStatement extends mySQLStatement{
           $bind_parms[] = & $parameters[$i];
         }
         call_user_func_array(array($prep_stmt, 'bind_param'), $bind_parms);
+        if($prep_count_stmt !=null){
+          call_user_func_array(array($prep_count_stmt, 'bind_param'), $bind_parms);
+        }
       }
 
       /* Execute statement */
-      $prep_stmt->execute() or die($this->dbcon->getMysqli()->error.__LINE__);
+      if($prep_count_stmt !=null){
+        $prep_count_stmt->execute() or die($this->dbcon->getDBConn()->error.__LINE__);
+      }
+      $prep_stmt->execute() or die($this->dbcon->getDBConn()->error.__LINE__);
 
       /* Fetch result to array */
       if(method_exists($prep_stmt,'get_result')){
@@ -640,13 +1119,23 @@ class mySQLSelectStatement extends mySQLStatement{
 
         if($r->num_rows > 0){
           if($return_mode == self::ALL_RECORDS ){
+            $c = $prep_count_stmt->get_result();
+            $rec = [];
             while($row = $r->fetch_assoc()){
-              $result[] = $row;
+              $rec[] = $row;
             }
+            $countr = $c->fetch_assoc();
+            $result['records_count'] = $countr['records_count'];
+            $result['range_low'] = $this->pagination_config['offset'];
+            $result['range_high'] = ( $this->pagination_config['offset'] + sizeOf($rec) ) - 1;
+            $result['range_size'] = $this->pagination_config['per_page'];
+            $result['max_size'] = $this->pagination_config['per_page'];
+            $result['data'] = $rec;
           }else{
             $result = $r->fetch_assoc();
           }
         }
+
       }else{
 
         $prep_stmt->store_result();
@@ -655,14 +1144,25 @@ class mySQLSelectStatement extends mySQLStatement{
 
         if($prep_stmt->num_rows > 0){
           if($return_mode == self::ALL_RECORDS ){
-            $result = [];
+            $rec = [];
 
             for($i=0;$i<$prep_stmt->num_rows;$i++){
 
-              $result[] = $sr->Get_Row($prep_stmt);
+              $rec[] = $sr->Get_Row($prep_stmt);
               $prep_stmt->fetch();
 
             }
+
+            $c = $prep_count_stmt->store_result();
+            $sr = new Statement_Result($prep_count_stmt);
+            $countr = $sr->Get_Row($prep_count_stmt);
+            $prep_count_stmt->fetch();
+            $result['records_count'] = $countr['records_count'];
+            $result['range_low'] = $this->pagination_config['offset'];
+            $result['range_high'] = ( $this->pagination_config['offset'] + sizeOf($rec) ) - 1;
+            $result['range_size'] = $this->pagination_config['per_page'];
+            $result['max_size'] = $this->pagination_config['per_page'];
+            $result['data'] = $rec;
 
           }
           else{
@@ -692,7 +1192,145 @@ class mySQLSelectStatement extends mySQLStatement{
 
 }
 
+class mySQL_PDO_SelectStatement extends mySQLSelectStatement{
 
+  public function execute($return_mode=self::ALL_RECORDS, $pagination=[]){ //Overwriting execute method
+    $result = array();
+    $bind_types = "";
+    $parameters = [];
+
+    if($this->WHERECond!=null){
+      $bind_types = $this->WHERECond->getBindTypes();
+      $parameters = $this->WHERECond->getParameters();
+    }
+
+    /* Prepare statement */
+    $prep_count_stmt = null;
+    if($return_mode == self::ALL_RECORDS ){
+      $this->addPagination($pagination);
+      $prep_count_stmt = $this->dbcon->getDBConn()->prepare($this->count_statement);
+    }
+    $prep_stmt = $this->dbcon->getDBConn()->prepare($this->statement);
+
+    if($prep_stmt === false) {
+      throw new Exception('Wrong SQL: ' . $this->statement . ' Error: ' . $this->dbcon->getDBConn()->errorInfo() );
+    }
+    else{
+
+      /* Execute statement */
+      if($prep_count_stmt!=null){
+        $prep_count_stmt->execute($parameters);
+      }
+      $prep_stmt->execute($parameters);
+
+
+      /* Fetch result to array */
+      $r = $prep_stmt->fetchAll(PDO::FETCH_ASSOC);
+      if($return_mode == self::ALL_RECORDS ){
+        $rec = [];
+
+        for($i=0;$i<sizeOf($r);$i++){
+
+          $rec[] = $r[$i];
+
+        }
+        $countr = $prep_count_stmt->fetchAll(PDO::FETCH_ASSOC);
+        $result['records_count'] = $countr[0]['records_count'];
+        $result['range_low'] = $this->pagination_config['offset'];
+        $result['range_high'] = ( $this->pagination_config['offset'] + sizeOf($rec) ) - 1;
+        $result['range_size'] = sizeOf($r); //$this->pagination_config['per_page'];
+        $result['max_size'] = $this->pagination_config['per_page'];
+        $result['data'] = $rec;
+
+      }
+      else{
+
+        if(sizeOf($r)>0){
+          $result = $r[0];
+        }
+
+      }
+
+    }
+    return $result;
+  }
+
+}
+
+
+
+class pgSQL_PDO_SelectStatement extends mySQL_PDO_SelectStatement{
+
+  public function addPagination($pagination){
+    if(sizeOf($pagination)>0){
+      $this->preparePagination($pagination);
+      $offset = $this->pagination_config['offset'];
+      $per_page = $this->pagination_config['per_page'];
+      $this->statement .= '  OFFSET ' . $offset .' LIMIT '. $per_page;
+    }
+  }
+
+  /*public function execute($return_mode=self::ALL_RECORDS, $pagination=[]){ //Overwriting execute method
+    $result = array();
+    $bind_types = "";
+    $parameters = [];
+
+    if($this->WHERECond!=null){
+      $bind_types = $this->WHERECond->getBindTypes();
+      $parameters = $this->WHERECond->getParameters();
+    }
+
+    /* Prepare statement * /
+    $prep_count_stmt = null;
+    if($return_mode == self::ALL_RECORDS ){
+      $this->addPagination($pagination);
+      $prep_count_stmt = $this->dbcon->getDBConn()->prepare($this->count_statement);
+    }
+    $prep_stmt = $this->dbcon->getDBConn()->prepare($this->statement);
+
+    if($prep_stmt === false) {
+      throw new Exception('Wrong SQL: ' . $this->statement . ' Error: ' . $this->dbcon->getDBConn()->errorInfo() );
+    }
+    else{
+
+      /* Execute statement * /
+      if($prep_count_stmt!=null){
+        $prep_count_stmt->execute($parameters);
+      }
+      $prep_stmt->execute($parameters);
+
+
+      /* Fetch result to array * /
+      $r = $prep_stmt->fetchAll(PDO::FETCH_ASSOC);
+      if($return_mode == self::ALL_RECORDS ){
+        $rec = [];
+
+        for($i=0;$i<sizeOf($r);$i++){
+
+          $rec[] = $r[$i];
+
+        }
+        $countr = $prep_count_stmt->fetchAll(PDO::FETCH_ASSOC);
+        $result['records_count'] = $countr[0]['records_count'];
+        $result['range_low'] = $this->pagination_config['offset'];
+        $result['range_high'] = ( $this->pagination_config['offset'] + $this->pagination_config['per_page'] ) - 1;
+        $result['range_size'] = sizeOf($r); //$this->pagination_config['per_page'];
+        $result['data'] = $rec;
+
+      }
+      else{
+
+        if(sizeOf($r)>0){
+          $result = $r[0];
+        }
+
+      }
+
+    }
+    return $result;
+  }*/
+
+}
 
 
 
@@ -724,14 +1362,13 @@ class mySQLInsertStatement extends mySQLStatement{
   public function execute(){
 
     $result = 0;
-    $bind_types = $this->bind_types;
     $parameters = $this->bind_parms;
 
     /* Prepare statement */
-    $prep_stmt = $this->dbcon->getMysqli()->prepare($this->statement);
+    $prep_stmt = $this->dbcon->getDBConn()->prepare($this->statement);
 
     if($prep_stmt === false) {
-      throw new Exception('Wrong SQL: ' . $this->statement . ' Error: ' . $this->dbcon->getMysqli()->error.__LINE__ );
+      throw new Exception('Wrong SQL: ' . $this->statement . ' Error: ' . $this->dbcon->getDBConn()->error.__LINE__ );
     }
     else{
       if(trim($this->bind_types)!==""){
@@ -744,7 +1381,7 @@ class mySQLInsertStatement extends mySQLStatement{
       }
 
       /* Execute statement */
-      $prep_stmt->execute() or die($this->dbcon->getMysqli()->error.__LINE__);
+      $prep_stmt->execute() or die($this->dbcon->getDBConn()->error.__LINE__);
 
       /* Get number of lines affected */
       $result = $prep_stmt->affected_rows;
@@ -755,6 +1392,30 @@ class mySQLInsertStatement extends mySQLStatement{
 
 }
 
+class mySQL_PDO_InsertStatement extends mySQLInsertStatement{
+
+
+  public function execute(){ //Overwriting execute
+
+    $result = 0;
+    $parameters = $this->bind_parms;
+
+    /* Prepare statement */
+    $prep_stmt = $this->dbcon->getDBConn()->prepare($this->statement);
+
+    if($prep_stmt === false) {
+      throw new Exception('Wrong SQL: ' . $this->statement . ' Error: ' . $this->dbcon->getDBConn()->errorInfo() );
+    }
+    else{
+
+      /* Execute statement */ /* Get number of lines affected */
+      $result = $prep_stmt->execute($parameters);
+
+
+    }
+    return $result;
+  }
+}
 
 
 
@@ -809,10 +1470,10 @@ class mySQLUpdateStatement extends mySQLStatement{
 
 
     /* Prepare statement */
-    $prep_stmt = $this->dbcon->getMysqli()->prepare($this->statement);
+    $prep_stmt = $this->dbcon->getDBConn()->prepare($this->statement);
 
     if($prep_stmt === false) {
-      throw new Exception('Wrong SQL: ' . $this->statement . ' Error: ' . $this->dbcon->getMysqli()->error.__LINE__ );
+      throw new Exception('Wrong SQL: ' . $this->statement . ' Error: ' . $this->dbcon->getDBConn()->error.__LINE__ );
     }
     else{
       if(trim($bind_types)!==""){
@@ -825,7 +1486,7 @@ class mySQLUpdateStatement extends mySQLStatement{
       }
 
       /* Execute statement */
-      $prep_stmt->execute() or die($this->dbcon->getMysqli()->error.__LINE__);
+      $prep_stmt->execute() or die($this->dbcon->getDBConn()->error.__LINE__);
 
       /* Get number of lines affected */
       $result = $prep_stmt->affected_rows;
@@ -836,7 +1497,35 @@ class mySQLUpdateStatement extends mySQLStatement{
 
 }
 
+class mySQL_PDO_UpdateStatement extends mySQLUpdateStatement{
 
+  public function execute(){ //Overwriting execute
+    $result = 0;
+    $parameters = $this->bind_parms;
+
+    if(sizeof($this->WHERECond->getParameters())>0){
+      $b = sizeof($parameters);
+      for($i=0;$i<sizeof($this->WHERECond->getParameters());$i++){
+        $parameters[$b++] = $this->WHERECond->getParameters()[$i];
+      }
+    }
+
+    /* Prepare statement */
+    $prep_stmt = $this->dbcon->getDBConn()->prepare($this->statement);
+
+    if($prep_stmt === false) {
+      throw new Exception('Wrong SQL: ' . $this->statement . ' Error: ' . $this->dbcon->getDBConn()->errorInfo() );
+    }
+    else{
+
+      /* Execute statement */ /* Get number of lines affected */
+      $result = $prep_stmt->execute($parameters);
+
+    }
+    return $result;
+  }
+
+}
 
 
 
@@ -885,10 +1574,10 @@ class mySQLDeleteStatement extends mySQLStatement{
 
 
     /* Prepare statement */
-    $prep_stmt = $this->dbcon->getMysqli()->prepare($this->statement);
+    $prep_stmt = $this->dbcon->getDBConn()->prepare($this->statement);
 
     if($prep_stmt === false) {
-      throw new Exception('Wrong SQL: ' . $this->statement . ' Error: ' . $this->dbcon->getMysqli()->error.__LINE__ );
+      throw new Exception('Wrong SQL: ' . $this->statement . ' Error: ' . $this->dbcon->getDBConn()->error.__LINE__ );
     }
     else{
       if(trim($bind_types)!==""){
@@ -901,7 +1590,7 @@ class mySQLDeleteStatement extends mySQLStatement{
       }
 
       /* Execute statement */
-      $prep_stmt->execute() or die($this->dbcon->getMysqli()->error.__LINE__);
+      $prep_stmt->execute() or die($this->dbcon->getDBConn()->error.__LINE__);
 
       /* Get number of lines affected */
       $result = $prep_stmt->affected_rows;
@@ -911,6 +1600,34 @@ class mySQLDeleteStatement extends mySQLStatement{
   }
 
 }
+
+
+class mySQL_PDO_DeleteStatement extends mySQLDeleteStatement{
+
+  public function execute(){ //Overwriting execute
+    $result = 0;
+    $parameters = $this->bind_parms;
+    if(sizeof($this->WHERECond->getParameters())>0){
+      $parameters = $this->WHERECond->getParameters();
+    }
+
+    /* Prepare statement */
+    $prep_stmt = $this->dbcon->getDBConn()->prepare($this->statement);
+
+    if($prep_stmt === false) {
+      throw new Exception('Wrong SQL: ' . $this->statement . ' Error: ' . $this->dbcon->getDBConn()->errorInfo() );
+    }
+    else{
+
+      /* Execute statement */ /* Get number of lines affected */
+      $result = $prep_stmt->execute($parameters);
+
+    }
+    return $result;
+  }
+
+}
+
 
 
 

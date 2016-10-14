@@ -108,6 +108,8 @@ angular.module('mercuryFWConfigApp.services', [])
 
       if(data_type.indexOf('(') >= 0){
         dtype = data_type.substr(0,data_type.indexOf('(')).toLowerCase();
+      }else{
+        dtype = data_type;
       }
       if(DBTypes_X_BindTypes[dtype]){
         return DBTypes_X_BindTypes[dtype];

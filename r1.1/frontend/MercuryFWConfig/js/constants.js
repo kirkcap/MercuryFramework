@@ -86,7 +86,7 @@ angular.module('mercuryFWConfigApp.constants', [])
         meta:{
           param_key: {fldtype: "string", placeholder: "Fill the DB Config Name, for the default to be used by the API, use 'default'"},
           DB : {fldtype: "string", placeholder: "Fill the Database Name"},
-          DB_TYPE : {fldtype: "select", placeholder: "Fill the Database Type(currently support only for mysql)", valid_values:{type:"array", values:[{key:'mysql',value:'MySQL DB'}]}},
+          DB_TYPE : {fldtype: "select", placeholder: "Fill the Database Type", valid_values:{type:"array", values:[{key:'mysql',value:'MySQL DB - MySQLi Driver'},{key:'mysql_PDO',value:'MySQL DB - PDO Driver'},{key:'pgsql_PDO',value:'PosgGreSQL DB - PDO Driver'}]}},
           DB_SERVER: {fldtype: "string", placeholder: "Fill the Database Server"},
           DB_USER: {fldtype: "string", placeholder: "Fill the Database User"},
           DB_PASSWORD: {fldtype: "string", placeholder: "Fill the Database User Password"},

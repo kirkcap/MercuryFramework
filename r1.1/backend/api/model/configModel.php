@@ -1,6 +1,7 @@
 <?php
 namespace com\mercuryfw\models;
 require_once(__ROOT__."/backend/api/application/helpers/error_helper.php");
+use com\mercuryfw\helpers\ErrorCatcher as ErrorCatcher;
 use com\mercuryfw\helpers\REST as REST;
 use \Exception as Exception;
 

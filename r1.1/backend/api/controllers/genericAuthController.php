@@ -49,6 +49,7 @@ class genericAuthController extends genericCRUDController{
 
           if(sizeof($r) > 0){
             $token = Token::getInstance();
+
             $enc_token = $token->build($r[$this->id_field]); //login_field]);
 
             $success = array( 'response' => "ok", 'user_data' => $r, 'auth_token' => $enc_token); // "{\"response\":\"ok\",\"auth_token\":\"" . $this->buildToken( $email ) . "\"}";

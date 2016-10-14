@@ -60,11 +60,11 @@ class dbMetadataController{
           if(sizeof($r) > 0){
             $this->API->response($this->API->json($r), 200); // send user details
     			}
-    			$this->API->response('',400);	// If no records "No Content" status
+    			$this->API->response('',200);	// If no records "No Content" status
         }
 
 			}
-			$this->API->response('',400);//204);	// If no records "No Content" status
+			$this->API->response('',200);//204);	// If no records "No Content" status
 		}
 
 		public function create($key){

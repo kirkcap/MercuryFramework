@@ -215,7 +215,7 @@ class TableColumns{
     if(array_key_exists($fname, $this->tb_columns)){
       return $this->tb_columns[$fname];
     }else{
-      throw new Exception('Field '.$fname. 'not found !');
+      throw new Exception('Field "'.$fname. '" not found !');
     }
   }
 
