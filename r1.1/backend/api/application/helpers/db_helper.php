@@ -669,10 +669,10 @@ abstract class mySQLStatement{
     $this->pagination_config = [];
     $mode__per_page = false;
     $mode__per_range = false;
+    $offset = 0;
+    $page = 1;
+    $per_page = $this->getMaxRecsSelect();
     if(sizeOf($pagination)>0){
-      $offset = 0;
-      $page = 1;
-      $per_page = 100;
       for($i=0;$i<sizeOf($pagination);$i++){
         if($pagination[$i]->getName() == '_page'){
           $page = $pagination[$i]->getValue();
@@ -692,10 +692,10 @@ abstract class mySQLStatement{
       }elseif($mode__per_page){
         $offset = ( ($page - 1) * $per_page );
       }
-      $this->pagination_config['page'] = $page;
-      $this->pagination_config['offset'] = $offset;
-      $this->pagination_config['per_page'] = $per_page;
     }
+    $this->pagination_config['page'] = $page;
+    $this->pagination_config['offset'] = $offset;
+    $this->pagination_config['per_page'] = $per_page;
   }
 
   public function addPagination($pagination){
@@ -727,8 +727,12 @@ class mySQLWHERECondition{
     foreach($conditionElements as $condElement){
       if($condElement->isFieldCriteria()){
         $this->bind_types .= $condElement->getField()->getBindType();
-        $this->parameters[$idx++] = $condElement->getValue();
-        $this->WHERE = $this->WHERE . " " . $condElement->getField()->getName() ." = ?";
+        $value = $condElement->getValue();
+        if(strtolower(trim($condElement->getOperator()))=='like'){
+          $value = str_replace("*", "%", $value);
+        }
+        $this->parameters[$idx++] = $value;
+        $this->WHERE = $this->WHERE . " " . $condElement->getField()->getName() ." ".$condElement->getOperator()." ?";
       }else{
         $this->WHERE = $this->WHERE . " " . $condElement->getOperator();
       }
@@ -1076,15 +1080,14 @@ class mySQLSelectStatement extends mySQLStatement{
   }
 
   public function addPagination($pagination){
-    if(sizeOf($pagination)>0){
-      $this->preparePagination($pagination);
-      $offset = $this->pagination_config['offset'];
-      $per_page = $this->pagination_config['per_page'];
-      if($per_page > $this->getMaxRecsSelect()){
-        throw new Exception('Range requested('.$per_page.') is larger than max records select per page parameter('.$this->getMaxRecsSelect().')!');
-      }
-      $this->statement .= '  LIMIT ' . $offset .','. $per_page;
+    $this->preparePagination($pagination);
+    $offset = $this->pagination_config['offset'];
+    $per_page = $this->pagination_config['per_page'];
+    if($per_page > $this->getMaxRecsSelect()){
+      throw new Exception('Range requested('.$per_page.') is larger than max records select per page parameter('.$this->getMaxRecsSelect().')!');
     }
+    $this->statement .= '  LIMIT ' . $offset .','. $per_page;
+
   }
 
   public function execute($return_mode=self::ALL_RECORDS, $pagination=[]){
@@ -1277,15 +1280,13 @@ class mySQL_PDO_SelectStatement extends mySQLSelectStatement{
 class pgSQL_PDO_SelectStatement extends mySQL_PDO_SelectStatement{
 
   public function addPagination($pagination){
-    if(sizeOf($pagination)>0){
-      $this->preparePagination($pagination);
-      $offset = $this->pagination_config['offset'];
-      $per_page = $this->pagination_config['per_page'];
-      if($per_page > $this->getMaxRecsSelect()){
-        throw new Exception('Range requested('.$per_page.') is larger than max records select per page parameter('.$this->getMaxRecsSelect().')!');
-      }
-      $this->statement .= '  OFFSET ' . $offset .' LIMIT '. $per_page;
+    $this->preparePagination($pagination);
+    $offset = $this->pagination_config['offset'];
+    $per_page = $this->pagination_config['per_page'];
+    if($per_page > $this->getMaxRecsSelect()){
+      throw new Exception('Range requested('.$per_page.') is larger than max records select per page parameter('.$this->getMaxRecsSelect().')!');
     }
+    $this->statement .= '  OFFSET ' . $offset .' LIMIT '. $per_page;
   }
 
   /*public function execute($return_mode=self::ALL_RECORDS, $pagination=[]){ //Overwriting execute method
