@@ -35,7 +35,7 @@ class Logger{
 
   protected function __construct(){
 
-    $cfgModel = new configModel("admin_cfg");
+    /*$cfgModel = new configModel("admin_cfg");
 
     $log_option = $cfgModel->findByKey("log_option");
     $this->log_option = sizeOf($log_option)>0?$log_option['log_option']:'';
@@ -49,7 +49,7 @@ class Logger{
     if($this->log_option!='' && $this->log_saver_class_name!='' && $log_saver_destination!=''){
       $reflectionClass = new ReflectionClass('com\\mercuryfw\\helpers\\'.$this->log_saver_class_name);
       $this->log_saver_class = $reflectionClass->newInstanceArgs([$log_saver_destination]);
-    }
+    }*/
   }
 
   /**
@@ -70,7 +70,7 @@ class Logger{
   private function __wakeup(){
   }
 
-  public function log($source, $type, $arr_params = [], $message = ''){
+  public function log($type, $arr_params = [], $message = ''){
     $log = false;
     if($this->log_option){
       switch($this->log_option){
@@ -95,7 +95,7 @@ class Logger{
       }
     }
     if($log){
-      $this->log_saver_class->save($source, $type, $arr_params, $message);
+      $this->log_saver_class->save($type, $arr_params, $message);
     }
   }
 
@@ -106,7 +106,7 @@ interface iLogSaver{
 
   public function __construct($destination);
 
-  public function save($source, $type, $arr_params, $message);
+  public function save($type, $arr_params, $message);
 
   //private function load();
 
@@ -129,7 +129,7 @@ class FileLogSaver implements iLogSaver{
     return file_get_contents($this->log_file);
   }
 
-  public function save($source, $type, $arr_params = [], $message = ''){
+  public function save($type, $arr_params = [], $message = ''){
     $log_timestamp = new DateTime(date('Y-m-d H:i:s'), new DateTimeZone(date_default_timezone_get()));
     $log_type = 'undefined';
     if($type!=null){
@@ -159,7 +159,7 @@ class FileLogSaver implements iLogSaver{
       }
     }
 
-    $this->log_contents .= "\r\n<br><p>"."Log Timestamp:".$log_timestamp->format('Y-m-d H:i:s')."</p>\r\n<p>"."Log originated in:".$source."</p>\r\n<p>"."</p>\r\n<p>"."Log Type:".$log_type."</p>\r\n<p>"."LogContents:".$log_var_data."</p>";
+    $this->log_contents .= "\r\n<br><p>"."Log Timestamp:".$log_timestamp->format('Y-m-d H:i:s')."</p>\r\n<p>"."</p>\r\n<p>"."Log Type:".$log_type."</p>\r\n<p>"."LogContents:".$log_var_data."</p>";
     if($message!=""){
       $this->log_contents .= "\r\n" . "<p>Message:" .$message ."</p>";
     }

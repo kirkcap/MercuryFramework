@@ -187,8 +187,8 @@ class mySqlDB implements if_db{
     }
 
 
-    public function getSelectStatement($tb_name, $SelectionElements, $WhereConditionElements, $SelectionOrderElements){
-      $stmt = new mySQLSelectStatement($this, $tb_name, $SelectionElements, $WhereConditionElements, $SelectionOrderElements);
+    public function getSelectStatement($tb_name, $SelectionElements, $WhereConditionElements, $SelectionOrderElements, $max_recs_select=100){
+      $stmt = new mySQLSelectStatement($this, $tb_name, $SelectionElements, $WhereConditionElements, $SelectionOrderElements, $max_recs_select);
       $stmt->buildStmt();
       return $stmt;
     }
@@ -312,8 +312,8 @@ class mySql_PDO_DB implements if_db{
     }
 
 
-    public function getSelectStatement($tb_name, $SelectionElements, $WhereConditionElements, $SelectionOrderElements){
-      $stmt = new mySQL_PDO_SelectStatement($this, $tb_name, $SelectionElements, $WhereConditionElements, $SelectionOrderElements);
+    public function getSelectStatement($tb_name, $SelectionElements, $WhereConditionElements, $SelectionOrderElements, $max_recs_select=100){
+      $stmt = new mySQL_PDO_SelectStatement($this, $tb_name, $SelectionElements, $WhereConditionElements, $SelectionOrderElements, $max_recs_select);
       $stmt->buildStmt();
       return $stmt;
     }
@@ -437,8 +437,8 @@ class postGreSql_PDO_DB implements if_db{
     }
 
 
-    public function getSelectStatement($tb_name, $SelectionElements, $WhereConditionElements, $SelectionOrderElements){
-      $stmt = new pgSQL_PDO_SelectStatement($this, $tb_name, $SelectionElements, $WhereConditionElements, $SelectionOrderElements);
+    public function getSelectStatement($tb_name, $SelectionElements, $WhereConditionElements, $SelectionOrderElements, $max_recs_select=100){
+      $stmt = new pgSQL_PDO_SelectStatement($this, $tb_name, $SelectionElements, $WhereConditionElements, $SelectionOrderElements, $max_recs_select);
       $stmt->buildStmt();
       return $stmt;
     }
@@ -489,6 +489,7 @@ abstract class mySQLStatement{
   protected $bind_types;
   protected $bind_parms;
   protected $pagination_config;
+  protected $max_recs_select;
 
   public function setStatement($stmt){
     $this->statement = $stmt;
@@ -654,6 +655,15 @@ abstract class mySQLStatement{
   public function buildStmt(){
     /*To be implemented*/
   }
+
+  public function setMaxRecsSelect($data){
+    $this->max_recs_select = $data;
+  }
+
+  public function getMaxRecsSelect(){
+    return $this->max_recs_select;
+  }
+
 
   public function preparePagination($pagination){
     $this->pagination_config = [];
@@ -1022,13 +1032,14 @@ class mySQLSelectStatement extends mySQLStatement{
   const FIRST_ONLY  = "FIRST";
   protected $count_statement;
 
-  public function __construct($dbcon, $tb_name = null, $selectionElements = null, $whereConditionElements = null, $selectionOrderElements = null){
+  public function __construct($dbcon, $tb_name = null, $selectionElements = null, $whereConditionElements = null, $selectionOrderElements = null, $max_recs_select = 100){
 
     $this->statement = "";
     $this->count_statement = "";
     $this->columns = "";
     $this->tb_name = "";
     $this->order = "";
+    $this->max_recs_select = $max_recs_select;
 
     $this->dbcon = $dbcon;
     $this->tb_name = $tb_name;
@@ -1069,6 +1080,9 @@ class mySQLSelectStatement extends mySQLStatement{
       $this->preparePagination($pagination);
       $offset = $this->pagination_config['offset'];
       $per_page = $this->pagination_config['per_page'];
+      if($per_page > $this->getMaxRecsSelect()){
+        throw new Exception('Range requested('.$per_page.') is larger than max records select per page parameter('.$this->getMaxRecsSelect().')!');
+      }
       $this->statement .= '  LIMIT ' . $offset .','. $per_page;
     }
   }
@@ -1127,7 +1141,7 @@ class mySQLSelectStatement extends mySQLStatement{
             $result['range_low'] = $this->pagination_config['offset'];
             $result['range_high'] = ( $this->pagination_config['offset'] + sizeOf($rec) ) - 1;
             $result['range_size'] = $this->pagination_config['per_page'];
-            $result['max_size'] = $this->pagination_config['per_page'];
+            $result['max_size'] = $this->getMaxRecsSelect(); //$this->pagination_config['per_page'];
             $result['data'] = $rec;
           }else{
             $result = $r->fetch_assoc();
@@ -1151,7 +1165,7 @@ class mySQLSelectStatement extends mySQLStatement{
 
             }
             $prep_stmt->close();
-            
+
             $prep_count_stmt->execute() or die($this->dbcon->getDBConn()->error.__LINE__);
             $c = $prep_count_stmt->store_result();
             $sr = new Statement_Result($prep_count_stmt);
@@ -1162,7 +1176,7 @@ class mySQLSelectStatement extends mySQLStatement{
             $result['range_low'] = $this->pagination_config['offset'];
             $result['range_high'] = ( $this->pagination_config['offset'] + sizeOf($rec) ) - 1;
             $result['range_size'] = $this->pagination_config['per_page'];
-            $result['max_size'] = $this->pagination_config['per_page'];
+            $result['max_size'] = $this->getMaxRecsSelect(); //$this->pagination_config['per_page'];
             $result['data'] = $rec;
 
           }
@@ -1240,7 +1254,7 @@ class mySQL_PDO_SelectStatement extends mySQLSelectStatement{
         $result['range_low'] = $this->pagination_config['offset'];
         $result['range_high'] = ( $this->pagination_config['offset'] + sizeOf($rec) ) - 1;
         $result['range_size'] = sizeOf($r); //$this->pagination_config['per_page'];
-        $result['max_size'] = $this->pagination_config['per_page'];
+        $result['max_size'] = $this->getMaxRecsSelect(); //$this->pagination_config['per_page'];
         $result['data'] = $rec;
 
       }
@@ -1267,6 +1281,9 @@ class pgSQL_PDO_SelectStatement extends mySQL_PDO_SelectStatement{
       $this->preparePagination($pagination);
       $offset = $this->pagination_config['offset'];
       $per_page = $this->pagination_config['per_page'];
+      if($per_page > $this->getMaxRecsSelect()){
+        throw new Exception('Range requested('.$per_page.') is larger than max records select per page parameter('.$this->getMaxRecsSelect().')!');
+      }
       $this->statement .= '  OFFSET ' . $offset .' LIMIT '. $per_page;
     }
   }

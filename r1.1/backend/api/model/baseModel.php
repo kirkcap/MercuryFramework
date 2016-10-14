@@ -159,7 +159,7 @@ class baseModel extends helpers\ModelData{
     if($this->SelectionElements == null or sizeof($this->SelectionElements)==0){
       $this->prepareDefaultSelectElements();
     }
-    return DBFactory::getInstance()->getDB($this->getDbCfgName())->getSelectStatement( $this->getTableName(), $this->SelectionElements, $this->WhereConditionElements, $this->SelectionOrderElements );
+    return DBFactory::getInstance()->getDB($this->getDbCfgName())->getSelectStatement( $this->getTableName(), $this->SelectionElements, $this->WhereConditionElements, $this->SelectionOrderElements, $this->getMaxRecsSelect() );
   }
 
   public function getUpdateStatement(){

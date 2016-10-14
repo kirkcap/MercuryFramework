@@ -29,11 +29,11 @@ angular.module('mercuryFWConfigApp.constants', [])
         schema:{"":""},
         parameter_list:["admin_frontend_allowed","log_option","log_saver_class","log_saver_destination"],
         meta:{
-          param_key: {fldtype: "select", placeholder: "Fill the parameter name, currently only admin_frontend_allowed is used"},
+          param_key:              {fldtype: "select", placeholder: "Fill the parameter name, currently only admin_frontend_allowed is used"},
           admin_frontend_allowed: {fldtype: "boolean", placeholder: "(If set to false, this frontend app will not work anymore)"},
-          log_option: {fldtype: "select", placeholder: "Select the type of log processing", valid_values:{type:"array", values:[{key:'all',value:'Logs Everything'}, {key:'info',value:'Logs Info, Warning and Error type messages'}, {key:'warning',value:'Logs Warning and Error Type Messages'}, {key:'error',value:'Logs Error type messages'}]} },
-          log_saver_class: {fldtype: "select", placeholder: "Select the Logger Class", valid_values:{type:"array", values:[{key:'FileLogSaver',value:'Save log to file'}]} },
-          log_saver_destination: {fldtype: "string", placeholder: "For the FileLogSaver, the filename prefix, for other, only God knows..."},
+          log_option:             {fldtype: "select", placeholder: "Select the type of log processing", valid_values:{type:"array", values:[{key:'all',value:'Logs Everything'}, {key:'info',value:'Logs Info, Warning and Error type messages'}, {key:'warning',value:'Logs Warning and Error Type Messages'}, {key:'error',value:'Logs Error type messages'}]} },
+          log_saver_class:        {fldtype: "select", placeholder: "Select the Logger Class", valid_values:{type:"array", values:[{key:'FileLogSaver',value:'Save log to file'}]} },
+          log_saver_destination:  {fldtype: "string", placeholder: "For the FileLogSaver, the filename prefix, for other, only God knows..."},
         }
       },
 
@@ -101,15 +101,16 @@ angular.module('mercuryFWConfigApp.constants', [])
         svcname:   'models',
         sourceUrl: 'modelConfig',
         schema:{
-            dbCfgName   : "",
-            entity_id   : "",
-            entity_name : "",
-            tb_name     : "",
-            tb_key      : [],
-            isAuthModel : false,
-            login_field : "",
-            pwd_field   : "",
-            tb_columns  : {}
+            dbCfgName     : "",
+            entity_id     : "",
+            entity_name   : "",
+            tb_name       : "",
+            tb_key        : [],
+            max_recs_sel  : 100,
+            isAuthModel   : false,
+            login_field   : "",
+            pwd_field     : "",
+            tb_columns    : {}
         },
         tb_columns_schema: { },
         tb_columns_field_schema: {
@@ -123,6 +124,7 @@ angular.module('mercuryFWConfigApp.constants', [])
           entity_name : {fldtype: "string", placeholder: "Fill the Entity Name which is represented by this Model"},
           tb_name     : {fldtype: "string", placeholder: "Fill the Table Name which is represented by this Model"},
           tb_key      : {fldtype: "array", placeholder: "Fill the list of field(s) which compose the key of the Table"},
+          max_recs_sel: {fldtype: "number", placeholder: "Fill the max records number to be returned by a selection(pagination length)"},
           isAuthModel : {fldtype: "boolean", placeholder: "Is this model used for authentication?"},
           login_field : {fldtype: "string", placeholder: "Fill the Field which contains the user login(valid only for the model used for authentication)", depends_on: {field:"isAuthModel", values:[true]} },
           pwd_field   : {fldtype: "string", placeholder: "Fill the Field which contains the user password(valid only for the model used for authentication)", depends_on: {field:"isAuthModel", values:[true]} },

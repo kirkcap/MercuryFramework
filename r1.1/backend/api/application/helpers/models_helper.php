@@ -70,6 +70,7 @@ class ModelData{
   protected $entity_name; // = "Maker";
   protected $tb_name    ; // = "tb_makers";
   protected $tb_key     ; // = array("makcod");
+  protected $max_recs_sel;
   protected $login_field;
   protected $pwd_field;
   protected $tb_columns ; /* = array(
@@ -97,6 +98,11 @@ class ModelData{
     $this->entity_name   = $ModelData["entity_name"];
     $this->tb_name       = $ModelData["tb_name"];
     $this->tb_key        = $ModelData["tb_key"];
+    if(array_key_exists("max_recs_sel",$ModelData) && $ModelData["max_recs_sel"] > 0){
+      $this->max_recs_sel  = $ModelData["max_recs_sel"];
+    }else{
+      $this->max_recs_sel  = 100;
+    }
     if(array_key_exists("login_field",$ModelData)){
       $this->login_field   = $ModelData["login_field"];
       $this->pwd_field     = $ModelData["pwd_field"];
@@ -161,6 +167,14 @@ class ModelData{
 
   public function getTableKey(){
     return $this->tb_key;
+  }
+
+  public function setMaxRecsSelect($data){
+    $this->max_recs_sel = $data;
+  }
+
+  public function getMaxRecsSelect(){
+    return $this->max_recs_sel;
   }
 
   public function setTableColumns($col_array){
