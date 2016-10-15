@@ -4,6 +4,7 @@ require_once(__ROOT__."/backend/api/application/helpers/db_helper.php");
 use com\mercuryfw\helpers as helpers;
 use com\mercuryfw\helpers\Models as Models;
 use com\mercuryfw\helpers\FieldDefault as FieldDefault;
+use com\mercuryfw\helpers\FieldDetails as FieldDetails;
 use com\mercuryfw\helpers\DBFactory as DBFactory;
 use com\mercuryfw\helpers\Token as Token;
 use \Exception as Exception;
@@ -11,8 +12,6 @@ use \Exception as Exception;
 class baseModel extends helpers\ModelData{
   const SelectFIRST_ONLY = "FIRST";
   const SelectALL_RECORDS = "ALL";
-
-  protected $SqlHelper;
 
   private $WhereConditionElements;
   private $SelectionElements;
@@ -22,7 +21,6 @@ class baseModel extends helpers\ModelData{
 
   public function __construct($modelName){
 
-    //$this->SqlHelper = sqlHelper::getInstance();
     $models = Models::getInstance();
 
     $this->setModelData( $modelName, $models->getModelDataArray($modelName) );
@@ -134,13 +132,8 @@ class baseModel extends helpers\ModelData{
     $this->SelectionOrderElements[] = new SelectionOrderElement($field, $asc_desc);
   }
 
-  public function testCondition($tb_name, $tb_columns){
-    $WhereCond = new WHERECondition();
-    $WhereCond->parseConditionElements($tb_columns, $this->WhereConditionElements);
-    print_r($WhereCond->getWHERE());
-  }
 
-  public function prepareDefaultSelectElements(){
+  public function prepareDefaultSelectElements($sort=[]){
     $this->_PREPARE_SELECT();
     $this->_PREPARE_ORDER();
     foreach($this->tb_columns->getColumnsMetadata() as $fname => $tbcolobj){
@@ -148,10 +141,24 @@ class baseModel extends helpers\ModelData{
       if($tbcolobj->getFieldDetails()->canShow()){
         $this->_ADD_SEL_FIELD( $tbcolobj->getField(DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB()) );
       }
-      if($tbcolobj->getFieldDetails()->getOrder()!=null){
-        $this->_ORDER_BY( $tbcolobj->getField(DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB()), $tbcolobj->getFieldDetails()->getOrder() );
+      if(sizeOf($sort)==0){//Sort sent on request overwrites configuration
+        if($tbcolobj->getFieldDetails()->getOrder()!=null){
+          $this->_ORDER_BY( $tbcolobj->getField(DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB()), $tbcolobj->getFieldDetails()->getOrder() );
+        }
       }
-
+    }
+    for($i=0;$i<sizeOf($sort);$i++){
+      $order = FieldDetails::SORT_ASC;
+      if($sort[$i]->getName()=='_sort'){//Sort ascending
+        $sort_fields = explode(",", $sort[$i]->getValue());
+        $order = FieldDetails::SORT_ASC;
+      }else{//Sort descending
+        $sort_fields = explode(",", $sort[$i]->getValue());
+        $order = FieldDetails::SORT_DESC;
+      }
+      for($j=0;$j<sizeOf($sort_fields);$j++){
+        $this->_ORDER_BY( $this->tb_columns->getTableColumn($sort_fields[$j])->getField(DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB()), $order );
+      }
     }
   }
 
@@ -170,9 +177,9 @@ class baseModel extends helpers\ModelData{
     return DBFactory::getInstance()->getDB($this->getDbCfgName())->getDeleteStatement( $this->getTableName(), $this->WhereConditionElements );
   }
 
-  public function prepareDynamicSelectStmt( $keys, $values, $filter = null){
+  public function prepareDynamicSelectStmt( $keys, $values, $filter = [], $sort = []){
 
-    $this->prepareDefaultSelectElements();
+    $this->prepareDefaultSelectElements($sort);
 
     $this->prepareDynamicWhere($keys, $values, $filter);
 
@@ -180,7 +187,7 @@ class baseModel extends helpers\ModelData{
 
   }
 
-  private function prepareDynamicWhere($keys, $values, $filter=null){
+  private function prepareDynamicWhere($keys, $values, $filter=[]){
     $condCounter = 0;
     if(sizeof($keys) > 0){
       $this->_PREPARE_WHERE();
@@ -229,45 +236,77 @@ class baseModel extends helpers\ModelData{
       }
       if($filter!=null){
         for($i=0;$i<sizeOf($filter);$i++){
-          $operator = "=";
+
+          $field_oper = $this->getFieldAndOperation($filter[$i]->getName());
+          $field      = $field_oper['field'];
+          $operator   = $field_oper['operator'];
+
           $values = explode(",", $filter[$i]->getValue());
           if(sizeOf($values)==1){
-            if(strpos($values[0],'*')){
+            if(strpos($values[0],'*')){//If value contains willdcard *, LIKE overwrites the operator previously set
               $operator = " LIKE ";
             }else{
-              $operator = " = ";
+              $operator = $field_oper['operator'];
             }
             if($condCounter == 0){
-              $this->_CONDITION( $this->getTableColumn($filter[$i]->getName())->getField( DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB() ) , $operator, $filter[$i]->getValue() );
+              $this->_CONDITION( $this->getTableColumn($field)->getField( DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB() ) , $operator, $filter[$i]->getValue() );
               $condCounter += 1;
             }else{
-              $this->_AND( $this->getTableColumn($filter[$i]->getName())->getField( DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB() ) , $operator, $filter[$i]->getValue() );
+              $this->_AND( $this->getTableColumn($field)->getField( DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB() ) , $operator, $filter[$i]->getValue() );
               $condCounter += 1;
             }
           }else{
             for($j=0;$j<sizeOf($values);$j++){
-              if(strpos($values[$j],'*')){
+              if(strpos($values[$j],'*')){//If value contains willdcard *, LIKE overwrites the operator previously set
                 $operator = " LIKE ";
               }else{
-                $operator = " = ";
+                $operator = $field_oper['operator'];
               }
               if($j==0){
                 if($condCounter == 0){
-                  $this->GROUP_OPEN( )->_CONDITION( $this->getTableColumn($filter[$i]->getName())->getField( DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB() ) , $operator, $values[$j] );
+                  $this->GROUP_OPEN( )->_CONDITION( $this->getTableColumn($field)->getField( DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB() ) , $operator, $values[$j] );
                 }else{
-                  $this->_AND( )->GROUP_OPEN( )->_CONDITION( $this->getTableColumn($filter[$i]->getName())->getField( DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB() ) , $operator, $values[$j] );
+                  $this->_AND( )->GROUP_OPEN( )->_CONDITION( $this->getTableColumn($field)->getField( DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB() ) , $operator, $values[$j] );
                 }
               }else{
-                $this->_OR( $this->getTableColumn($filter[$i]->getName())->getField( DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB() ) , $operator, $values[$j] );
+                $this->_OR( $this->getTableColumn($field)->getField( DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB() ) , $operator, $values[$j] );
                 $condCounter += 1;
               }
             }
             $this->GROUP_CLOSE( );
           }
 
+
         }
       }
     }
+  }
+
+  private function getFieldAndOperation($field){
+    $result = [];
+    $field_oper = explode("|", $field );
+    if(sizeOf($field_oper)>1){
+      $result['field'] = $field_oper[0];
+      switch($field_oper[1]){
+        case "lt":
+          $operator = " < ";
+          break;
+        case "le":
+          $operator = " <= ";
+          break;
+        case "gt":
+          $operator = " > ";
+          break;
+        case "ge":
+          $operator = " >= ";
+          break;
+      }
+      $result['operator'] = $operator;
+    }else{
+      $result['field'] = $field;
+      $result['operator'] = " = ";
+    }
+    return $result;
   }
 
   private function parse_keys_values($keys, $values){

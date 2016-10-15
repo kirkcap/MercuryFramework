@@ -327,6 +327,8 @@ class TableColumn{
 }
 
 class FieldDetails{
+  const SORT_ASC = 'asc';
+  const SORT_DESC = 'desc';
   private $key;
   private $show;
   private $insert;

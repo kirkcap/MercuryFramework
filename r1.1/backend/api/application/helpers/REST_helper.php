@@ -49,9 +49,11 @@ class REST {
 					200 => 'OK',
 					201 => 'Created',
 					204 => 'No Content',
+					206 => 'Partial Content',
 					404 => 'Not Found',
 					400 => 'Error',
 					401 => 'Unauthorized',
+					403 => 'Forbidden',
 					406 => 'Not Acceptable');
 		return ($status[$this->_code])?$status[$this->_code]:$status[500];
 	}
@@ -118,7 +120,7 @@ class REST {
 		header("HTTP/1.1 ".$this->_code." ".$this->get_status_message());
 		header("Content-Type:".$this->_content_type);
 		header("Access-Control-Allow-Origin: *");
-    header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, PATCH, DELETE");
+    header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
 		header("Access-Control-Max-Age: 1000");
     header("Access-Control-Allow-Headers: Content-Type, token, Authorization, X-Requested-With");
     header("Access-Control-Allow-Credentials: true");
@@ -198,15 +200,18 @@ class RequestInfo{
 	public function processParameters($params){
 		$reqParams = [];
 		$pagParams = [];
+		$srtParams = [];
 		for($i=0;$i<sizeOf($params);$i++){
 			$reqParam = new RequestParameter($params[$i]);
 			if($reqParam->isFilterCriteria()){
 			  $reqParams[] = $reqParam;
-			}else{
+			}elseif($reqParam->isPagination()){
 				$pagParams[] = $reqParam;
+			}else{
+				$srtParams[] = $reqParam;
 			}
 		}
-		$this->setParameters(['filter_criteria' => $reqParams, 'pagination' => $pagParams]);
+		$this->setParameters(['filter_criteria' => $reqParams, 'pagination' => $pagParams, 'sort' => $srtParams ]);
 	}
 
 	public function setPathInfo($data){
@@ -248,6 +253,9 @@ class RequestParameter{
 		}elseif(strtolower($parts[0])=='_page' || strtolower($parts[0])=='_per_page'){
 			$this->setValue($parts[1]);
 			$this->setType('pagination');
+		}elseif(strtolower($parts[0])=='_sort' || strtolower($parts[0])=='_desc'){
+			$this->setValue($parts[1]);
+			$this->setType('sort');
 		}else{
 			$this->setValue($parts[1]);
 			$this->setType('filter_criteria');
@@ -295,6 +303,10 @@ class RequestParameter{
 
 	public function isPagination(){
 		return $this->type == 'pagination';
+	}
+
+	public function isSortParameter(){
+		return $this->type == 'sort';
 	}
 
 

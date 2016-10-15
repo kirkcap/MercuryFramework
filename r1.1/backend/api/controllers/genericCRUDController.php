@@ -10,6 +10,7 @@ class genericCRUDController{
     protected $modelName;
     protected $filter;
     protected $pagination;
+    protected $sort;
 
 
     public function __construct($ModelName){
@@ -19,10 +20,11 @@ class genericCRUDController{
 
     }
 
-    public function execute($method, $parameter, $filter_pagination=[]){
-      if(sizeOf($filter_pagination)>0){
-        $this->setFilter($filter_pagination['filter_criteria']);
-        $this->setPagination($filter_pagination['pagination']);
+    public function execute($method, $parameter, $filter_pagination_sort=[]){
+      if(sizeOf($filter_pagination_sort)>0){
+        $this->setFilter($filter_pagination_sort['filter_criteria']);
+        $this->setPagination($filter_pagination_sort['pagination']);
+        $this->setSort($filter_pagination_sort['sort']);
       }
       $this->$method($parameter);
     }
@@ -33,6 +35,9 @@ class genericCRUDController{
     public function setPagination($pagination){
       $this->pagination = $pagination;
     }
+    public function setSort($sort){
+      $this->sort = $sort;
+    }
 
 
     public function index($parm){
@@ -42,7 +47,7 @@ class genericCRUDController{
 
       $modelObj = new genericModel($this->modelName);
 
-      $r = $modelObj->listAll($parm, $this->filter, $this->pagination);
+      $r = $modelObj->listAll($parm, $this->filter, $this->pagination, $this->sort);
       if($modelObj->exceptionOcurred()){
         $this->API->response($modelObj->getErrorData()->getFrontEndResponse(),200);
       }else{
@@ -51,7 +56,11 @@ class genericCRUDController{
           $additional_headers = [];
           $additional_headers[0] = ['name' => 'Content-Range', 'value' => $r['range_low'].'-'.$r['range_high'].'/'.$r['records_count']];
           $additional_headers[1] = ['name' => 'Accept-Range', 'value' => $this->modelName.' '.$r['max_size']];
-          $this->API->response($this->API->json($r['data']), 200, $additional_headers); // send user details
+          $http_code = 200;
+          if($r['range_size'] < $r['records_count']){//If the range size is less than total records, return http 206 - partial content
+            $http_code = 206;
+          }
+          $this->API->response($this->API->json($r['data']), $http_code, $additional_headers); // send user details
   			}
         $this->API->response('',204);	// If no records "No Content" status
 

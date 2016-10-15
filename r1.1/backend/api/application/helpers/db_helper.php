@@ -1075,7 +1075,7 @@ class mySQLSelectStatement extends mySQLStatement{
       $order = " ORDER BY ".$this->order;
     }
     $this->statement .= $where . $order;
-    $this->count_statement .= $where . $order;
+    $this->count_statement .= $where;
 
   }
 
@@ -1143,7 +1143,7 @@ class mySQLSelectStatement extends mySQLStatement{
             $result['records_count'] = $countr['records_count'];
             $result['range_low'] = $this->pagination_config['offset'];
             $result['range_high'] = ( $this->pagination_config['offset'] + sizeOf($rec) ) - 1;
-            $result['range_size'] = $this->pagination_config['per_page'];
+            $result['range_size'] = sizeOf($rec);
             $result['max_size'] = $this->getMaxRecsSelect(); //$this->pagination_config['per_page'];
             $result['data'] = $rec;
           }else{
