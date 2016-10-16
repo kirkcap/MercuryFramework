@@ -44,7 +44,7 @@ class genericAuthController extends genericCRUDController{
         $critvalues = [$login, md5($password)];
         $r = $this->modelObj->find($critfields, $critvalues);
         if($this->modelObj->exceptionOcurred()){
-          $this->API->response($this->modelObj->getErrorData()->getFrontEndResponse(),200);
+          $this->API->response($this->API->json($modelObj->getErrorData()->getFrontEndResponse()),200);
         }else{
 
           if(sizeof($r) > 0){

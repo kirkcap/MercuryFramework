@@ -32,7 +32,7 @@ class dbMetadataController{
 
       $r = $modelObj->listAll();
       if($modelObj->exceptionOcurred()){
-        $this->API->response($modelObj->getErrorData()->getFrontEndResponse(),200);
+        $this->API->response($this->API->json($modelObj->getErrorData()->getFrontEndResponse()),200);
       }else{
 
         if(sizeof($r) > 0){
@@ -55,7 +55,7 @@ class dbMetadataController{
         $r = $modelObj->findByKey($key[1]);
 
         if($modelObj->exceptionOcurred()){
-          $this->API->response($modelObj->getErrorData()->getFrontEndResponse(),200);
+          $this->API->response($this->API->json($modelObj->getErrorData()->getFrontEndResponse()),200);
         }else{
           if(sizeof($r) > 0){
             $this->API->response($this->API->json($r), 200); // send user details

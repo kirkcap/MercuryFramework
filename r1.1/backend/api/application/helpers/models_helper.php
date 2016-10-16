@@ -1,6 +1,7 @@
 <?php
 namespace com\mercuryfw\helpers;
 use \Exception as Exception;
+use com\mercuryfw\models\configModel as configModel;
 
 class Models{
 
@@ -26,8 +27,8 @@ class Models{
   }
 
   protected function __construct(){
-
-    $this->ModelsData = json_decode(file_get_contents(__ROOT__.'/backend/config/Models.json'), true); //Getting model data
+    $modelModel = new configModel("models");
+    $this->ModelsData = $modelModel->listAll(); //json_decode(file_get_contents(__ROOT__.'/backend/config/Models.json'), true); //Getting model data
 
   }
 

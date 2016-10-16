@@ -27,13 +27,15 @@ angular.module('mercuryFWConfigApp.constants', [])
         svcname:   'admin_cfg',
         sourceUrl: 'adminConfig',
         schema:{"":""},
-        parameter_list:["admin_frontend_allowed","log_option","log_saver_class","log_saver_destination"],
+        parameter_list:["admin_frontend_allowed","log_option","log_saver_class","log_saver_destination","exception_return","exception_friendly_message"],
         meta:{
-          param_key:              {fldtype: "select", placeholder: "Fill the parameter name, currently only admin_frontend_allowed is used"},
-          admin_frontend_allowed: {fldtype: "boolean", placeholder: "(If set to false, this frontend app will not work anymore)"},
-          log_option:             {fldtype: "select", placeholder: "Select the type of log processing", valid_values:{type:"array", values:[{key:'all',value:'Logs Everything'}, {key:'info',value:'Logs Info, Warning and Error type messages'}, {key:'warning',value:'Logs Warning and Error Type Messages'}, {key:'error',value:'Logs Error type messages'}]} },
-          log_saver_class:        {fldtype: "select", placeholder: "Select the Logger Class", valid_values:{type:"array", values:[{key:'FileLogSaver',value:'Save log to file'}]} },
-          log_saver_destination:  {fldtype: "string", placeholder: "For the FileLogSaver, the filename prefix, for other, only God knows..."},
+          param_key:                   {fldtype: "select", placeholder: "Fill the parameter name, currently only admin_frontend_allowed is used"},
+          admin_frontend_allowed:      {fldtype: "boolean", placeholder: "(If set to false, this frontend app will not work anymore)"},
+          log_option:                  {fldtype: "select", placeholder: "Select the type of log processing", valid_values:{type:"array", values:[{key:'all',value:'Logs Everything'}, {key:'info',value:'Logs Info, Warning and Error type messages'}, {key:'warning',value:'Logs Warning and Error Type Messages'}, {key:'error',value:'Logs Error type messages'}]} },
+          log_saver_class:             {fldtype: "select", placeholder: "Select the Logger Class", valid_values:{type:"array", values:[{key:'FileLogSaver',value:'Save log to file'}]} },
+          log_saver_destination:       {fldtype: "string", placeholder: "For the FileLogSaver, the filename prefix, for other, only God knows..."},
+          exception_return:            {fldtype: "select", placeholder: "Select the way to deal with exceptions", valid_values:{type:"array", values:[{key:'exception_data',value:'Return Exception Details in REST Call'},{key:'default_message',value:'Return friendly message in REST Call'}]}},
+          exception_friendly_message:  {fldtype: "string", placeholder: "Fill a friendly message to be returned when a exception occurs"}
         }
       },
 

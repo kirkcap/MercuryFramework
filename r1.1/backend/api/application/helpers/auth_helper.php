@@ -35,8 +35,8 @@ class Token{
     $this->id = null;
     $this->issued_at = null;
     $this->expiration = null;
-    //$this->auth_config = include( __ROOT__."/backend/config/authentication.php" );
-    $this->auth_config = json_decode(file_get_contents(__ROOT__."/backend/config/auth_cfg.json"), true); //Getting auth config data
+    $authModel = new configModel("auth_cfg");
+    $this->auth_config = $authModel->listAll(); //json_decode(file_get_contents(__ROOT__."/backend/config/auth_cfg.json"), true); //Getting auth config data
     $this->is_valid = false;
     $this->diag = "";
 

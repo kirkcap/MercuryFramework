@@ -32,7 +32,7 @@ class configurationController{
 
       $r = $modelObj->listAll();
       if($modelObj->exceptionOcurred()){
-        $this->API->response($modelObj->getErrorData()->getFrontEndResponse(),200);
+        $this->API->response($this->API->json($modelObj->getErrorData()->getFrontEndResponse()),200);
       }else{
 
         if(sizeof($r) > 0){
@@ -55,7 +55,7 @@ class configurationController{
         $r = $modelObj->findByKey($key[0]);
 
         if($modelObj->exceptionOcurred()){
-          $this->API->response($modelObj->getErrorData()->getFrontEndResponse(),200);
+          $this->API->response($this->API->json($modelObj->getErrorData()->getFrontEndResponse()),200);
         }else{
           if(sizeof($r) > 0){
             $this->API->response($this->API->json($r), 200); // send user details
@@ -78,7 +78,7 @@ class configurationController{
 
       $r = $modelObj->create($key[0], $entity_data);
       if($modelObj->exceptionOcurred()){
-        $this->API->response($modelObj->getErrorData()->getFrontEndResponse(),200);
+        $this->API->response($this->API->json($modelObj->getErrorData()->getFrontEndResponse()),200);
       }else{
         if(sizeof($r) > 0){
           $this->API->response($this->API->json($r), 200); // send user details
@@ -99,7 +99,7 @@ class configurationController{
 
       $r = $modelObj->change($key[0], $entity_data);
       if($modelObj->exceptionOcurred()){
-        $this->API->response($modelObj->getErrorData()->getFrontEndResponse(),200);
+        $this->API->response($this->API->json($modelObj->getErrorData()->getFrontEndResponse()),200);
       }else{
         if(sizeof($r) > 0){
           $this->API->response($this->API->json($r), 200); // send user details
@@ -120,7 +120,7 @@ class configurationController{
 
         $r = $modelObj->delete($key[0]);
         if($modelObj->exceptionOcurred()){
-          $this->API->response($modelObj->getErrorData()->getFrontEndResponse(),200);
+          $this->API->response($this->API->json($modelObj->getErrorData()->getFrontEndResponse()),200);
         }else{
           if(sizeof($r) > 0){
             $this->API->response($this->API->json($r), 200); // send user details

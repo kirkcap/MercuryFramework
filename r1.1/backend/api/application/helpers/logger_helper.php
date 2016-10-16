@@ -35,7 +35,7 @@ class Logger{
 
   protected function __construct(){
 
-    /*$cfgModel = new configModel("admin_cfg");
+    $cfgModel = new configModel("admin_cfg");
 
     $log_option = $cfgModel->findByKey("log_option");
     $this->log_option = sizeOf($log_option)>0?$log_option['log_option']:'';
@@ -49,7 +49,7 @@ class Logger{
     if($this->log_option!='' && $this->log_saver_class_name!='' && $log_saver_destination!=''){
       $reflectionClass = new ReflectionClass('com\\mercuryfw\\helpers\\'.$this->log_saver_class_name);
       $this->log_saver_class = $reflectionClass->newInstanceArgs([$log_saver_destination]);
-    }*/
+    }
   }
 
   /**
@@ -83,12 +83,12 @@ class Logger{
           }
           break;
         case 'warning':
-          if($type!=null && $type==Logger::LOG_TYPE_Warning){
+          if($type!=null && ( $type==Logger::LOG_TYPE_Warning || $type==Logger::LOG_TYPE_Error ) ){
             $log = true;
           }
           break;
         case 'info':
-          if($type!=null && $type==Logger::LOG_TYPE_Info){
+          if($type!=null && ( $type==Logger::LOG_TYPE_Info || $type==Logger::LOG_TYPE_Warning || $type==Logger::LOG_TYPE_Error ) ){
             $log = true;
           }
           break;
@@ -125,10 +125,6 @@ class FileLogSaver implements iLogSaver{
     //$this->log_contents = $this->load();
   }
 
-  private function load(){
-    return file_get_contents($this->log_file);
-  }
-
   public function save($type, $arr_params = [], $message = ''){
     $log_timestamp = new DateTime(date('Y-m-d H:i:s'), new DateTimeZone(date_default_timezone_get()));
     $log_type = 'undefined';
@@ -160,7 +156,7 @@ class FileLogSaver implements iLogSaver{
     }
 
     $this->log_contents .= "\r\n<br><p>"."Log Timestamp:".$log_timestamp->format('Y-m-d H:i:s')."</p>\r\n<p>"."</p>\r\n<p>"."Log Type:".$log_type."</p>\r\n<p>"."LogContents:".$log_var_data."</p>";
-    if($message!=""){
+    if($message!=''){
       $this->log_contents .= "\r\n" . "<p>Message:" .$message ."</p>";
     }
     file_put_contents($this->log_file, $this->log_contents, FILE_APPEND);

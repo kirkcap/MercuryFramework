@@ -49,7 +49,7 @@ class genericCRUDController{
 
       $r = $modelObj->listAll($parm, $this->filter, $this->pagination, $this->sort);
       if($modelObj->exceptionOcurred()){
-        $this->API->response($modelObj->getErrorData()->getFrontEndResponse(),200);
+        $this->API->response($this->API->json($modelObj->getErrorData()->getFrontEndResponse()),200);
       }else{
 
         if(sizeof($r) > 0){
@@ -79,7 +79,7 @@ class genericCRUDController{
 
         $r = $modelObj->findByKey($parm);
         if($modelObj->exceptionOcurred()){
-          $this->API->response($modelObj->getErrorData()->getFrontEndResponse(),200);
+          $this->API->response($this->API->json($modelObj->getErrorData()->getFrontEndResponse()),200);
         }else{
           if(sizeof($r) > 0){
     				$this->API->response($this->API->json($r), 200); // send user details
@@ -102,7 +102,7 @@ class genericCRUDController{
 
       $r = $modelObj->create($parm, $entity_data);
       if($modelObj->exceptionOcurred()){
-        $this->API->response($modelObj->getErrorData()->getFrontEndResponse(),200);
+        $this->API->response($this->API->json($modelObj->getErrorData()->getFrontEndResponse()),200);
       }else{
         if(sizeof($r) > 0){
           $this->API->response($this->API->json($r), 200); // send user details
@@ -123,7 +123,7 @@ class genericCRUDController{
 
       $r = $modelObj->change($parm, $entity_data);
       if($modelObj->exceptionOcurred()){
-        $this->API->response($modelObj->getErrorData()->getFrontEndResponse(),200);
+        $this->API->response($this->API->json($modelObj->getErrorData()->getFrontEndResponse()),200);
       }else{
         if(sizeof($r) > 0){
           $this->API->response($this->API->json($r), 200); // send user details
@@ -144,7 +144,7 @@ class genericCRUDController{
 
         $r = $modelObj->delete($parm);
         if($modelObj->exceptionOcurred()){
-          $this->API->response($modelObj->getErrorData()->getFrontEndResponse(),200);
+          $this->API->response($this->API->json($modelObj->getErrorData()->getFrontEndResponse()),200);
         }else{
           if(sizeof($r) > 0){
             $this->API->response($this->API->json($r), 200); // send user details

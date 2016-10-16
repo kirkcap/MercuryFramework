@@ -3,6 +3,8 @@ namespace com\mercuryfw\helpers;
 use \Exception as Exception;
 use \mysqli as mysqli;
 use \PDO as PDO;
+use com\mercuryfw\models\configModel as configModel;
+use com\mercuryfw\helpers\Logger as Logger;
 
 interface if_db{
 
@@ -11,8 +13,7 @@ interface if_db{
    *
    * @return Singleton The *Singleton* instance.
    */
-  public static function getInstance($conn_data);
-
+  public static function getInstance($conn_data, $logger_instance);
 
   public function prefixDB();
 
@@ -20,13 +21,19 @@ interface if_db{
 
   public function getDBName();
 
-  public function getSelectStatement($tb_name, $SelectionElements, $WhereConditionElements, $SelectionOrderElements);
+  public function getLogger();
+
+  public function getSelectStatement( $tb_name, $SelectionElements, $WhereConditionElements, $SelectionOrderElements);
 
   public function getInsertStatement( $tb_name, $InsertionElements );
 
-  public function getUpdateStatement($tb_name, $UpdateElements, $WhereConditionElements);
+  public function getUpdateStatement( $tb_name, $UpdateElements, $WhereConditionElements);
 
-  public function getDeleteStatement($tb_name, $WhereConditionElements);
+  public function getDeleteStatement( $tb_name, $WhereConditionElements);
+
+  public function getTablesListStatement();
+
+  public function getTableStructureStatement( $tbName );
 
   public function getDBConn();
 
@@ -37,6 +44,7 @@ class dbFactory{
 
   private $db_data;
   private $DB_Config;
+  private $logger;
 
   /**
    * @var Singleton The reference to *Singleton* instance of this class
@@ -64,19 +72,20 @@ class dbFactory{
    */
   protected function __construct(){
     if($this->db_data == null){
-      //$this->db_data = include( __ROOT__."/backend/config/database.php" );
-      $this->DB_Config = json_decode(file_get_contents(__ROOT__.'/backend/config/databases.json'), true); //Getting database(s) config data
+      $this->logger = Logger::getInstance();
+      $dbModel = new configModel("databases");
+      $this->DB_Config = $dbModel->listAll();//json_decode(file_get_contents(__ROOT__.'/backend/config/databases.json'), true); //Getting database(s) config data
     }
   }
 
   public function getDB($db_cfg_name){
     if(array_key_exists($db_cfg_name, $this->DB_Config)){
       if($this->DB_Config[$db_cfg_name]["DB_TYPE"]=='mysql'){
-        return mySqlDB::getInstance($this->DB_Config[$db_cfg_name]);
+        return mySqlDB::getInstance($this->DB_Config[$db_cfg_name], $this->logger);
       }elseif($this->DB_Config[$db_cfg_name]["DB_TYPE"]=='mysql_PDO'){
-        return mySql_PDO_DB::getInstance($this->DB_Config[$db_cfg_name]);
+        return mySql_PDO_DB::getInstance($this->DB_Config[$db_cfg_name], $this->logger);
       }elseif($this->DB_Config[$db_cfg_name]["DB_TYPE"]=='pgsql_PDO'){
-        return postGreSql_PDO_DB::getInstance($this->DB_Config[$db_cfg_name]);
+        return postGreSql_PDO_DB::getInstance($this->DB_Config[$db_cfg_name], $this->logger);
       }else{
         throw new Exception("Database Type ".$this->DB_Config[$db_cfg_name]["DB_TYPE"]." not supported yet!");
       }
@@ -107,7 +116,8 @@ class dbFactory{
 
 class mySqlDB implements if_db{
 
-    public $mysqli = null;
+    private $logger;
+    public  $mysqli = null;
     private $conn_data = null;
     private $dbName = "";
     private $prefix_db = false;
@@ -124,10 +134,10 @@ class mySqlDB implements if_db{
      *
      * @return Singleton The *Singleton* instance.
      */
-    public static function getInstance($conn_data){
+    public static function getInstance($conn_data, $logger_instance){
 
         if (null === static::$instance) {
-            static::$instance = new static($conn_data);
+          static::$instance = new static($conn_data, $logger_instance);
         }
 
         return static::$instance;
@@ -147,7 +157,8 @@ class mySqlDB implements if_db{
      * Protected constructor to prevent creating a new instance of the
      * *Singleton* via the `new` operator from outside of this class.
      */
-    protected function __construct($conn_data){
+    protected function __construct($conn_data, $logger_instance){
+      $this->logger = $logger_instance;
       if($this->conn_data == null){
         $this->conn_data = $conn_data; //include( __ROOT__."/backend/api/application/config/database.php" );
         $this->prefix_db = $this->conn_data['PREFIX_DB'];
@@ -166,6 +177,10 @@ class mySqlDB implements if_db{
 
     public function getDBName(){
       return $this->dbName;
+    }
+
+    public function getLogger(){
+      return $this->logger;
     }
 
     /**
@@ -227,6 +242,7 @@ class mySqlDB implements if_db{
 
 class mySql_PDO_DB implements if_db{
 
+    private $logger;
     public  $dbconn = null;
     private $conn_data = null;
     private $dbName = "";
@@ -244,10 +260,10 @@ class mySql_PDO_DB implements if_db{
      *
      * @return Singleton The *Singleton* instance.
      */
-    public static function getInstance($conn_data){
+    public static function getInstance($conn_data, $logger_instance){
 
         if (null === static::$instance) {
-            static::$instance = new static($conn_data);
+          static::$instance = new static($conn_data, $logger_instance);
         }
 
         return static::$instance;
@@ -271,7 +287,8 @@ class mySql_PDO_DB implements if_db{
      * Protected constructor to prevent creating a new instance of the
      * *Singleton* via the `new` operator from outside of this class.
      */
-    protected function __construct($conn_data){
+    protected function __construct($conn_data, $logger_instance){
+      $this->logger = $logger_instance;
       if($this->conn_data == null){
         $this->conn_data = $conn_data; //include( __ROOT__."/backend/api/application/config/database.php" );
         $this->prefix_db = $this->conn_data['PREFIX_DB'];
@@ -290,6 +307,10 @@ class mySql_PDO_DB implements if_db{
 
     public function getDBName(){
       return $this->dbName;
+    }
+
+    public function getLogger(){
+      return $this->logger;
     }
 
 
@@ -351,6 +372,7 @@ class mySql_PDO_DB implements if_db{
 
 class postGreSql_PDO_DB implements if_db{
 
+    private $logger;
     public  $dbconn = null;
     private $conn_data = null;
     private $dbName = "";
@@ -368,10 +390,10 @@ class postGreSql_PDO_DB implements if_db{
      *
      * @return Singleton The *Singleton* instance.
      */
-    public static function getInstance($conn_data){
+    public static function getInstance($conn_data, $logger_instance){
 
         if (null === static::$instance) {
-            static::$instance = new static($conn_data);
+            static::$instance = new static($conn_data, $logger_instance);
         }
 
         return static::$instance;
@@ -393,7 +415,8 @@ class postGreSql_PDO_DB implements if_db{
      * Protected constructor to prevent creating a new instance of the
      * *Singleton* via the `new` operator from outside of this class.
      */
-    protected function __construct($conn_data){
+    protected function __construct($conn_data, $logger_instance){
+      $this->logger = $logger_instance;
       if($this->conn_data == null){
         $this->conn_data = $conn_data; //include( __ROOT__."/backend/api/application/config/database.php" );
         $this->prefix_db = $this->conn_data['PREFIX_DB'];
@@ -416,6 +439,10 @@ class postGreSql_PDO_DB implements if_db{
 
     public function getDBUser(){
       return $this->conn_data['DB_USER'];
+    }
+
+    public function getLogger(){
+      return $this->logger;
     }
 
     /**
@@ -776,6 +803,8 @@ class mySQLGetTableListStatement extends mySQLStatement{
 
   public function execute(){
 
+    $this->dbcon->getLogger()->log(Logger::LOG_TYPE_Info, null, "SQL Statement: ".$this->statement ); //Logging SQL Statement
+
     $result = [];
 
     /* Prepare statement */
@@ -827,6 +856,8 @@ class mySQL_PDO_GetTableListStatement extends mySQLStatement{
 
   public function execute(){
 
+    $this->dbcon->getLogger()->log(Logger::LOG_TYPE_Info, null, "SQL Statement: ".$this->statement ); //Logging SQL Statement
+
     $result = [];
 
     /* Prepare statement */
@@ -858,6 +889,8 @@ class pgSQL_PDO_GetTableListStatement extends mySQLStatement{
   }
 
   public function execute(){
+
+    $this->dbcon->getLogger()->log(Logger::LOG_TYPE_Info, null, "SQL Statement: ".$this->statement." Schema:".$this->dbcon->getDBUser() ); //Logging SQL Statement
 
     $result = [];
 
@@ -893,6 +926,8 @@ class mySQLGetTableStructureStatement extends mySQLStatement{
   }
 
   public function execute(){
+
+    $this->dbcon->getLogger()->log(Logger::LOG_TYPE_Info, null, "SQL Statement: ".$this->statement ); //Logging SQL Statement
 
     $result = [];
 
@@ -947,6 +982,8 @@ class mySQL_PDO_GetTableStructureStatement extends mySQLStatement{
 
   public function execute(){
 
+    $this->dbcon->getLogger()->log(Logger::LOG_TYPE_Info, null, "SQL Statement: ".$this->statement ); //Logging SQL Statement
+
     $result = [];
 
     /* Prepare statement */
@@ -980,6 +1017,8 @@ class pgSQL_PDO_GetTableStructureStatement extends mySQLStatement{
   }
 
   public function execute(){
+
+    $this->dbcon->getLogger()->log(Logger::LOG_TYPE_Info, null, "SQL Statement: ".$this->statement ); //Logging SQL Statement
 
     $result = [];
 
@@ -1091,6 +1130,7 @@ class mySQLSelectStatement extends mySQLStatement{
   }
 
   public function execute($return_mode=self::ALL_RECORDS, $pagination=[]){
+
     $result = array();
     $bind_types = "";
     $parameters = [];
@@ -1106,6 +1146,9 @@ class mySQLSelectStatement extends mySQLStatement{
       $this->addPagination($pagination);
       $prep_count_stmt = $this->dbcon->getDBConn()->prepare($this->count_statement);
     }
+
+    $this->dbcon->getLogger()->log(Logger::LOG_TYPE_Info, [$parameters, $pagination], "SQL Statement: ".$this->statement ); //Logging SQL Statement
+
     $prep_stmt = $this->dbcon->getDBConn()->prepare($this->statement);
 
     if($prep_stmt === false) {
@@ -1228,6 +1271,9 @@ class mySQL_PDO_SelectStatement extends mySQLSelectStatement{
       $this->addPagination($pagination);
       $prep_count_stmt = $this->dbcon->getDBConn()->prepare($this->count_statement);
     }
+
+    $this->dbcon->getLogger()->log(Logger::LOG_TYPE_Info, [$parameters, $pagination], "SQL Statement: ".$this->statement ); //Logging SQL Statement
+
     $prep_stmt = $this->dbcon->getDBConn()->prepare($this->statement);
 
     if($prep_stmt === false) {
@@ -1383,6 +1429,9 @@ class mySQLInsertStatement extends mySQLStatement{
     $result = 0;
     $parameters = $this->bind_parms;
 
+    $this->dbcon->getLogger()->log(Logger::LOG_TYPE_Info, $parameters, "SQL Statement: ".$this->statement ); //Logging SQL Statement
+
+
     /* Prepare statement */
     $prep_stmt = $this->dbcon->getDBConn()->prepare($this->statement);
 
@@ -1418,6 +1467,9 @@ class mySQL_PDO_InsertStatement extends mySQLInsertStatement{
 
     $result = 0;
     $parameters = $this->bind_parms;
+
+    $this->dbcon->getLogger()->log(Logger::LOG_TYPE_Info, $parameters, "SQL Statement: ".$this->statement ); //Logging SQL Statement
+
 
     /* Prepare statement */
     $prep_stmt = $this->dbcon->getDBConn()->prepare($this->statement);
@@ -1487,6 +1539,8 @@ class mySQLUpdateStatement extends mySQLStatement{
       }
     }
 
+    $this->dbcon->getLogger()->log(Logger::LOG_TYPE_Info, $parameters, "SQL Statement: ".$this->statement ); //Logging SQL Statement
+
 
     /* Prepare statement */
     $prep_stmt = $this->dbcon->getDBConn()->prepare($this->statement);
@@ -1528,6 +1582,8 @@ class mySQL_PDO_UpdateStatement extends mySQLUpdateStatement{
         $parameters[$b++] = $this->WHERECond->getParameters()[$i];
       }
     }
+
+    $this->dbcon->getLogger()->log(Logger::LOG_TYPE_Info, $parameters, "SQL Statement: ".$this->statement ); //Logging SQL Statement
 
     /* Prepare statement */
     $prep_stmt = $this->dbcon->getDBConn()->prepare($this->statement);
@@ -1591,6 +1647,8 @@ class mySQLDeleteStatement extends mySQLStatement{
       $parameters = $this->WHERECond->getParameters();
     }
 
+    $this->dbcon->getLogger()->log(Logger::LOG_TYPE_Info, $parameters, "SQL Statement: ".$this->statement ); //Logging SQL Statement
+
 
     /* Prepare statement */
     $prep_stmt = $this->dbcon->getDBConn()->prepare($this->statement);
@@ -1629,6 +1687,8 @@ class mySQL_PDO_DeleteStatement extends mySQLDeleteStatement{
     if(sizeof($this->WHERECond->getParameters())>0){
       $parameters = $this->WHERECond->getParameters();
     }
+
+    $this->dbcon->getLogger()->log(Logger::LOG_TYPE_Info, $parameters, "SQL Statement: ".$this->statement ); //Logging SQL Statement
 
     /* Prepare statement */
     $prep_stmt = $this->dbcon->getDBConn()->prepare($this->statement);
