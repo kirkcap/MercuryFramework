@@ -17,34 +17,19 @@ limitations under the License.
 /**
 * PHP version 5
 *
-* @category Error catching
+* @category Configuration
 * @package  Mercuryfw
 * @author   Wilson Rodrigo dos Santos <wilson.santos@gmail.com>
 * @license  http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
 * @link     https://github.com/kirkcap/MercuryFramework
 */
+  return [
+    'DB_SERVER'   => "",
+    'DB_USER'     => "",
+    'DB_PASSWORD' => "",
+    'DB'          => "",
+    'PREFIX_DB'   => false,  //Mount SQL prefixing Database.Table
+    'PREFIX_TB'   => false   //Mount SQL prefixing Table.FieldName
+  ];
 
-class ErrorCatcher{
-  private $message;
-  private $exception;
-  private $source;
-
-  public function __construct($exception){
-    $this->exception = $exception;
-  }
-
-  public function getFrontEndResponse(){
-    $return = 'Exception code '
-              .$this->exception->getCode()
-              .' originated on '
-              .$this->exception->getFile()
-              .' at line '
-              .$this->exception->getLine()
-              .' Message: '
-              .$this->exception->getMessage()
-              .' Complete trace:'
-              .$this->exception->getTraceAsString();
-    return $return;
-  }
-}
  ?>

@@ -17,34 +17,16 @@ limitations under the License.
 /**
 * PHP version 5
 *
-* @category Error catching
+* @category Configuration
 * @package  Mercuryfw
 * @author   Wilson Rodrigo dos Santos <wilson.santos@gmail.com>
 * @license  http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
 * @link     https://github.com/kirkcap/MercuryFramework
 */
 
-class ErrorCatcher{
-  private $message;
-  private $exception;
-  private $source;
+  return [
+    'TOKEN_VALIDITY'     => "", //Token Validity in minutes
+    'SECRET_SERVER_KEY'  => ""
+  ];
 
-  public function __construct($exception){
-    $this->exception = $exception;
-  }
-
-  public function getFrontEndResponse(){
-    $return = 'Exception code '
-              .$this->exception->getCode()
-              .' originated on '
-              .$this->exception->getFile()
-              .' at line '
-              .$this->exception->getLine()
-              .' Message: '
-              .$this->exception->getMessage()
-              .' Complete trace:'
-              .$this->exception->getTraceAsString();
-    return $return;
-  }
-}
  ?>
