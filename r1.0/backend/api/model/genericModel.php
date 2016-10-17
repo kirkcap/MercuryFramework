@@ -17,7 +17,7 @@ limitations under the License.
 /**
 * PHP version 5
 *
-* @category Controllers
+* @category Models
 * @package  Mercuryfw
 * @author   Wilson Rodrigo dos Santos <wilson.santos@gmail.com>
 * @license  http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
