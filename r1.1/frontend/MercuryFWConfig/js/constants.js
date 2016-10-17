@@ -1,3 +1,27 @@
+/*
+Copyright 2016 Wilson Rodrigo dos Santos - wilson.santos@gmail.com
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+/**
+* Angular JS
+*
+* @category Constants
+* @author   Wilson Rodrigo dos Santos <wilson.santos@gmail.com>
+* @license  http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
+* @link     https://github.com/kirkcap/MercuryFramework
+*/
+
 angular.module('mercuryFWConfigApp.constants', [])
 
     .constant('BackendConfig', {
@@ -180,6 +204,7 @@ angular.module('mercuryFWConfigApp.constants', [])
         schema:{
           controller : "",
           method : "" ,
+          http_method: "*",
           checkToken : false,
           model : ""
         },
@@ -187,14 +212,21 @@ angular.module('mercuryFWConfigApp.constants', [])
           param_key: {fldtype: "string", placeholder: "Fill the route name, if you have object + subobject, fill as object.subobject"},
           controller: {fldtype: "select", placeholder: "Fill the Controller Name which will be process this route", valid_values:{type:"array", values:[{key: "genericCRUDController", value:"Generic Controller which deal with CRUD operations automatically"},{key: "genericAuthController",value: "Controller designed to deal with Authentication - Login and JWT Generation"}, {key: "configurationController", value:"Controller designed to deal with Configuration Files"}, {key:"Other", value:"Indicate the controller name:"}]}},
           method: {fldtype: "select", placeholder: "Fill the Controller Method to be called by this route", valid_values:{type:"array",
-            values:[{key:"CRUD", value: "Automatic process of all CRUD operations, according to HTTP Method used"},
-                    {key:"index", value:"List all elements, HTTP GET"},
-                    {key:"show", value:"Get a single element, HTTP GET"},
-                    {key:"create", value:"Create new elements - HTTP POST"},
-                    {key:"update", value:"Update elements, HTTP PUT"},
-                    {key:"destroy", value: "delete elements, HTTP DELETE"},
-                    {key: "login", value: "User/Password credentials check and JWT issuing"},
+            values:[{key: "CRUD", value: "Automatic process of all CRUD operations, according to HTTP Method used"},
+                    {key: "index", value:"List all elements, HTTP GET"},
+                    {key: "show", value:"Get a single element, HTTP GET"},
+                    {key: "create", value:"Create new elements - HTTP POST"},
+                    {key: "update", value:"Update elements, HTTP PUT"},
+                    {key: "destroy", value: "delete elements, HTTP DELETE"},
+                    {key: "login", value: "User/Password credentials check and JWT issuing, HTTP POST"},
                     {key: "Other", value:"Indicate the method name:"}]}},
+          http_method: {fldtype: "select", placeholder: "Fill the HTTP Method corresponding to the method configured", valid_values:{type:"array",
+            values:[{key: "GET"   , value: "HTTP GET"},
+                    {key: "POST"  , value: "HTTP POST"},
+                    {key: "PUT"   , value: "HTTP PUT"},
+                    {key: "DELETE", value: "HTTP DELETE"},
+                    {key: "*"     , value: "GET,POST,PUT,DELETE"}]},
+            depends_on: {field:"method", values:["Other"]}},
           checkToken: {fldtype: "boolean", placeholder: "(Authorizatin Token must be checked for this route?)"},
           model: {fldtype: "select", placeholder: "Fill the Model Name to be used", valid_values:{type:"service_call", service: "models"}}
         }
