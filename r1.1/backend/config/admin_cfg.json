@@ -1,8 +1,8 @@
 {
   "admin_frontend_allowed" : true,
-  "log_option":"info",
-  "log_saver_class":"FileLogSaver",
-  "log_saver_destination":"Log",
-  "exception_return":"default_message",
-  "exception_friendly_message":"Something goes wrong with this call, please try again!"
+  "log_option" : "info",
+  "log_saver_class" : "FileLogSaver",
+  "log_saver_destination" : "Log",
+  "exception_return" : "default_message",
+  "exception_friendly_message" : "Something goes wrong with this call, please try again!"
 }
