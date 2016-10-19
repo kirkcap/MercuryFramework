@@ -1,5 +1,6 @@
 {
   "admin_frontend_allowed" : true,
+  "cors_allow_origin": "localhost",
   "log_option" : "info",
   "log_saver_class" : "FileLogSaver",
   "log_saver_destination" : "Log",

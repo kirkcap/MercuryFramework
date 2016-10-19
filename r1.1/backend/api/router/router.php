@@ -61,6 +61,42 @@ class router{
     //{  "object"              : {"controller" : "<controller>","method" : "<method>", "checkToken" : true/false, ["model" : "<model>"]}} where method = CRUD|Method Name, model=Model Name
   }
 
+  public function getAllowedMethods($request_parts){
+    $method = "";
+    $srd = new serviceRequestedData($request_parts);
+    if(array_key_exists($srd->getRouteName(), $this->routes)){
+      switch($this->routes[$srd->getRouteName()]["method"]){
+        case "CRUD":
+          $method = "GET,POST,PUT,DELETE,OPTIONS";
+          break;
+        case "index":
+          $method = "GET,OPTIONS";
+          break;
+        case "show":
+          $method = "GET,OPTIONS";
+          break;
+        case "create":
+          $method = "POST,OPTIONS";
+          break;
+        case "update":
+          $method = "PUT,OPTIONS";
+          break;
+        case "destroy":
+          $method = "DELETE,OPTIONS";
+          break;
+        case "login":
+          $method = "POST,OPTIONS";
+          break;
+        default:
+          $method = $this->routes[$srd->getRouteName()]["http_method"].",OPTIONS";
+          break;
+      }
+      return $method;
+    }else{
+      REST::getInstance()->response(["error" => "No route found for specified address!"],200);
+    }
+  }
+
   public function getRoute( $httpMethod, $request_parts){
 
     $route = new route();
@@ -69,84 +105,124 @@ class router{
     $counter    = 0;
     $objCounter = 0;
     $checkToken = false;
-    $objs       = array();
-    $parms      = array();
-    $object     = "";
-    $parameters = array();
 
-    foreach($request_parts as $part){
-      if($counter++ == 0){
-        $objs[$objCounter] = $part;
-        $object = $object . $sep . $part;
-        $sep = '.';
-      }else{
-        $parms[$objCounter++] = $part;
-        $counter = 0;
+    $srd = new serviceRequestedData($request_parts);
+
+
+    if(array_key_exists($srd->getRouteName(), $this->routes)){
+      $route->setController($this->routes[$srd->getRouteName()]["controller"]);
+      $route->setRouteMethod($this->routes[$srd->getRouteName()]["method"]);
+      $route->setCheckToken($this->routes[$srd->getRouteName()]["checkToken"]);
+
+      if(array_key_exists("model",$this->routes[$srd->getRouteName()])){
+        $route->setModel($this->routes[$srd->getRouteName()]["model"]);
+      }elseif($this->routes[$srd->getRouteName()]['controller']=='dbMetadataController'){ //If it´s a call to dbMetadataController, the first param is the DBConfig name, the 'model'
+        $route->setModel($srd->getRouteParams()[0]); //$parms[0]);
       }
-    }
 
-    $result = array();
 
-    foreach($this->routes as $key => $value){
-
-      if($key == $object){
-        $route->setController($value["controller"]);
-        $route->setRouteMethod($value["method"]);
-        $route->setCheckToken($value["checkToken"]);
-
-        if(array_key_exists("model",$value)){
-          $route->setModel($value["model"]);
-        }elseif($value['controller']=='dbMetadataController'){ //If it´s a call to dbMetadataController, the first param is the DBConfig name, the 'model'
-          $route->setModel($parms[0]);
-        }
-        break;
-      }
-    }
-
-    if($route->getController() != null){//If a controller was found...
 
       if($route->getRouteMethod() == "CRUD"){
         if($httpMethod == "GET"){//Get object data
-           if(sizeof($objs) > sizeof($parms)){//Request all elements
+           //if(sizeof($objs) > sizeof($parms)){//Request all elements
+           if(sizeof($srd->getRouteParts()) > sizeof($srd->getRouteParams())){//Request all elements
              $route->setControllerMethod("index") ;
-             if(sizeof($parms)>0){
-               $route->setControllerParameters($parms);
+             //if(sizeof($parms)>0){
+             if(sizeof($srd->getRouteParams())>0){
+               $route->setControllerParameters($srd->getRouteParams()); //$parms);
              }
 
            }else{
              $route->setControllerMethod("show");
-             $route->setControllerParameters($parms);
+             $route->setControllerParameters($srd->getRouteParams()); //$parms);
            }
 
         }elseif($httpMethod == "POST"){//Create object data
            $route->setControllerMethod("create");
 
-           if(sizeof($parms)>0){
-             $route->setControllerParameters($parms);
+           //if(sizeof($parms)>0){
+           if(sizeof($srd->getRouteParams())>0){
+             $route->setControllerParameters($srd->getRouteParams()); //$parms);
            }
 
         }elseif($httpMethod == "PUT"){//Update object data
            $route->setControllerMethod("update");
-           $route->setControllerParameters($parms);
+           $route->setControllerParameters($srd->getRouteParams()); //$parms);
 
         }elseif($httpMethod == "DELETE"){//Delete object data
            $route->setControllerMethod("destroy");
-           $route->setControllerParameters($parms);
+           $route->setControllerParameters($srd->getRouteParams()); //$parms);
 
         }
       }else{
         $route->setControllerMethod($route->getRouteMethod());
-        if(sizeof($parms)>0){
-          $route->setControllerParameters($parms);
+        //if(sizeof($parms)>0){
+        if(sizeof($srd->getRouteParams())>0){
+          $route->setControllerParameters($srd->getRouteParams()); //$parms);
         }
       }
 
       return $route;
+
     }else{
       REST::getInstance()->response(["error" => "No route found for specified address!"],200);
     }
   }
 }
+
+
+class serviceRequestedData{
+
+  private $routeName;
+  private $routeParts;
+  private $routeParams;
+
+  public function __construct($request_parts){
+    $sep         = "";
+    $counter     = 0;
+    $objCounter  = 0;
+    $routeParts  = array();
+    $routeParams = array();
+    $routeName   = "";
+
+    foreach($request_parts as $part){
+      if($counter++ == 0){
+        $routeParts[$objCounter] = $part;
+        $routeName .= $sep . $part;
+        $sep = '.';
+      }else{
+        $routeParams[$objCounter++] = $part;
+        $counter = 0;
+      }
+    }
+    $this->setRouteName($routeName);
+    $this->setRouteParts($routeParts);
+    $this->setRouteParams($routeParams);
+  }
+
+  public function setRouteName($name){
+    $this->routeName = $name;
+  }
+  public function getRouteName(){
+    return $this->routeName;
+  }
+
+  public function setRouteParts($parts){
+    $this->routeParts = $parts;
+  }
+  public function getRouteParts(){
+    return $this->routeParts;
+  }
+
+  public function setRouteParams($parms){
+    $this->routeParams = $parms;
+  }
+  public function getRouteParams(){
+    return $this->routeParams;
+  }
+
+}
+
 
 class route{
   private $controller;

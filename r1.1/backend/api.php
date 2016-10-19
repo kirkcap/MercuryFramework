@@ -50,45 +50,44 @@ class API {
 	public function processApi(){
     $REST = REST::getInstance();
 
-    $reqInfo = $REST->getRequestInfo(); //Gets the REST path info containing object(s) and parameter(s)
+    if($REST->HTTPMethodIsAllowed()){
 
-    $request_parts = explode( "/", $reqInfo->getPathInfo() ); //Separating request parts
+      $route = $REST->getRoute();
 
-    $router = new router(); //Initializing router
-    $route = $router->getRoute($REST->get_request_method(), $request_parts ); //Obtaining route, containing controller to be instantiated and method to be called, and additional data
+      if($route->getController()!=null){
+        $continue = true;
 
-    if($route->getController()!=null){
-      $continue = true;
-
-      if($route->getCheckToken()){
-        $token = Token::validateToken();
-        if(!$token->isValid()){
-          $continue = false;
-          $REST->response($REST->json($token->getDiagnostic()),401);
+        if($route->getCheckToken()){
+          $token = Token::validateToken();
+          if(!$token->isValid()){
+            $continue = false;
+            $REST->response($REST->json($token->getDiagnostic()),401);
+          }
         }
-      }
 
-      if($continue){
+        if($continue){
 
-        if($route->getController() == "genericCRUDController" or
-           $route->getController() == "genericAuthController" ){
+          if($route->getController() == "genericCRUDController" or
+             $route->getController() == "genericAuthController" ){
 
-          $controller = ControllerFactory::getController($route->getController(),array($route->getModel()));
-
-        }else{
-          if($route->getModel()!=null){
             $controller = ControllerFactory::getController($route->getController(),array($route->getModel()));
 
           }else{
-            $controller = ControllerFactory::getController($route->getController(),array());
+            if($route->getModel()!=null){
+              $controller = ControllerFactory::getController($route->getController(),array($route->getModel()));
 
+            }else{
+              $controller = ControllerFactory::getController($route->getController(),array());
+
+            }
           }
-        }
-        $controller->execute($route->getControllerMethod(), $route->getControllerParameters(), $reqInfo->getParameters());
+          $controller->execute($route->getControllerMethod(), $route->getControllerParameters(), $REST->getRequestInfo()->getParameters());
 
-      }
+        }
+      }else
+  			$REST->response('',404); // If the method not exist with in this class "Page not found".
     }else
-			$REST->response('',404); // If the method not exist with in this class "Page not found".
+      $REST->response('',406); //Not acceptable
 	}
 
 

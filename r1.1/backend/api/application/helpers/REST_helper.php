@@ -26,14 +26,22 @@ limitations under the License.
 
 namespace com\mercuryfw\helpers;
 use com\mercuryfw\helpers\Logger as Logger;
+use com\mercuryfw\models\configModel as configModel;
+use com\mercuryfw\routers\router as router;
+
 class REST {
 
-	public $_allow = array();
-	public $_content_type = "application/json";
+	public  $_allow = array();
+	public  $_content_type = "application/json";
 	private $_request = array();
+	private $_router;
+	private $_request_parts = null;
+	private $_route;
 
 	private $_method = "";
 	private $_code = 200;
+	private $_allowed_methods = "";
+	private $_http_method_allowed = false;
 
 	/**
 	 * @var Singleton The reference to *Singleton* instance of this class
@@ -55,7 +63,48 @@ class REST {
 
 
 	protected function __construct(){
+
+		$this->setRouter(new router());
+		$this->setAllowedMethods($this->getRouter()->getAllowedMethods($this->getRequestParts()));
+
 		$this->inputs();
+
+	}
+
+  private function getRequestParts(){
+		if($this->_request_parts==null){
+			$reqInfo = $this->getRequestInfo(); //Gets the REST path info containing object(s) and parameter(s)
+			$this->_request_parts = explode( "/", $reqInfo->getPathInfo() ); //Separating request parts
+		}
+		return $this->_request_parts;
+	}
+
+	private function setRouter($router){
+		$this->_router = $router;
+	}
+	public function getRouter(){
+		return $this->_router;
+	}
+
+	private function setRoute($route){
+		$this->_route = $route;
+	}
+	public function getRoute(){
+		return $this->_route;
+	}
+
+	private function setAllowedMethods($methods){
+		$this->_allowed_methods = $methods;
+	}
+	public function getAllowedMethods(){
+		return $this->_allowed_methods;
+	}
+
+	private function setHTTPMethodIsAllowed($allowed){
+		$this->_http_method_allowed = $allowed;
+	}
+	public function HTTPMethodIsAllowed(){
+		return $this->_http_method_allowed;
 	}
 
 	public function get_referer(){
@@ -68,6 +117,8 @@ class REST {
 		echo $data;
 		exit;
 	}
+
+
 	// For a list of http codes checkout http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
 	private function get_status_message(){
 		$status = array(
@@ -88,23 +139,33 @@ class REST {
 	}
 
 	private function inputs(){
-		switch($this->get_request_method()){
-			case "POST":
-			  $this->_request = empty($_POST)?$this->cleanInputs(file_get_contents("php://input")):$this->cleanInputs($_POST);
-				break;
-			case "GET":
-			case "DELETE":
-				$this->_request = empty($_GET)?$this->cleanInputs(file_get_contents("php://input")):$this->cleanInputs($_GET);
-				break;
-			case "PUT":
-				$this->_request = $this->cleanInputs(file_get_contents("php://input")); //$this->_request);
-				break;
-			case "OPTIONS":
-				$this->response('',200);//Responding OK to the processing continue...
-				break;
-			default:
-				$this->response('',406);
-				break;
+		if(strpos($this->getAllowedMethods(), $this->get_request_method())!==false){
+			$this->setHTTPMethodIsAllowed(true);
+			$this->setRoute($this->getRouter()->getRoute($this->get_request_method(), $this->getRequestParts()));
+			switch($this->get_request_method()){
+				case "POST":
+				  $this->_request = empty($_POST)?$this->cleanInputs(file_get_contents("php://input")):$this->cleanInputs($_POST);
+					break;
+
+				case "GET":
+				case "DELETE":
+					$this->_request = empty($_GET)?$this->cleanInputs(file_get_contents("php://input")):$this->cleanInputs($_GET);
+					break;
+
+				case "PUT":
+					$this->_request = $this->cleanInputs(file_get_contents("php://input")); //$this->_request);
+					break;
+
+				case "OPTIONS":
+	        $this->response('',200);//Responding OK to the processing continue...
+					break;
+
+				default:
+					$this->response('',406);
+					break;
+			}
+		}else{
+			$this->setHTTPMethodIsAllowed(false);
 		}
 	}
 
@@ -145,11 +206,19 @@ class REST {
 
 
 	private function set_headers($additional_headers=[]){
+    $cfgModel = new configModel("admin_cfg");
+		$r = $cfgModel->findByKey("cors_allow_origin");
 
 		header("HTTP/1.1 ".$this->_code." ".$this->get_status_message());
 		header("Content-Type:".$this->_content_type);
-		header("Access-Control-Allow-Origin: *");
-    header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
+
+		if(sizeOf($r)>0 && $r["cors_allow_origin"]){
+			header("Access-Control-Allow-Origin: " . $r["cors_allow_origin"]);
+		}else{
+			header("Access-Control-Allow-Origin: localhost");
+		}
+
+		header("Access-Control-Allow-Methods: ". $this->getAllowedMethods() ); //GET, POST, OPTIONS, PUT, DELETE");
 		header("Access-Control-Max-Age: 1000");
     header("Access-Control-Allow-Headers: Content-Type, token, Authorization, X-Requested-With");
     header("Access-Control-Allow-Credentials: true");
