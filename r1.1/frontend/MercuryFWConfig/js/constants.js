@@ -25,7 +25,7 @@ limitations under the License.
 angular.module('mercuryFWConfigApp.constants', [])
 
     .constant('BackendConfig', {
-        url: 'http://localhost:8090/index_mc.php/'
+        url: 'http://localhost:{{port}}/index.php/'
     })
 
     .constant('Months', [
