@@ -57,7 +57,6 @@ class router{
       $this->routes["dbMetadata.tbMetadata"]  = json_decode("{\"controller\" : \"dbMetadataController\", \"method\" : \"getTBMetadata\", \"checkToken\" : false}", true);
       //$this->routes["config_files"]  = json_decode("{\"controller\" : \"configurationController\", \"method\" : \"CRUD\", \"checkToken\" : false, \"model\" : \"config_files\"}", true);
     }
-
     //{  "object"              : {"controller" : "<controller>","method" : "<method>", "checkToken" : true/false, ["model" : "<model>"]}} where method = CRUD|Method Name, model=Model Name
   }
 
@@ -93,7 +92,7 @@ class router{
       }
       return $method;
     }else{
-      REST::getInstance()->response(["error" => "No route found for specified address!"],200);
+      return "NOROUTE!";
     }
   }
 
@@ -165,7 +164,8 @@ class router{
       return $route;
 
     }else{
-      REST::getInstance()->response(["error" => "No route found for specified address!"],200);
+      //REST::getInstance()->response(["error" => "No route found for specified address!"],200);
+      throw new Exception("No route found for specified address!");
     }
   }
 }

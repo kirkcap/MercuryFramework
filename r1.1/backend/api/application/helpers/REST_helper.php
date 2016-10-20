@@ -139,7 +139,7 @@ class REST {
 	}
 
 	private function inputs(){
-		if(strpos($this->getAllowedMethods(), $this->get_request_method())!==false){
+		if($this->getAllowedMethods()!="NOROUTE!" && strpos($this->getAllowedMethods(), $this->get_request_method())!==false){
 			$this->setHTTPMethodIsAllowed(true);
 			$this->setRoute($this->getRouter()->getRoute($this->get_request_method(), $this->getRequestParts()));
 			switch($this->get_request_method()){
