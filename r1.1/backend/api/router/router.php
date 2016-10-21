@@ -53,8 +53,8 @@ class router{
       $this->routes["databases"] = json_decode("{\"controller\" : \"configurationController\", \"method\" : \"CRUD\", \"checkToken\" : false, \"model\" : \"databases\"}", true);
       $this->routes["models"]    = json_decode("{\"controller\" : \"configurationController\", \"method\" : \"CRUD\", \"checkToken\" : false, \"model\" : \"models\"}", true);
       $this->routes["routes"]    = json_decode("{\"controller\" : \"configurationController\", \"method\" : \"CRUD\", \"checkToken\" : false, \"model\" : \"routes\"}", true);
-      $this->routes["dbMetadata"]  = json_decode("{\"controller\" : \"dbMetadataController\", \"method\" : \"getDBMetadata\", \"checkToken\" : false}", true);
-      $this->routes["dbMetadata.tbMetadata"]  = json_decode("{\"controller\" : \"dbMetadataController\", \"method\" : \"getTBMetadata\", \"checkToken\" : false}", true);
+      $this->routes["dbMetadata"]  = json_decode("{\"controller\" : \"dbMetadataController\", \"method\" : \"getDBMetadata\", \"http_method\" : \"GET\", \"checkToken\" : false}", true);
+      $this->routes["dbMetadata.tbMetadata"]  = json_decode("{\"controller\" : \"dbMetadataController\", \"method\" : \"getTBMetadata\", \"http_method\" : \"GET\", \"checkToken\" : false}", true);
       //$this->routes["config_files"]  = json_decode("{\"controller\" : \"configurationController\", \"method\" : \"CRUD\", \"checkToken\" : false, \"model\" : \"config_files\"}", true);
     }
     //{  "object"              : {"controller" : "<controller>","method" : "<method>", "checkToken" : true/false, ["model" : "<model>"]}} where method = CRUD|Method Name, model=Model Name

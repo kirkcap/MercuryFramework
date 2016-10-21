@@ -259,50 +259,54 @@ class baseModel extends helpers\ModelData{
           }
         }
       }
-      if($filter!=null){
-        for($i=0;$i<sizeOf($filter);$i++){
+    }
 
-          $field_oper = $this->getFieldAndOperation($filter[$i]->getName());
-          $field      = $field_oper['field'];
-          $operator   = $field_oper['operator'];
+    if($filter!=null){
+      if($condCounter==0){
+        $this->_PREPARE_WHERE();
+      }
+      for($i=0;$i<sizeOf($filter);$i++){
 
-          $values = explode(",", $filter[$i]->getValue());
-          if(sizeOf($values)==1){
-            if(strpos($values[0],'*')>=0){//If value contains willdcard *, LIKE overwrites the operator previously set
+        $field_oper = $this->getFieldAndOperation($filter[$i]->getName());
+        $field      = $field_oper['field'];
+        $operator   = $field_oper['operator'];
+
+        $values = explode(",", $filter[$i]->getValue());
+        if(sizeOf($values)==1){
+          if(strpos($values[0],'*')>=0){//If value contains willdcard *, LIKE overwrites the operator previously set
+            $operator = " LIKE ";
+          }else{
+            $operator = $field_oper['operator'];
+          }
+          if($condCounter == 0){
+            $this->_CONDITION( $this->getTableColumn($field)->getField( DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB() ) , $operator, $filter[$i]->getValue() );
+            $condCounter += 1;
+          }else{
+            $this->_AND( $this->getTableColumn($field)->getField( DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB() ) , $operator, $filter[$i]->getValue() );
+            $condCounter += 1;
+          }
+        }else{
+          for($j=0;$j<sizeOf($values);$j++){
+            if(strpos($values[$j],'*')>=0){//If value contains willdcard *, LIKE overwrites the operator previously set
               $operator = " LIKE ";
             }else{
               $operator = $field_oper['operator'];
             }
-            if($condCounter == 0){
-              $this->_CONDITION( $this->getTableColumn($field)->getField( DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB() ) , $operator, $filter[$i]->getValue() );
-              $condCounter += 1;
+            if($j==0){
+              if($condCounter == 0){
+                $this->GROUP_OPEN( )->_CONDITION( $this->getTableColumn($field)->getField( DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB() ) , $operator, $values[$j] );
+              }else{
+                $this->_AND( )->GROUP_OPEN( )->_CONDITION( $this->getTableColumn($field)->getField( DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB() ) , $operator, $values[$j] );
+              }
             }else{
-              $this->_AND( $this->getTableColumn($field)->getField( DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB() ) , $operator, $filter[$i]->getValue() );
+              $this->_OR( $this->getTableColumn($field)->getField( DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB() ) , $operator, $values[$j] );
               $condCounter += 1;
             }
-          }else{
-            for($j=0;$j<sizeOf($values);$j++){
-              if(strpos($values[$j],'*')>=0){//If value contains willdcard *, LIKE overwrites the operator previously set
-                $operator = " LIKE ";
-              }else{
-                $operator = $field_oper['operator'];
-              }
-              if($j==0){
-                if($condCounter == 0){
-                  $this->GROUP_OPEN( )->_CONDITION( $this->getTableColumn($field)->getField( DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB() ) , $operator, $values[$j] );
-                }else{
-                  $this->_AND( )->GROUP_OPEN( )->_CONDITION( $this->getTableColumn($field)->getField( DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB() ) , $operator, $values[$j] );
-                }
-              }else{
-                $this->_OR( $this->getTableColumn($field)->getField( DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB() ) , $operator, $values[$j] );
-                $condCounter += 1;
-              }
-            }
-            $this->GROUP_CLOSE( );
           }
-
-
+          $this->GROUP_CLOSE( );
         }
+
+
       }
     }
   }
