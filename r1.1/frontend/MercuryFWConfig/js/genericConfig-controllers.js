@@ -153,9 +153,11 @@ angular.module('mercuryFWConfigApp.controllers',[])
                 }
               })
               //if(vm.metadata.meta[key].valid_values.values.indexOf(value) == -1 ){
-              if($filter('filter')(vm.metadata.meta[key].valid_values.values, value, true).length==0){
-                vm.others[key] = vm.config_body[key];
-                vm.config_body[key] = "Other";
+              if(value!=""){
+                if($filter('filter')(vm.metadata.meta[key].valid_values.values, value, true).length==0){
+                  vm.others[key] = vm.config_body[key];
+                  vm.config_body[key] = "Other";
+                }
               }
               vm.cfg_values={};
             })
@@ -165,18 +167,22 @@ angular.module('mercuryFWConfigApp.controllers',[])
         angular.forEach(vm.config_body, function(value, key){
           //if(vm.metadata.meta[key].fldtype == "select" && vm.metadata.meta[key].valid_values.values.indexOf(value) == -1 ){
           if(vm.metadata.meta[key].fldtype == "select" && vm.metadata.meta[key].valid_values.type=="array"){
-            if($filter('filter')(vm.metadata.meta[key].valid_values.values, value, true).length==0){
-              vm.others[key] = vm.config_body[key];
-              vm.config_body[key] = "Other";
+            if(value!=""){
+              if($filter('filter')(vm.metadata.meta[key].valid_values.values, value, true).length==0){
+                vm.others[key] = vm.config_body[key];
+                vm.config_body[key] = "Other";
+              }
             }
           }
         })
       }else{
         if(vm.metadata.meta[vm.config_key.value].fldtype == "select" && vm.metadata.meta[vm.config_key.value].valid_values.type=="array"){
-          if($filter('filter')(vm.metadata.meta[vm.config_key.value].valid_values.values, vm.config[vm.config_key.value], true).length==0){
-            vm.others[vm.config_key.value] = vm.config[vm.config_key.value];
-            vm.config[vm.config_key.value] = "Other";
-          }
+          if(vm.config[vm.config_key.value]!=""){
+            if($filter('filter')(vm.metadata.meta[vm.config_key.value].valid_values.values, vm.config[vm.config_key.value], true).length==0){
+              vm.others[vm.config_key.value] = vm.config[vm.config_key.value];
+              vm.config[vm.config_key.value] = "Other";
+            }
+          }  
         }
       }
     });

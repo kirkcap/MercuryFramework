@@ -45,7 +45,7 @@ angular.module('mercuryFWConfigApp.services', [])
 .factory('ModelMetadataLoader', function(DBTableStructure, Utils){
   return {
     modelStructurePrepare: function($config_body, $metadata){
-      var tableStructure = DBTableStructure.get({db_name:$config_body.dbCfgName, tb_name:$config_body.tb_name},function(){
+      var tableStructure = DBTableStructure.get({db_name:$config_body.db_cfg_name, tb_name:$config_body.tb_name},function(){
         if(!$config_body.tb_columns){
           $config_body.tb_columns = $metadata.tb_columns_schema;
         }

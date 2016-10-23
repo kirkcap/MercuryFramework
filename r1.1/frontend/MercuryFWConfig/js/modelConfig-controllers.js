@@ -343,16 +343,16 @@ angular.module('mercuryFWConfigApp.controllers')
   vm.modelConfigs = CONFIG_API.query({service:model_config_metadata.svcname});
   vm.existingModels = [];
 
-  vm.getDbTablesList = function(dbCfgName){
-    vm.dbTables = CONFIG_API.get({service:'dbMetadata',cfg:dbCfgName});
+  vm.getDbTablesList = function(db_cfg_name){
+    vm.dbTables = CONFIG_API.get({service:'dbMetadata',cfg:db_cfg_name});
   }
 
   vm.checkExistingModels = function(tb_name){
     $i=0;
     vm.existingModels = [];
-    vm.data.tableStructure = DBTableStructure.get({db_name:vm.data.config_body.dbCfgName, tb_name:tb_name});
+    vm.data.tableStructure = DBTableStructure.get({db_name:vm.data.config_body.db_cfg_name, tb_name:tb_name});
     angular.forEach(vm.modelConfigs,function(data, model_name){
-      if(data.tb_name==tb_name && ((!data.dbCfgName && vm.data.config_body.dbCfgName =='default') || (data.dbCfgName==vm.data.config_body.dbCfgName))){
+      if(data.tb_name==tb_name && ((!data.db_cfg_name && vm.data.config_body.db_cfg_name =='default') || (data.db_cfg_name==vm.data.config_body.db_cfg_name))){
         vm.existingModels[$i++] = model_name;
       }
     });

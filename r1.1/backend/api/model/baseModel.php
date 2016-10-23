@@ -273,7 +273,7 @@ class baseModel extends helpers\ModelData{
 
         $values = explode(",", $filter[$i]->getValue());
         if(sizeOf($values)==1){
-          if(strpos($values[0],'*')>=0){//If value contains willdcard *, LIKE overwrites the operator previously set
+          if(strpos($values[0],'*')!==false){//If value contains willdcard *, LIKE overwrites the operator previously set
             $operator = " LIKE ";
           }else{
             $operator = $field_oper['operator'];
@@ -287,7 +287,7 @@ class baseModel extends helpers\ModelData{
           }
         }else{
           for($j=0;$j<sizeOf($values);$j++){
-            if(strpos($values[$j],'*')>=0){//If value contains willdcard *, LIKE overwrites the operator previously set
+            if(strpos($values[$j],'*')!==false){//If value contains willdcard *, LIKE overwrites the operator previously set
               $operator = " LIKE ";
             }else{
               $operator = $field_oper['operator'];

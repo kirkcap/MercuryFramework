@@ -74,7 +74,7 @@ angular.module('mercuryFWConfigApp.constants', [])
         meta:{
           param_key: {fldtype: "select", placeholder: "Fill the parameter name"},
           TOKEN_VALIDITY: {fldtype: "number", placeholder: "Fill the validity of the Authorization Token, in minutes"},
-          SECRET_SERVER_KEY: {fldtype: "string", placeholder: "Fill the secret key to Authorization Token encoding"}
+          SECRET_SERVER_KEY: {fldtype: "password", placeholder: "Fill the secret key to Authorization Token encoding"}
         }
       },
 
@@ -112,13 +112,13 @@ angular.module('mercuryFWConfigApp.constants', [])
             },
         meta:{
           param_key: {fldtype: "string", placeholder: "Fill the DB Config Name, for the default to be used by the API, use 'default'"},
-          DB : {fldtype: "string", placeholder: "Fill the Database Name"},
-          DB_TYPE : {fldtype: "select", placeholder: "Fill the Database Type", valid_values:{type:"array", values:[{key:'mysql',value:'MySQL DB - MySQLi Driver'},{key:'mysql_PDO',value:'MySQL DB - PDO Driver'},{key:'pgsql_PDO',value:'PosgGreSQL DB - PDO Driver'}]}},
-          DB_SERVER: {fldtype: "string", placeholder: "Fill the Database Server"},
-          DB_USER: {fldtype: "string", placeholder: "Fill the Database User"},
-          DB_PASSWORD: {fldtype: "string", placeholder: "Fill the Database User Password"},
-          PREFIX_DB: {fldtype: "boolean", placeholder: "(Must SQL prefix Database Name?)"},
-          PREFIX_TB: {fldtype: "boolean", placeholder: "(Must SQL prefix Table Names?)"}
+          DB         : {fldtype: "string", placeholder: "Fill the Database Name"},
+          DB_TYPE    : {fldtype: "select", placeholder: "Fill the Database Type", valid_values:{type:"array", values:[{key:'mysql',value:'MySQL DB - MySQLi Driver'},{key:'mysql_PDO',value:'MySQL DB - PDO Driver'},{key:'pgsql_PDO',value:'PosgGreSQL DB - PDO Driver'}]}},
+          DB_SERVER  : {fldtype: "string", placeholder: "Fill the Database Server"},
+          DB_USER    : {fldtype: "string", placeholder: "Fill the Database User"},
+          DB_PASSWORD: {fldtype: "password", placeholder: "Fill the Database User Password"},
+          PREFIX_DB  : {fldtype: "boolean", placeholder: "(Must SQL prefix Database Name?)"},
+          PREFIX_TB  : {fldtype: "boolean", placeholder: "(Must SQL prefix Table Names?)"}
         }
       },
 
@@ -128,13 +128,13 @@ angular.module('mercuryFWConfigApp.constants', [])
         svcname:   'models',
         sourceUrl: 'modelConfig',
         schema:{
-            dbCfgName     : "",
+            db_cfg_name   : "",
             entity_id     : "",
             entity_name   : "",
             tb_name       : "",
             tb_key        : [],
             max_recs_sel  : 100,
-            isAuthModel   : false,
+            is_auth_model : false,
             login_field   : "",
             pwd_field     : "",
             tb_columns    : {}
@@ -145,17 +145,17 @@ angular.module('mercuryFWConfigApp.constants', [])
                                  },
         tb_columns_field_default_schema: {type:"", value:"", fill_on_insert: false, fill_on_update: false},
         meta:{
-          param_key   : {fldtype: "string", placeholder: "Fill the Model name, which will be used to configure Route"},
-          dbCfgName   : {fldtype: "select", placeholder: "DB Configuration from where this model must be readed", valid_values:{type:"service_call", service:"databases"}},
-          entity_id   : {fldtype: "string", placeholder: "Fill the Entity ID which is represented by this Model"},
-          entity_name : {fldtype: "string", placeholder: "Fill the Entity Name which is represented by this Model"},
-          tb_name     : {fldtype: "string", placeholder: "Fill the Table Name which is represented by this Model"},
-          tb_key      : {fldtype: "array", placeholder: "Fill the list of field(s) which compose the key of the Table"},
-          max_recs_sel: {fldtype: "number", placeholder: "Fill the max records number to be returned by a selection(pagination length)"},
-          isAuthModel : {fldtype: "boolean", placeholder: "Is this model used for authentication?"},
-          login_field : {fldtype: "string", placeholder: "Fill the Field which contains the user login(valid only for the model used for authentication)", depends_on: {field:"isAuthModel", values:[true]} },
-          pwd_field   : {fldtype: "string", placeholder: "Fill the Field which contains the user password(valid only for the model used for authentication)", depends_on: {field:"isAuthModel", values:[true]} },
-          tb_columns  : {fldtype: "object", placeholder: "Fill the Field(s) and attributes of each one",
+          param_key     : {fldtype: "string", placeholder: "Fill the Model name, which will be used to configure Route"},
+          db_cfg_name   : {fldtype: "select", placeholder: "DB Configuration from where this model must be readed", valid_values:{type:"service_call", service:"databases"}, protected: true},
+          entity_id     : {fldtype: "string", placeholder: "Fill the Entity ID which is represented by this Model"},
+          entity_name   : {fldtype: "string", placeholder: "Fill the Entity Name which is represented by this Model"},
+          tb_name       : {fldtype: "string", placeholder: "Fill the Table Name which is represented by this Model", protected: true},
+          tb_key        : {fldtype: "array", placeholder: "Fill the list of field(s) which compose the key of the Table", protected: true},
+          max_recs_sel  : {fldtype: "number", placeholder: "Fill the max records number to be returned by a selection(pagination length)"},
+          is_auth_model : {fldtype: "boolean", placeholder: "Is this model used for authentication?"},
+          login_field   : {fldtype: "string", placeholder: "Fill the Field which contains the user login(valid only for the model used for authentication)", depends_on: {field:"is_auth_model", values:[true]} },
+          pwd_field     : {fldtype: "string", placeholder: "Fill the Field which contains the user password(valid only for the model used for authentication)", depends_on: {field:"is_auth_model", values:[true]} },
+          tb_columns    : {fldtype: "object", placeholder: "Fill the Field(s) and attributes of each one",
             useDialog: true,
             dialogForm: "cfgDialogTbColumnsEdit.html",
             dialogController: "CfgTbColumnsDialogEditController as TbColumnsVm",

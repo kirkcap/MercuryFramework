@@ -37,6 +37,12 @@ limitations under the License.
   <label for="cfgvalue" class="col-sm-2 control-label">Parameter Value</label>
   <div class="col-sm-8">
     <input type="text" ng-disabled="vm.action=='view'" ng-if="vm.metadata.meta[vm.config_key.value].fldtype=='string'" ng-model="vm.config[vm.config_key.value]" class="form-control" id="cfgvalue" placeholder="{{vm.metadata.meta[vm.config_key.value].placeholder}}"/>
+    <div class="col-sm-5" ng-if="vm.metadata.meta[vm.config_key.value].fldtype=='password'">
+      <input type="password" ng-disabled="vm.action=='view'" ng-if="vm.metadata.meta[vm.config_key.value].fldtype=='password'" ng-model="vm.config[vm.config_key.value]" class="form-control" id="cfgvalue"/>
+    </div>
+    <div class="col-sm-7" ng-if="vm.metadata.meta[vm.config_key.value].fldtype=='password'">
+      <div style="font-size: xx-small;"><br>{{vm.metadata.meta[vm.config_key.value].placeholder}}</div>
+    </div>
     <input type="number" ng-disabled="vm.action=='view'" ng-if="vm.metadata.meta[vm.config_key.value].fldtype=='number'" string-to-number ng-model="vm.config[vm.config_key.value]" class="form-control" id="cfgvalue" placeholder="{{vm.metadata.meta[vm.config_key.value].placeholder}}"/>
     <div class="col-sm-2" ng-if="vm.metadata.meta[vm.config_key.value].fldtype=='boolean'">
       <input type="checkbox" ng-disabled="vm.action=='view'" ng-if="vm.metadata.meta[vm.config_key.value].fldtype=='boolean'" ng-model="vm.config[vm.config_key.value]" ng-true-value="true" ng-false-value="false" class="form-control" id="cfgvalue"/>
