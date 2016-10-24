@@ -58,95 +58,95 @@ http://localhost:8090/my-project-config/MercuryFWConfig/
 
 And the Mercury Framework Configuration App will load, and you will see this initial screen:
 
-![Alt text](//tree/master/r1.1/doc_images/Initial.jpg?raw=true "Mercury Initial Screen")
+![Mercury Initial Screen](/r1.1/doc_images/Initial.jpg?raw=true "Mercury Initial Screen")
 
 Now the magick begins, lets take as premise to the next steps that we have a MySQL database called foo_bar, with 2 tables, foo and bar:
 
-![Alt text](//tree/master/r1.1/doc_images/foo_bar_db.jpg?raw=true "The foo_bar MySQL database")
+![The foo_bar MySQL database](/r1.1/doc_images/foo_bar_db.jpg?raw=true "The foo_bar MySQL database")
 
 Keeping this in mind, lets start the Connect & Configuration(or Configuration & Connection... doesn´t matters), so, lets directly to the ***Databases*** option, to configure our database connection:
 
-![Alt text](//tree/master/r1.1/doc_images/DatabasesInitial.jpg?raw=true "Database Connections Initial Screen")
+![Database Connections Initial Screen](/r1.1/doc_images/DatabasesInitial.jpg?raw=true "Database Connections Initial Screen")
 
 Here all available database connection configurations are shown, as it´s the first time we are entering Mercury, there is some the ***default*** connection, which as we will see, is empty. Clicking in ***Edit*** to adjust the configurations, we have the following:
 
-![Alt text](//tree/master/r1.1/doc_images/DatabasesEdit.jpg?raw=true "Database Connection Edit Screen")
+![Database Connection Edit Screen](/r1.1/doc_images/DatabasesEdit.jpg?raw=true "Database Connection Edit Screen")
 
 In this screen, lets fill the parameters as follow:
 
-![Alt text](//tree/master/r1.1/doc_images/DatabasesDefaultFooBar.jpg?raw=true "foo_bar db connection filled")
+![foo_bar db connection filled](/r1.1/doc_images/DatabasesDefaultFooBar.jpg?raw=true "foo_bar db connection filled")
 
 After saving these settings, lets configure our first model, going to ***Models*** option:
 
-![Alt text](//tree/master/r1.1/doc_images/ModelsInitial.jpg?raw=true "Models Configuration Initial Screen")
+![Models Configuration Initial Screen](/r1.1/doc_images/ModelsInitial.jpg?raw=true "Models Configuration Initial Screen")
 
 Here, click on ***New Model Configuration*** to start configuring a new model, the following screen will appear:
 
-![Alt text](//tree/master/r1.1/doc_images/NewModel.jpg?raw=true "New Model Popup")
+![New Model Popup](/r1.1/doc_images/NewModel.jpg?raw=true "New Model Popup")
 
 Select the Database Configuration ***default*** which where configured previously:
 
-![Alt text](//tree/master/r1.1/doc_images/NewModel_selectDB.jpg?raw=true "New Model - Select database connection")
+![Select database connection](/r1.1/doc_images/NewModel_selectDB.jpg?raw=true "New Model - Select database connection")
 
 After Database Connection selected, you can select the ***foo*** table:
 
-![Alt text](//tree/master/r1.1/doc_images/NewModel_selectTable.jpg?raw=true "New Model - Select database table")
+![Select database table](/r1.1/doc_images/NewModel_selectTable.jpg?raw=true "New Model - Select database table")
 
 And after Table selected, fill a name for the New Model, for example, ***fooModel***:
 
-![Alt text](//tree/master/r1.1/doc_images/NewModel_fillModelName.jpg?raw=true "New Model - Fill model name")
+![Fill model name](/r1.1/doc_images/NewModel_fillModelName.jpg?raw=true "New Model - Fill model name")
 
 So, clicking in ***Continue***, and the popup will close, showing all Model configuration data to be filled:
 
-![Alt text](//tree/master/r1.1/doc_images/NewModel_form.jpg?raw=true "New Model - Model data")
+![Model data](/r1.1/doc_images/NewModel_form.jpg?raw=true "New Model - Model data")
 
 Fill according with this screenshot, scroll down the form and click in the ***...*** button in front of ***tb_columns***:
 
-![Alt text](//tree/master/r1.1/doc_images/NewModel_form.jpg?raw=true "New Model - Model data filled")
+![Model data Filled](/r1.1/doc_images/NewModel_form.jpg?raw=true "New Model - Model data filled")
 
 The popup to configure Table Columns behavior will be shown:
 
-![Alt text](//tree/master/r1.1/doc_images/NewModel_tbColumns.jpg?raw=true "New Model - Table Columns Popup")
+![Table Columns Popup](/r1.1/doc_images/NewModel_tbColumns.jpg?raw=true "New Model - Table Columns Popup")
 
 As we can see, Mercury shows here the table structure - all fields available, and some data about them - if is a key, the label defined in the MySQL table structure, allowing to change(not in the database, only for Mercury Configurations), the database field type, and allowing set the default selection order. So, for this basic tutorial we let these fields are they are and click in ***Show/Insert/Update Configuration***, and in the next screen we mark the checkboxes according to this screenshot:
 
-![Alt text](//tree/master/r1.1/doc_images/NewModel_tbColumns_siucfg.jpg?raw=true "New Model - Config. Show/Insert/Update")
+![Config. Show/Insert/Update](/r1.1/doc_images/NewModel_tbColumns_siucfg.jpg?raw=true "New Model - Config. Show/Insert/Update")
 
 With this configuration, all fields will be shown, but only ***foo_name*** and ***foo_desc*** will be available for insert and update by user - as ***foo_code*** is **autonumber** in the table definition, user must not fill or change it, and ***foo_creat*** and ***foo_updat***, will be filled by default values configured in the next screen, clicking in ***Default Data Configuration***:
 
-![Alt text](//tree/master/r1.1/doc_images/NewModel_tbColumns_defaultcfg.jpg?raw=true "New Model - Default values config.")
+![Default values config.](/r1.1/doc_images/NewModel_tbColumns_defaultcfg.jpg?raw=true "New Model - Default values config.")
 
 Here, lets configure ***foo_creat*** to be filled by a PHP Function:
 
-![Alt text](//tree/master/r1.1/doc_images/NewModel_default_foo_creat_function.jpg?raw=true "New Model - Default value for foo_creat using function")
+![Default value for foo_creat using function](/r1.1/doc_images/NewModel_default_foo_creat_function.jpg?raw=true "New Model - Default value for foo_creat using function")
 
 And lets set it to function ***current_timestamp***(yes, it´s the only function available by now, it´s only to see the possibilities...):
 
-![Alt text](//tree/master/r1.1/doc_images/NewModel_default_foo_creat_function_ct.jpg?raw=true "New Model - Default value for foo_creat using current_timestamp PHP function")
+![Using current_timestamp PHP function](/r1.1/doc_images/NewModel_default_foo_creat_function_ct.jpg?raw=true "New Model - Default value for foo_creat using current_timestamp PHP function")
 
 And now, lets configure it to be set only during the insert, and next, do the same for ***foo_updat***, but configuring it to be set only during update, and so we have:
 
-![Alt text](//tree/master/r1.1/doc_images/NewModel_default_complete.jpg?raw=true "New Model - Default value for foo_creat using current_timestamp PHP function")
+![Defalt config. complete](/r1.1/doc_images/NewModel_default_complete.jpg?raw=true "New Model - Default config. complete")
 
 With this, we have all the model configuration for ***foo*** table done, click in ***Close*** to close the popup, and in ***Save*** in the main form to save the Model configuration, and Mercury will redirect to the initial Model Configuration screen, listing the new model created:
 
-![Alt text](//tree/master/r1.1/doc_images/ModelsList.jpg?raw=true "Models List - all existing models")
+![All existing models](/r1.1/doc_images/ModelsList.jpg?raw=true "Models List - all existing models")
 
 After that, what is needed is to configure a Route to access our created model, so, clicking in ***Routes***:
 
-![Alt text](//tree/master/r1.1/doc_images/RoutesInitial.jpg?raw=true "Routes Configuration Initial Screen")
+![Routes initial screen](/r1.1/doc_images/RoutesInitial.jpg?raw=true "Routes Configuration Initial Screen")
 
 Here, lets click in ***New Route Configuration***, and the a form will be opened to configure a New Route, quite simple:
 
-![Alt text](//tree/master/r1.1/doc_images/NewRoute.jpg?raw=true "New Route")
+![New Route](/r1.1/doc_images/NewRoute.jpg?raw=true "New Route")
 
 We must fill a name for the route, which will be used in the URL to access the CRUD REST services for our previously configured model, so, lets call the new route ***foo***, this route will use the Mercury controller defined to deal with CRUD operations for any model configured, ***genericCRUDController***, the method assigned will be ***CRUD***, what means that this route will support ***GET(list/show), POST(insert), PUT(update) and DELETE(destroy)*** for the ***fooModel*** model we defined, so, the form filled will be in this way:
 
-![Alt text](//tree/master/r1.1/doc_images/NewRouteFilled.jpg?raw=true "New Route Filled")
+![New Route Filled](/r1.1/doc_images/NewRouteFilled.jpg?raw=true "New Route Filled")
 
 So, clicking on ***Save***, our new Route is saved and the app returns to the Routes configured list:
 
-![Alt text](//tree/master/r1.1/doc_images/RoutesList.jpg?raw=true "Available Routes")
+![Available Routes](/r1.1/doc_images/RoutesList.jpg?raw=true "Available Routes")
 
 And now, the REST CRUD services for our ***foo*** table is avialable to use ! Yeah, simple like that ! Supposing we put the index.php on the root of public_html/www folder of our local server, and that our local server port is 8090, all that is needed to access the service for the first time is to call the URL:
 
@@ -156,39 +156,39 @@ http://localhost:8090/index.php/foo
 
 Doing it on Google Postman, we have:
 
-![Alt text](//tree/master/r1.1/doc_images/PostManFoo_FirstTest.jpg?raw=true "First test of foo")
+![First test of foo](/r1.1/doc_images/PostManFoo_FirstTest.jpg?raw=true "First test of foo")
 
 Obviously, there is nothing to show, as the table is empty, so, lets POST a new record to it:
 
-![Alt text](//tree/master/r1.1/doc_images/PostManFoo_CreateFoo.jpg?raw=true "First POST of foo")
+![POST...](/r1.1/doc_images/PostManFoo_CreateFoo.jpg?raw=true "First POST of foo")
 
 Look the answer of the service:
 
-![Alt text](//tree/master/r1.1/doc_images/PostManFoo_CreateFooResponse.jpg?raw=true "Response of first POST of foo")
+![POST response](/r1.1/doc_images/PostManFoo_CreateFooResponse.jpg?raw=true "Response of first POST of foo")
 
 So, if we send a GET again, we will get this response:
 
-![Alt text](//tree/master/r1.1/doc_images/PostManFoo_ShowAgain.jpg?raw=true "Response of first POST of foo")
+![Showing the list again...](/r1.1/doc_images/PostManFoo_ShowAgain.jpg?raw=true "Showing the list again...")
 
 Note the ***foo_code*** filled by the MySQL autonumber, and the ***foo_creat*** filled with *current_timestamp* as we set in the model configurations. Lets ***PUT*** an update to this foo code 1:
 
-![Alt text](//tree/master/r1.1/doc_images/PostManFoo_UpdateFoo.jpg?raw=true "Updating foo with PUT")
+![Updating foo](/r1.1/doc_images/PostManFoo_UpdateFoo.jpg?raw=true "Updating foo with PUT")
 
 And we have as answer:
 
-![Alt text](//tree/master/r1.1/doc_images/PostManFoo_UpdateFooResponse.jpg?raw=true "Updat foo response")
+![Update foo response](/r1.1/doc_images/PostManFoo_UpdateFooResponse.jpg?raw=true "Update foo response")
 
 Getting specifically the foo code 1:
 
-![Alt text](//tree/master/r1.1/doc_images/PostManFoo_GetFoo1.jpg?raw=true "GET foo 1")
+![GET foo 1](/r1.1/doc_images/PostManFoo_GetFoo1.jpg?raw=true "GET foo 1")
 
 As we can see, foo_name and foo_desc where updated, and also foo_updat was updated with the current timestamp, leaving foo_creat with the value set when the record was created. After creating some more records, we have:
 
-![Alt text](//tree/master/r1.1/doc_images/PostManFoo_MoreFoos.jpg?raw=true "GET all foos")
+![GET all foo´s](/r1.1/doc_images/PostManFoo_MoreFoos.jpg?raw=true "GET all foos")
 
 So, lets try to get some foo containing ```*Sec*``` in the description:
 
-![Alt text](//tree/master/r1.1/doc_images/PostManFoo_Filter.jpg?raw=true "GET foo by filter query")
+![GET foo by filter query](/r1.1/doc_images/PostManFoo_Filter.jpg?raw=true "GET foo by filter query")
 
 As you see, filtering is very simple, to get all *foo* resources with code between 2 and 4, all needed is something like that:
 
@@ -200,4 +200,4 @@ Where ```|ge``` after the field *foo_code* means to Mercury ```foo_code greater 
 *|lt* - *less than*
 *|gt* - *greater than*
 
-So now, we have a complete set of REST services for CRUD operations for foo, and we didn´t write a single line of code to have them, we only did some configuration, isn´t it amazing ?
+So now, we have a complete set of REST services for CRUD operations for foo, without write a single line of code to have them, that is it. More complete documentation soon.
