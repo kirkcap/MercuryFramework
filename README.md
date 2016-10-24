@@ -74,7 +74,7 @@ Here all available database connection configurations are shown, as it´s the fi
 
 In this screen, lets fill the parameters as follow:
 
-![foo_bar db connection filled](/r1.1/doc_images/DatabasesDefaultFooBar.jpg?raw=true "foo_bar db connection filled")
+![foo_bar db connection filled](/r1.1/doc_images/DatabaseDefaultFooBar.jpg?raw=true "foo_bar db connection filled")
 
 After saving these settings, lets configure our first model, going to ***Models*** option:
 
@@ -102,7 +102,7 @@ So, clicking in ***Continue***, and the popup will close, showing all Model conf
 
 Fill according with this screenshot, scroll down the form and click in the ***...*** button in front of ***tb_columns***:
 
-![Model data Filled](/r1.1/doc_images/NewModel_form.jpg?raw=true "New Model - Model data filled")
+![Model data Filled](/r1.1/doc_images/NewModel_formFilled.jpg?raw=true "New Model - Model data filled")
 
 The popup to configure Table Columns behavior will be shown:
 
