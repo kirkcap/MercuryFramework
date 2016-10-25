@@ -1,15 +1,16 @@
 # Mercury
 ###The first CCR* REST API Builder of the Earth!
 
-Mercury is a software package consisting of a PHP application able to provide REST API for CRUD operations(but not restricted to it), which are built upon configurations, and an AngularJS Web Application, called Mercury Framework Configuration, which is a User Interface to do easily the Mercury Configuration.
 
-Mercury was built having in mind what was called the **CCR concept**, which means **C***onnect* - your database(s), **C***onfigure* - your Model(s), Router(s), Controller(s), Authentication, etc, and **R***un*, which means that, for CRUD operations, isn´t needed to write a single line of code - doing the configurations in Mercury, it will make available for you the REST Services you need(and if you need some very specific REST service to work joined with the standard CRUD ones, Mercury offer a way to you build them, since you respect some simple rules, which will be explained in a more complete documentation).
+*Mercury* is a software package consisting of a PHP application able to provide REST API for CRUD operations(but not restricted to it), which are built upon configurations, and an AngularJS Web Application, called *Mercury Framework Configuration*, which is a User Interface to do easily the *Mercury* Configuration.
+
+*Mercury* was built having in mind what was called the **CCR concept**, which means **C***onnect* - your database(s), **C***onfigure* - your Model(s), Router(s), Controller(s), Authentication, etc, and **R***un*, which means that, for CRUD operations, isn´t needed to write a single line of code - doing the configurations in Mercury, it will make available for you the REST Services you need(and if you need some very specific REST service to work joined with the standard CRUD ones, *Mercury* offer a way to you build them, since you respect some simple rules, which will be explained in a more complete documentation).
 
 
 
 ##Installing Mercury
 
-To get Mercury up and running, download a ZIP file from ```https://github.com/kirkcap/MercuryFramework```(I hope in a near future it will support Composer, I´m sorry by the inconvenience now), you will get a small file(11.3M), extract it, and inside the subfolder ***r1.1*** you will have 3 folders, from which you will use only 2: ***backend*** - which contains the PHP backend, and ***frontend*** - which contains the AngularJS Web App for configuration.
+To get *Mercury* up and running, download a ZIP file from ```https://github.com/kirkcap/MercuryFramework```(I hope in a near future it will support Composer, I´m sorry by the inconvenience now), you will get a small file(11.3M), extract it, and inside the subfolder ***r1.1*** you will have 3 folders, from which you will use only 2: ***backend*** - which contains the PHP backend, and ***frontend*** - which contains the AngularJS Web App for configuration.
 
 So, copy the ***backend*** folder to a location in your local server(it was developed/tested using WampServer 2.5) *out* of the ***www***(the public folder), so, supposing you will use it for a project called ***my-project***, you can create the folder ***my-project*** under wamp/lamp, and copy the ***backend*** folder inside it. After that, copy the ***index.php*** file, which is in your downloaded package under ***r1.1*** folder(same level as ***backend*** and ***frontend*** folders) to the wamp/lamp ***www*** folder, to make it public, so open it in an editor and locate the following block of code:
 
@@ -33,7 +34,7 @@ require_once __DIR__.'/../my-project/backend/api.php';
 use com\mercuryfw\api as api;
 ```
 
-This will prepare the ***index.php*** to instantiate Mercury main class, which will make the magick happens.
+This will prepare the ***index.php*** to instantiate *Mercury* main class, which will make the magick happens.
 After that, you need to create a folder under ***www***, which can have the same name you created out of www, or another name at your choice, in this sample I will sugest ***my-project-config***, and back to the package you extracted from the ZIP downloaded from Github, go to folder ***frontend***, and copy the folder ***MercuryFWConfig*** to the new folder you created under ***www***.
 
 The next step is to open in a editor the ***constants.js*** file, which is in the path ***MercuryFWConfig\js***, and locate the following block of code:
@@ -53,14 +54,14 @@ Here, adjust the ***url*** constant according to your local environment, so, sup
     })
 ```
 
-And now, with your lamp/wamp started, you are ready to open the Mercury Framework Configuration App for the first time, open a web browser and type:
+And now, with your lamp/wamp started, we are ready to open the *Mercury Framework Configuration* App for the first time, open a web browser and type:
 
 
 ```
 http://localhost:8090/my-project-config/MercuryFWConfig/
 ```
 
-And the Mercury Framework Configuration App will load, and you will see this initial screen:
+And the *Mercury Framework Configuration* App will load, and you will see this initial screen:
 
 ![Mercury Initial Screen](/r1.1/doc_images/Initial.jpg?raw=true "Mercury Initial Screen")
 
@@ -84,7 +85,7 @@ And keeping this in mind, lets go ahead.
 
 ###Connecting to Database
 
-To connect Mercury with our foo_bar database, we must go directly to the ***Databases*** option:
+To connect *Mercury* with our foo_bar database, we must go directly to the ***Databases*** option:
 
 ![Database Connections Initial Screen](/r1.1/doc_images/DatabasesInitial.jpg?raw=true "Database Connections Initial Screen")
 
@@ -135,7 +136,7 @@ Clicking in the ***...*** opens the ***Model Fields Configuration*** popup, whic
 
 ![Table Columns Popup](/r1.1/doc_images/NewModel_tbColumns.jpg?raw=true "New Model - Table Columns Popup")
 
-As we can see, Mercury shows here the table structure - all fields available, and some data about them - if it is a key, the label defined in the MySQL table structure, allowing to change(not in the database, only for Mercury Configurations, and I must say, for the REST services it´s currently useless, but I have some ideas for the future...), the database field type, the bind type(used to mysqli driver) and allowing set the default selection order. So, for this basic tutorial we let these fields are they are and click in ***Show/Insert/Update Configuration*** tab, which as his name indicates, contains options to configure which fields must be Shown(returned by a GET), Inserted(filled/informed by user during a POST) and Updated(changed by user during a PUT). For the purposes of this tutorial, in this screen we must mark the checkboxes according to this screenshot:
+As we can see, *Mercury* shows here the table structure - all fields available, and some data about them - if it is a key, the label defined in the MySQL table structure, allowing to change(not in the database, only for Mercury Configurations, and I must say, for the REST services it´s currently useless, but I have some ideas for the future...), the database field type, the bind type(used to mysqli driver) and allowing set the default selection order. So, for this basic tutorial we let these fields are they are and click in ***Show/Insert/Update Configuration*** tab, which as his name indicates, contains options to configure which fields must be Shown(returned by a GET), Inserted(filled/informed by user during a POST) and Updated(changed by user during a PUT). For the purposes of this tutorial, in this screen we must mark the checkboxes according to this screenshot:
 
 ![Config. Show/Insert/Update](/r1.1/doc_images/NewModel_tbColumns_siucfg.jpg?raw=true "New Model - Config. Show/Insert/Update")
 
@@ -155,7 +156,7 @@ And now, lets configure it to be set only during the insert, and next, do the sa
 
 ![Defalt config. complete](/r1.1/doc_images/NewModel_default_complete.jpg?raw=true "New Model - Default config. complete")
 
-With this, we have all the model configuration for ***foo*** table done, click in ***Close*** to close the popup, and in ***Save*** in the main form to save the Model configuration, and Mercury will redirect to the initial Model Configuration screen, listing the new model created:
+With this, we have all the model configuration for ***foo*** table done, click in ***Close*** to close the popup, and in ***Save*** in the main form to save the Model configuration, and *Mercury* will redirect to the initial Model Configuration screen, listing the new model created:
 
 ![All existing models](/r1.1/doc_images/ModelsList.jpg?raw=true "Models List - all existing models")
 
@@ -172,7 +173,7 @@ Here, click in ***New Route Configuration***, and a form will be opened to confi
 
 ![New Route](/r1.1/doc_images/NewRoute.jpg?raw=true "New Route")
 
-We must fill a name for the route, which will be used in the URL to access the CRUD REST services for our previously configured model, so, lets call the new route ***foo***, this route will use the Mercury controller defined to deal with CRUD operations for any model configured, ***genericCRUDController***, the method assigned will be ***CRUD***, what means that this route will support ***GET(list/show), POST(insert), PUT(update) and DELETE(destroy)*** for the ***fooModel*** we defined, so, the form filled will be in this way:
+We must fill a name for the route, which will be used in the URL to access the CRUD REST services for our previously configured model, so, lets call the new route ***foo***, this route will use the *Mercury* controller defined to deal with CRUD operations for any model configured, ***genericCRUDController***, the method assigned will be ***CRUD***, what means that this route will support ***GET(list/show), POST(insert), PUT(update) and DELETE(destroy)*** for the ***fooModel*** we defined, so, the form filled will be in this way:
 
 ![New Route Filled](/r1.1/doc_images/NewRouteFilled.jpg?raw=true "New Route Filled")
 
@@ -232,7 +233,7 @@ As you see, filtering is very simple, to get all *foo* resources with code betwe
 ```
 http://localhost:8090/index.php/foo?foo_code|ge=2&foo_code|le=4
 ```
-Where ```|ge``` after the field ***foo_code*** means to Mercury ```foo_code greater than or equals to...``` and ```|le``` means ```foo_code less than or equals to...```. Other possibilities are:
+Where ```|ge``` after the field ***foo_code*** means to *Mercury* ```foo_code greater than or equals to...``` and ```|le``` means ```foo_code less than or equals to...```. Other possibilities are:
 
 *|lt* - ***less than***
 
@@ -247,7 +248,7 @@ Well, let´s make the things more interesting, and configure Model and Route for
 
 ![bar table structure](/r1.1/doc_images/BarTableStructure.jpg?raw=true "Bar Table Structure")
 
-With this, we will explore a little bit more the Mercury available resources.
+With this, we will explore a little bit more the *Mercury* available resources.
 
 
 ###Configuring Model for bar
@@ -276,9 +277,9 @@ With these settings, when a new bar resource is created, ***bar_code*** field wi
 
 ###Configuring Route for bar
 
-The next step is to create a new Route for ***bar***, and at this moment I must explain that the *Mercury* way to deal with routes for master-detail tables is doing it in the following format: ***<master route>.<detail route>***. In this way, Mercury will know that when we are trying to access something like that:
+The next step is to create a new Route for ***bar***, and at this moment I must explain that the *Mercury* way to deal with routes for master-detail tables is doing it in the following format: ```<master route>.<detail>```. In this way, *Mercury* will know that when we are trying to access something like that:
 
-*http://{server address}/{path to mercury index.php}/****{master route}/{key}/{detail route}***
+*http://{server address}/{path to mercury index.php}/****{master route}/{key}/{detail}***
 
 What we want is to access the *detail route model data*, where the *master key* = ***{key}***, so keeping this in mind, as ***bar*** was defined as detail for ***foo***, the correct way to define route for ***bar***, is call it ***foo.bar***. To do that, we go to ***Routes*** option and click in ***New Route Configuration***, and we must fill the form parameters in this way:
 
@@ -316,4 +317,4 @@ GETting ***bar*** for ***foo=2*** where ```bar_comt like "Second*"```:
 
 ###Finishing(by now...)
 
-So now, after these simple steps, we have a complete set of REST services for CRUD operations for ***foo*** which is a single key entity, and also for ***bar*** which is a composed key entity depending of ***foo***, without writing a single line of code to have them. That is it, this is the central idea regarding Mercury. Wait for more complete documentation soon.
+So now, after these simple steps, we have a complete set of REST services for CRUD operations for ***foo*** which is a single key entity, and also for ***bar*** which is a composed key entity depending of ***foo***, without writing a single line of code to have them. That is it, this is the central idea regarding *Mercury*. Wait for more complete documentation soon.
