@@ -143,7 +143,7 @@ angular.module('mercuryFWConfigApp.constants', [])
         tb_columns_field_schema: {
                                    label: "", dbtype: "", key : false , show : false , insert : false, update : false, bind_type : "", order:"", default:{}
                                  },
-        tb_columns_field_default_schema: {type:"", value:"", fill_on_insert: false, fill_on_update: false},
+        tb_columns_field_default_schema: {type:"", value:"", field:"",criteriaFields:[], fill_on_insert: false, fill_on_update: false},
         meta:{
           param_key     : {fldtype: "string", placeholder: "Fill the Model name, which will be used to configure Route"},
           db_cfg_name   : {fldtype: "select", placeholder: "DB Configuration from where this model must be readed", valid_values:{type:"service_call", service:"databases"}, protected: true},
@@ -184,8 +184,10 @@ angular.module('mercuryFWConfigApp.constants', [])
                     dialogController: "CfgTbColumnsFieldDefaultDialogEditController as FieldDefaultVm",
                     dialogClass: "ngdialog-custom-tb_columns-field-default",
                     structure:{
-                      type: {fldtype:"select", group:2, placeholder: "Indicate the type of default", noShow: false, valid_values:{type: "array", values:[{key: "", value:""},{key: "function", value:"PHP Function"},{key: "token_id", value:"Authorization Token"}]}},
+                      type: {fldtype:"select", group:2, placeholder: "Indicate the type of default", noShow: false, valid_values:{type: "array", values:[{key: "", value:""},{key: "function", value:"PHP Function"},{key: "token_id", value:"Authorization Token"},{key: "subquery_max", value:"Subquery with MAX"}]}},
                       value:{fldtype:"select", group:2, placeholder: "Indicate the complementing value", noShow: false, depends_on: {field:"type", values:["function"]}, valid_values:{type: "array", values:[{key: "", value:""},{key: "current_timestamp", value:"Gets Current Timestamp"}]}},
+                      /*field:{fldtype:"select", group:2, placeholder: "Select field for subquery MAX", noShow: false, depends_on: {field:"type", values:["subquery_max"]}, valid_values:{type: "controller_array", name:"field_names"}},
+                      criteriaFields:{fldtype:"select", multiple:true, group:2, placeholder: "Select criteria field(s) for subquery MAX", noShow: false, depends_on: {field:"type", values:["subquery_max"]}, valid_values:{type: "controller_array", name:"field_names"}},*/
                       fill_on_insert: {fldtype:"boolean", group:2, placeholder: "Must be filled on insert?", noShow: false},
                       fill_on_update: {fldtype:"boolean", group:2, placeholder: "Must be filled on update?", noShow: false}
                     }

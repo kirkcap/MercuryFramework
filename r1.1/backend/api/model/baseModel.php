@@ -450,11 +450,14 @@ class baseModel extends helpers\ModelData{
 
           $modelObj = $this;
 
-          $modelObj->_PREPARE_SELECT()->_ADD_MAX( $modelObj->getTableColumn( $tbcolobj->getFieldDetails()->getDefault()->getSubQueryMaxField() )->getField( DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB() ) , "LastKey" );
+
+          //$modelObj->_PREPARE_SELECT()->_ADD_MAX( $modelObj->getTableColumn( $tbcolobj->getFieldDetails()->getDefault()->getSubQueryMaxField() )->getField( DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB() ) , "LastKey" );
+          $modelObj->_PREPARE_SELECT()->_ADD_MAX( $tbcolobj->getField( DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB() ) , "LastKey" );
 
           $idx = 0;
           $firstCondition = true;
           $modelObj->_PREPARE_WHERE();
+          /*
           foreach($keys as $key){
             $fvalue = "";
             if(array_key_exists($key, $keys_data)){
@@ -470,6 +473,19 @@ class baseModel extends helpers\ModelData{
             }
             else{
               $modelObj->_AND($modelObj->getTableColumn($key)->getField( DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB() ), "=", $fvalue );
+            }
+          }
+          */
+
+          foreach($keys_data as $key => $value){
+            if($key!=$fname){ //If the key field being processed is not the current field(which is supposed to be a subtable additional key...)
+              if($firstCondition){
+                $modelObj->_CONDITION($modelObj->getTableColumn($key)->getField( DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB() ), "=", $value );
+                $firstCondition = false;
+              }
+              else{
+                $modelObj->_AND($modelObj->getTableColumn($key)->getField( DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB() ), "=", $value );
+              }
             }
           }
 

@@ -176,6 +176,11 @@ angular.module('mercuryFWConfigApp.controllers')
   vm.cfgDialog = function(cfg) {
 
     vm.detail_key = cfg.key;
+    vm.field_names = [];
+    $i = 0;
+    angular.forEach(vm.config_body.tb_columns, function(value, key){
+      vm.field_names[$i++] = {key: key, value: value.label};
+    });
 
     ngDialog.open({ template: 'partials/dialog/'+ vm.metadata.meta[vm.detail_key].dialogForm, //cfgDialogTbColumnsEdit.html',
                     className: 'ngdialog-theme-default',
@@ -267,6 +272,11 @@ angular.module('mercuryFWConfigApp.controllers')
   vm.cfgDialog = function(cfg) {
 
     vm.detail_key = cfg.key;
+    vm.field_names = [];
+    $i = 0;
+    angular.forEach(vm.config_body.tb_columns, function(value, key){
+      vm.field_names[$i++] = {key: key, value: value.label};
+    });
 
     ngDialog.open({ template: 'partials/dialog/'+ vm.metadata.meta[vm.detail_key].dialogForm, //cfgDialogTbColumnsEdit.html',
                     className: 'ngdialog-theme-default',
@@ -298,6 +308,12 @@ angular.module('mercuryFWConfigApp.controllers')
         vm.data.metadata.meta[vm.data.detail_key].structure.field.filteredStructure[key] = vmeta[key];
       }
     });
+    /* Disabled by now, as will support only subquery for the same table
+    if(vm.data.group==2){//Default - adjusting valid values for field and criteriaFields
+      vm.data.metadata.meta[vm.data.detail_key].structure.field.structure.default.structure.field.valid_values.values = vm.data[vm.data.metadata.meta[vm.data.detail_key].structure.field.structure.default.structure.field.valid_values.name];
+      vm.data.metadata.meta[vm.data.detail_key].structure.field.structure.default.structure.criteriaFields.valid_values.values = vm.data[vm.data.metadata.meta[vm.data.detail_key].structure.field.structure.default.structure.criteriaFields.valid_values.name];
+    }
+    */
   }
 
   vm.setZebra = function(){
