@@ -1,12 +1,62 @@
 # Mercury
 ###The first CCR* REST API Builder of the Earth!
 
+#Part I - some explanation...
 
-*Mercury* is a software package consisting of a PHP application able to provide REST API for CRUD operations(but not restricted to it), which are built upon configurations, and an AngularJS Web Application, called *Mercury Framework Configuration*, which is a User Interface to do easily the *Mercury* Configuration.
-
-*Mercury* was built having in mind what was called the **CCR concept**, which means **C***onnect* - your database(s), **C***onfigure* - your Model(s), Router(s), Controller(s), Authentication, etc, and **R***un*, which means that, for CRUD operations, isn´t needed to write a single line of code - doing the configurations in Mercury, it will make available for you the REST Services you need(and if you need some very specific REST service to work joined with the standard CRUD ones, *Mercury* offer a way to you build them, since you respect some simple rules, which will be explained in a more complete documentation).
+*Mercury* is a software package consisting of 2 main pieces, a PHP application backend, built basically to get your database model(s) and provide REST services to deal with the available data, based on configurations done in the another piece of the product, an AngularJS Web Application called *Mercury Framework Configuration*, which is a User Interface to do easily all needed configurations, the whole product built having in mind what was called the **CCR concept**, which means **C***onnect* - your database(s), **C***onfigure* - your Model(s), Router(s), Controller(s), Authentication, etc, and **R***un*!
 
 
+##Why Mercury ?
+
+First of all, the name *Mercury* was given keeping in mind the first planet of our solar system, which is the minor one and also the fastest in his orbit around the Sun, and in the same way, *Mercury* is a software piece which is little in size, but able to be put to work - and do what is it purposes - really fast.
+
+Second, *Mercury* was created from the idea that we are in XXI century, and with the current technologies available, there is no more reason to spend time to write code to deal with single CRUD tasks. There are several frameworks and micro-frameworks existing in the market which support REST services building but, all of them requires some coding to deal with CRUD operations - basically, at least define the model, write the controller with all operations/methods needed, and after that write the router configuration to the corresponding services.
+
+What was in mind when creating *Mercury*, as said by the ***CCR*** concept presented before, was to build something which doesn´t need coding to do these repetitive tasks, you can connect it to your database(s), configure your models - according to the tables and views available in the configured database(s), configure the routes, and all needed REST services will be available, and of course, if there is some need to write more specific REST services - like build complex report data combining several models data, or merge your models data with external services, like geocoding, for a little example - provide the ways to do that with ease - without need to write any SQL code, keeping the standards.
+This is the general spirit, go ahead to know a little bit more about the mechanics behind it.
+
+
+##How does Mercury work ?
+
+All configurations done in the so called *Mercury Framework Configuration* web application, are saved in JSON files in a folder in the path structure of *Mercury* backend, so, when you configure your database(s) connection(s), the settings are saved in a file named *databases.json*, when you create a new model, the settings done are saved to a file named *Models.json*, when you configure a new route, the settings are saved in a file named *routes.json*, all these files(there are more, these are the main ones get for example now) being available for the *Mercury* PHP backend, the heart of *Mercury* itself.
+
+Inside *Mercury* backend, there is a model class called ***genericModel***, which when instantiated with a given Model name as parameter, reads the corresponding *Models.json* file to get the model settings, and you have a complete Model class to deal with that specific entity, with all configured operations available, and knowing from/to which database read/write data. Also, there is a controller class called ***genericCRUDController***, which is able to do all the basic CRUD tasks, instantiating the correct model through ***genericModel*** class and doing all operations needed according to the specific route configured - which is managed by the ***Router*** class, which receives the route called by the http request received, identify in the *routes.json* the specific route being called, identify the allowed methods according to the route settings, and delivers to the main API the controller to be called, the method to be executed by it, and the model to be used.
+
+There is much more to know about *Mercury*, but these 3 pieces composes the heart, the secret recipe´s main ingredients behind it.
+
+
+
+##What does Mercury actually support?
+
+- The main feature: you can get your existing Database(s) and make their data available by REST services in a couple of minutes(logically, if you have a huge number of tables to be configured, it will spend more time, but I assure you that doesn´t matter the number of tables, 1 or 1000, configure it and make available as REST services through *Mercury* will be faster than write all the code needed in any existing framework in the market to do the same).
+- MySQL(using mysqli and PDO) and PostGres(PDO) Databases;
+- Authentication using JWT(with your own database model - you don´t need to create a specific table with a specific structure, you indicate your database table in which are saved the user credentials, indicate what are the Login and Password fields, and *Mercury* deals with it accordingly), for specific routes(you can configure routes to be acessed with our without need of token authentication);
+- Automatic filling of table fields indicated to be filled with Token id, from the Token captured in the HTTP Request;
+- CORS;
+- Composed key tables;
+- Different behavior for specific table fields(you can configure which fields must be returned when querying a model, which fields can be inserted/updated by the user, and define default values for insert/update fields);
+- Logging;
+- Filtering;
+- Sorting;
+- Paginating;
+
+
+
+##What does Mercury is expected to support in a near future?
+
+- More databases;
+- Authorization profiles(without need of specific tables in your database model);
+- BLOB files related to database records;
+- Suggestions please ??
+
+
+##Finally...
+
+Is *Mercury* perfect? Of course not(yet!), there is much more to be improved and delivered, but it already shows that is possible to build softwares to bring high level productivity, allowing focus on what really matters instead of struggling with repetitive tasks that doesn´t make sense anymore, bringing great gains for the customers and projects, with respect in development time and quality - as the process is fast to be done and almost all standardized by configurations. Additionally, is also a great example of what can be done with a little bit of engineering and inovation spirit, combined with the desire to build something to cause a big impact. Said that, go ahead to put your *Mercury* instance to work and see by yourself how it can be a simple and powerfull tool to accelerate your developments.
+
+
+
+#Part II - lets make the things happens...
 
 ##Installing Mercury
 
@@ -315,6 +365,6 @@ GETting ***bar*** for ***foo=2*** where ```bar_comt like "Second*"```:
 
 
 
-###Finishing(by now...)
+###End of second act(by now...)
 
 So now, after these simple steps, we have a complete set of REST services for CRUD operations for ***foo*** which is a single key entity, and also for ***bar*** which is a composed key entity depending of ***foo***, without writing a single line of code to have them. That is it, this is the central idea regarding *Mercury*. Wait for more complete documentation soon.
