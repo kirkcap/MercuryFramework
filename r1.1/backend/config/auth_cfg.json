@@ -1,4 +1,1 @@
-{
-  "TOKEN_VALIDITY"     : "",
-  "SECRET_SERVER_KEY"  : ""
-}
+{"TOKEN_VALIDITY":"300","SECRET_SERVER_KEY":"XYZ"}

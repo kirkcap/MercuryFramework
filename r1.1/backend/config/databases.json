@@ -1,10 +1,10 @@
 {
-  "default":{
-  "DB":"",
-  "DB_TYPE":"",
-  "DB_SERVER":"",
-  "DB_USER":"",
-  "DB_PASSWORD":"",
-  "PREFIX_DB":false,
-  "PREFIX_TB":false}
+    "default":{
+    "DB":"",
+    "DB_TYPE":"",
+    "DB_SERVER":"",
+    "DB_USER":"",
+    "DB_PASSWORD":"",
+    "PREFIX_DB":false,
+    "PREFIX_TB":false}
 }

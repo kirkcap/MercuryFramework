@@ -182,7 +182,8 @@ class baseModel extends helpers\ModelData{
         $order = FieldDetails::SORT_DESC;
       }
       for($j=0;$j<sizeOf($sort_fields);$j++){
-        $this->_ORDER_BY( $this->tb_columns->getTableColumn($sort_fields[$j])->getField(DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB()), $order );
+          $this->_ORDER_BY( $this->tb_columns->getTableColumn($sort_fields[$j])->getField(DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB()), $order );
+        
       }
     }
   }
@@ -273,8 +274,9 @@ class baseModel extends helpers\ModelData{
 
         $values = explode(",", $filter[$i]->getValue());
         if(sizeOf($values)==1){
-          if(strpos($values[0],'*')!==false){//If value contains willdcard *, LIKE overwrites the operator previously set
-            $operator = " LIKE ";
+		  $strpos = "'". strpos($values[0],"*") ."'"; 
+		  if(strlen($strpos) > 2 ){//If value contains willdcard *, LIKE overwrites the operator previously set
+		    $operator = " LIKE ";
           }else{
             $operator = $field_oper['operator'];
           }
@@ -287,8 +289,9 @@ class baseModel extends helpers\ModelData{
           }
         }else{
           for($j=0;$j<sizeOf($values);$j++){
-            if(strpos($values[$j],'*')!==false){//If value contains willdcard *, LIKE overwrites the operator previously set
-              $operator = " LIKE ";
+			$strpos = "'". strpos($values[$j],"*") ."'"; 
+            if(strlen($strpos) > 2 ){//If value contains willdcard *, LIKE overwrites the operator previously set
+			  $operator = " LIKE ";
             }else{
               $operator = $field_oper['operator'];
             }
@@ -313,7 +316,7 @@ class baseModel extends helpers\ModelData{
 
   private function getFieldAndOperation($field){
     $result = [];
-    $field_oper = explode("|", $field );
+	$field_oper = explode("|", $field );
     if(sizeOf($field_oper)>1){
       $result['field'] = $field_oper[0];
       switch($field_oper[1]){
@@ -328,6 +331,9 @@ class baseModel extends helpers\ModelData{
           break;
         case "ge":
           $operator = " >= ";
+          break;
+		case "ne":
+		  $operator = " <> ";
           break;
       }
       $result['operator'] = $operator;
@@ -450,14 +456,11 @@ class baseModel extends helpers\ModelData{
 
           $modelObj = $this;
 
-
-          //$modelObj->_PREPARE_SELECT()->_ADD_MAX( $modelObj->getTableColumn( $tbcolobj->getFieldDetails()->getDefault()->getSubQueryMaxField() )->getField( DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB() ) , "LastKey" );
-          $modelObj->_PREPARE_SELECT()->_ADD_MAX( $tbcolobj->getField( DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB() ) , "LastKey" );
+          $modelObj->_PREPARE_SELECT()->_ADD_MAX( $modelObj->getTableColumn( $tbcolobj->getFieldDetails()->getDefault()->getSubQueryMaxField() )->getField( DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB() ) , "LastKey" );
 
           $idx = 0;
           $firstCondition = true;
           $modelObj->_PREPARE_WHERE();
-          /*
           foreach($keys as $key){
             $fvalue = "";
             if(array_key_exists($key, $keys_data)){
@@ -473,19 +476,6 @@ class baseModel extends helpers\ModelData{
             }
             else{
               $modelObj->_AND($modelObj->getTableColumn($key)->getField( DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB() ), "=", $fvalue );
-            }
-          }
-          */
-
-          foreach($keys_data as $key => $value){
-            if($key!=$fname){ //If the key field being processed is not the current field(which is supposed to be a subtable additional key...)
-              if($firstCondition){
-                $modelObj->_CONDITION($modelObj->getTableColumn($key)->getField( DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB() ), "=", $value );
-                $firstCondition = false;
-              }
-              else{
-                $modelObj->_AND($modelObj->getTableColumn($key)->getField( DBFactory::getInstance()->getDB($this->getDbCfgName())->prefixTB() ), "=", $value );
-              }
             }
           }
 
@@ -525,16 +515,18 @@ class baseModel extends helpers\ModelData{
 
     $value = "";
     $this->UpdateElements = [];
+	$keyidx = 0;
+    $keyvals_local = array();
 
     foreach($this->tb_columns->getColumnsMetadata() as $fname => $tbcolobj){
 
       if($tbcolobj->getFieldDetails()->canUpdate()){
         if(!array_key_exists($fname, $fields_data)) {
-          if(sizeof($keyvals_local) >= $keyidx+1){
-            $value = $keyvals_local[$keyidx++];
-          }else{
+          /*if(sizeof($values) >= $keyidx+1){
+            $value = $values[$keyidx++];
+          }else{*/
             $value = '';
-          }
+          //}
         }else{
           $value = $fields_data[$fname];
         }

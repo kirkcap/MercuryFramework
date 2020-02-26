@@ -184,11 +184,12 @@ class Token{
       $token->setDiagnostic( "No authorization token present" );
 
     }
+	//print_r($token->getDiagnostic());
     return $token;
 
   }
 
-  private static function parseRequestHeaders() {
+  public static function parseRequestHeaders() {
       $headers = array();
       foreach($_SERVER as $key => $value) {
           if (substr($key, 0, 5) <> 'HTTP_') {

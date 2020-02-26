@@ -40,54 +40,59 @@ use com\mercuryfw\helpers\Token as Token;
 use com\mercuryfw\helpers\Logger as Logger;
 
 class API {
-  public function __construct(){
+	
+	private $logger;
+	
+	public function __construct(){
 		//parent::__construct();				// Init parent contructor
+		$this->logger = Logger::getInstance();
 	}
 
   /*
 	 * Dynmically call the method based on the query string
 	 */
 	public function processApi(){
-    $REST = REST::getInstance();
+		$REST = REST::getInstance();
+		
+		//$this->logger->log(Logger::LOG_TYPE_Info, null, "Chegou aqui 1!". var_dump(file_get_contents("php://input")) . var_dump($_POST) . var_dump($_FILES) ); 
 
-    if($REST->HTTPMethodIsAllowed()){
+		if($REST->HTTPMethodIsAllowed()){
 
-      $route = $REST->getRoute();
+		  $route = $REST->getRoute();
 
-      if($route->getController()!=null){
-        $continue = true;
+		  if($route->getController()!=null){
+			$continue = true;
 
-        if($route->getCheckToken()){
-          $token = Token::validateToken();
-          if(!$token->isValid()){
-            $continue = false;
-            $REST->response($REST->json($token->getDiagnostic()),401);
-          }
-        }
+			if($route->getCheckToken()){
+			  $token = Token::validateToken();
+			  if(!$token->isValid()){
+				$continue = false;
+				$REST->response($REST->json($token->getDiagnostic()),401);
+			  }
+			}
 
-        if($continue){
+			if($continue){
+			  if($route->getController() == "genericCRUDController" or
+				 $route->getController() == "genericAuthController" ){
 
-          if($route->getController() == "genericCRUDController" or
-             $route->getController() == "genericAuthController" ){
+				$controller = ControllerFactory::getController($route->getController(),array($route->getModel()));
 
-            $controller = ControllerFactory::getController($route->getController(),array($route->getModel()));
+			  }else{
+				if($route->getModel()!=null){
+				  $controller = ControllerFactory::getController($route->getController(),array($route->getModel()));
 
-          }else{
-            if($route->getModel()!=null){
-              $controller = ControllerFactory::getController($route->getController(),array($route->getModel()));
+				}else{
+				  $controller = ControllerFactory::getController($route->getController(),array());
 
-            }else{
-              $controller = ControllerFactory::getController($route->getController(),array());
+				}
+			  }
+			  $controller->execute($route->getControllerMethod(), $route->getControllerParameters(), $REST->getRequestInfo()->getParameters());
 
-            }
-          }
-          $controller->execute($route->getControllerMethod(), $route->getControllerParameters(), $REST->getRequestInfo()->getParameters());
-
-        }
-      }else
-  			$REST->response('',404); // If the method not exist with in this class "Page not found".
-    }else
-      $REST->response('',406); //Not acceptable
+			}
+		  }else
+				$REST->response('',404); // If the method not exist with in this class "Page not found".
+		}else
+		  $REST->response('',406); //Not acceptable
 	}
 
 

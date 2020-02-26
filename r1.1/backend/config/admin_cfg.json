@@ -1,9 +1,1 @@
-{
-  "admin_frontend_allowed" : true,
-  "cors_allow_origin": "localhost",
-  "log_option" : "info",
-  "log_saver_class" : "FileLogSaver",
-  "log_saver_destination" : "Log",
-  "exception_return" : "default_message",
-  "exception_friendly_message" : "Something goes wrong with this call, please try again!"
-}
+{"admin_frontend_allowed":true,"cors_allow_origin":"*","log_option":"warning","log_saver_class":"FileLogSaver","log_saver_destination":"LogNew","exception_return":"default_message","exception_friendly_message":"Something goes wrong with this call, please try again!"}

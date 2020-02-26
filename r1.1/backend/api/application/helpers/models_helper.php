@@ -91,7 +91,7 @@ class Models{
 
 class ModelData{
   protected $modelName;
-  protected $db_cfg_name;
+  protected $dbCfgName;
   protected $entity_id;
   protected $entity_name; // = "Maker";
   protected $tb_name    ; // = "tb_makers";
@@ -115,10 +115,10 @@ class ModelData{
 
   public function setModelData($ModelName, $ModelData){
     $this->modelName     = $ModelName;
-    if(array_key_exists("db_cfg_name",$ModelData)){
-      $this->db_cfg_name     = $ModelData["db_cfg_name"];
+    if(array_key_exists("dbCfgName",$ModelData)){
+      $this->dbCfgName     = $ModelData["dbCfgName"];
     }else{
-      $this->db_cfg_name     = "default";
+      $this->dbCfgName     = "default";
     }
     $this->entity_id     = $ModelData["entity_id"];
     $this->entity_name   = $ModelData["entity_name"];
@@ -146,10 +146,10 @@ class ModelData{
   }
 
   public function setDbCfgName($name){
-    $this->db_cfg_name = $name;
+    $this->dbCfgName = $name;
   }
   public function getDbCfgName(){
-    return $this->db_cfg_name;
+    return $this->dbCfgName;
   }
 
   public function setEntityID($ID){

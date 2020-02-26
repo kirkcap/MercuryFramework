@@ -180,7 +180,7 @@ class FileLogSaver implements iLogSaver{
       }
     }
 
-    $this->log_contents .= "\r\n<br><p>"."Log Timestamp:".$log_timestamp->format('Y-m-d H:i:s')."</p>\r\n<p>"."</p>\r\n<p>"."Log Type:".$log_type."</p>\r\n<p>"."LogContents:".$log_var_data."</p>";
+    $this->log_contents = "\r\n<br><p>"."Log Timestamp:".$log_timestamp->format('Y-m-d H:i:s')."</p>\r\n<p>"."</p>\r\n<p>"."Log Type:".$log_type."</p>\r\n<p>"."LogContents:".$log_var_data."</p>";
     if($message!=''){
       $this->log_contents .= "\r\n" . "<p>Message:" .$message ."</p>";
     }

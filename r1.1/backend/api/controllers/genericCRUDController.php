@@ -72,40 +72,40 @@ class genericCRUDController extends abstractController implements ifController{
 
       }
 
+	}
+
+	public function show($parm){
+		if($this->API->get_request_method() != "GET"){
+			$this->API->response('',406);
 		}
 
-		public function show($parm){
-			if($this->API->get_request_method() != "GET"){
-				$this->API->response('',406);
-			}
+		if(sizeof($parm) > 0){
 
-			if(sizeof($parm) > 0){
+			$modelObj = new genericModel($this->getModelName());
 
-        $modelObj = new genericModel($this->getModelName());
-
-        $r = $modelObj->findByKey($parm);
-        if($modelObj->exceptionOcurred()){
-          $this->API->response($this->API->json($modelObj->getErrorData()->getFrontEndResponse()),200);
-        }else{
-          if(sizeof($r) > 0){
+			$r = $modelObj->findByKey($parm);
+			if($modelObj->exceptionOcurred()){
+				$this->API->response($this->API->json($modelObj->getErrorData()->getFrontEndResponse()),200);
+			}else{
+				if(sizeof($r) > 0){
     				$this->API->response($this->API->json($r), 200); // send user details
-    			}
-    			$this->API->response('',400);	// If no records "No Content" status
-        }
-
+				}
+				$this->API->response('',400);	// If no records "No Content" status
 			}
-			$this->API->response('',400);//204);	// If no records "No Content" status
+
+		}
+		$this->API->response('',400);//204);	// If no records "No Content" status
+	}
+
+
+
+
+	public function create($parm){
+		if($this->API->get_request_method() != "POST"){
+			$this->API->response('',406);
 		}
 
-
-
-
-		public function create($parm){
-			if($this->API->get_request_method() != "POST"){
-				$this->API->response('',406);
-			}
-
-			$entity_data = json_decode($this->API->getRequestData(),true); //json_decode(file_get_contents("php://input"),true);
+		$entity_data = json_decode($this->API->getRequestData(),true); //json_decode(file_get_contents("php://input"),true);
 
       $modelObj = new genericModel($this->modelName);
 
@@ -119,14 +119,14 @@ class genericCRUDController extends abstractController implements ifController{
         $this->API->response('',400);	// If no records "No Content" status
       }
 
+	}
+
+
+	public function update($parm){
+		if($this->API->get_request_method() != "PUT"){
+			$this->API->response('',406);
 		}
-
-
-		public function update($parm){
-			if($this->API->get_request_method() != "PUT"){
-				$this->API->response('',406);
-			}
-			$entity_data = json_decode($this->API->getRequestData(),true); //file_get_contents("php://input"),true);
+		$entity_data = json_decode($this->API->getRequestData(),true); //file_get_contents("php://input"),true);
 
       $modelObj = new genericModel($this->modelName);
 
@@ -140,14 +140,14 @@ class genericCRUDController extends abstractController implements ifController{
         $this->API->response('',204);	// If no records "No Content" status
       }
 
+	}
+
+	public function destroy($parm){
+		if($this->API->get_request_method() != "DELETE"){
+			$this->API->response('',406);
 		}
 
-		public function destroy($parm){
-			if($this->API->get_request_method() != "DELETE"){
-				$this->API->response('',406);
-			}
-
-			if(sizeof($parm) > 0){
+		if(sizeof($parm) > 0){
 
         $modelObj = new genericModel($this->modelName);
 
@@ -163,7 +163,7 @@ class genericCRUDController extends abstractController implements ifController{
 
 			}else
 				$this->API->response('',204);	// If no records "No Content" status
-		}
+	}
 
 
 }
